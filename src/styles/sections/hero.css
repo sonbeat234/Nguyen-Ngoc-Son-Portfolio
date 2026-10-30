@@ -1,0 +1,112 @@
+/* Hero "Power-on": pin 140% → chiều cao do pin-spacer quyết định. Wafer (stage) nằm bên phải / nửa dưới (mobile). */
+#hero .pin { height: 100vh; height: 100svh; min-height: 600px; overflow: hidden; }
+
+/* precision frame: khung reticle mảnh, dấu góc, nhãn mono 4 góc + trục */
+#hero .hero-frame { position: absolute; inset: 28px; pointer-events: none; transform-origin: 50% 50%; }
+#hero .hero-frame-inner { position: absolute; inset: 0; border: 1px solid color-mix(in oklab, var(--accent) 16%, transparent); }
+#hero .fr-c { position: absolute; width: 16px; height: 16px; border: 0 solid color-mix(in oklab, var(--accent) 75%, var(--bone)); }
+#hero .fr-tl { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+#hero .fr-tr { top: -1px; right: -1px; border-top-width: 1px; border-right-width: 1px; }
+#hero .fr-bl { bottom: -1px; left: -1px; border-bottom-width: 1px; border-left-width: 1px; }
+#hero .fr-br { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+#hero .fr-axis { position: absolute; opacity: .4; }
+#hero .fr-axis-v { top: 0; bottom: 0; left: 62%; width: 1px; background: linear-gradient(transparent, color-mix(in oklab, var(--accent) 40%, transparent), transparent); }
+#hero .fr-axis-h { left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--accent) 30%, transparent), transparent); }
+#hero .fr-meta {
+  position: absolute; font: 400 .66rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--accent) 50%, var(--mute)); white-space: pre; font-variant-numeric: tabular-nums;
+}
+#hero .fr-meta b { font-weight: 500; color: var(--accent); }
+#hero .fr-m-tl { top: 18px; left: 22px; }
+#hero .fr-m-tr { top: 18px; right: 22px; }
+#hero .fr-m-bl { bottom: 18px; left: 22px; }
+#hero .fr-m-br { bottom: 18px; right: 22px; }
+#hero .fr-m-side { top: 50%; right: 18px; transform: translateY(-50%) rotate(90deg); transform-origin: 100% 50%; }
+
+/* scrim: giữ chữ dễ đọc trên nền wafer */
+#hero .hero-scrim { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(4,6,10,.88) 0%, rgba(4,6,10,.62) 34%, rgba(4,6,10,0) 64%); }
+
+/* copy: cột trái, canh giữa theo chiều dọc (translate độc lập với yPercent của GSAP) */
+#hero .hero-copy {
+  position: absolute; left: calc(var(--gutter) + 40px); top: 50%; translate: 0 -46%;
+  display: grid; gap: 20px; width: min(62vw, 980px);
+}
+#hero .hero-name {
+  margin: 0; font: 300 clamp(3rem, 7.4vw, 8.6rem)/1.1 var(--f-display); letter-spacing: -.045em;
+  color: var(--bone); perspective: 800px; position: relative;
+}
+#hero .hero-line { display: block; white-space: nowrap; }
+#hero .hero-line + .hero-line { font-weight: 700; letter-spacing: -.05em; }
+#hero .hero-ch {
+  --k: 0;
+  color: color-mix(in oklab, var(--accent) calc(var(--k) * 100%), var(--bone));
+  text-shadow: 0 0 calc(var(--k) * 28px) color-mix(in oklab, var(--accent) calc(var(--k) * 70%), transparent);
+  will-change: transform;
+}
+/* vệt quét sáng chạy qua tên một lần sau intro */
+#hero .hero-name::after {
+  content: ""; position: absolute; inset: -4% -2%; pointer-events: none; opacity: 0; mix-blend-mode: screen;
+  background: linear-gradient(100deg, transparent 0 40%, color-mix(in oklab, var(--accent) 55%, transparent) 50%, transparent 60% 100%) -60% 0 / 60% 100% no-repeat;
+}
+#hero .hero-name.is-scanned::after { animation: hero-scan 1.8s var(--ease-in-out) .4s 1 both; }
+@keyframes hero-scan { 0% { opacity: 0; background-position: -60% 0 } 15% { opacity: 1 } 85% { opacity: 1 } 100% { opacity: 0; background-position: 160% 0 } }
+
+#hero .hero-tag { font-size: clamp(1.35rem, 2.5vw, 2.3rem); line-height: 1.1; color: color-mix(in oklab, var(--accent) 55%, var(--bone)); }
+#hero .hero-lede { max-width: 44ch; color: color-mix(in oklab, var(--bone) 72%, transparent); font-weight: 300; }
+#hero .hero-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 4px; }
+#hero .hero-chip {
+  position: relative; display: block; width: 30px; height: 30px; border-radius: 6px; flex: none;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 70%, #fff), var(--accent) 50%, color-mix(in oklab, var(--accent) 50%, #000));
+  box-shadow: 0 0 0 2px rgba(255,255,255,.08), 0 0 18px color-mix(in oklab, var(--accent) 45%, transparent);
+}
+#hero .hero-chip::before { /* chân chip bằng gradient lặp */
+  content: ""; position: absolute; inset: -4px 6px;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.75) 0 2px, transparent 2px 6px);
+  -webkit-mask: linear-gradient(#000 0 4px, transparent 4px calc(100% - 4px), #000 calc(100% - 4px));
+          mask: linear-gradient(#000 0 4px, transparent 4px calc(100% - 4px), #000 calc(100% - 4px));
+}
+
+/* readout: thông tin xác nhận, decode khi intro */
+#hero .hero-readout { position: absolute; right: calc(var(--gutter) + 52px); bottom: clamp(70px, 12vh, 130px); margin: 0;
+  display: grid; gap: 12px; text-align: right; padding: 14px 16px; border-radius: 12px;
+  background: rgba(4,6,10,.62); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); }
+#hero .hero-readout > div { display: grid; gap: 4px; padding-right: 14px; border-right: 1px solid color-mix(in oklab, var(--accent) 55%, transparent); }
+#hero .hero-readout dt { font: 400 .62rem/1 var(--f-mono); letter-spacing: .24em; text-transform: uppercase; color: var(--mute); }
+#hero .hero-readout dd { margin: 0; font: 500 .95rem/1.2 var(--f-mono); color: var(--bone); }
+
+/* gợi ý cuộn: vạch dọc có chấm chạy xuống */
+#hero .hero-hint { position: absolute; left: 50%; bottom: 44px; translate: -50% 0;
+  display: flex; flex-direction: column; align-items: center; gap: 12px; pointer-events: none; }
+#hero .hero-hint-line { position: relative; display: block; width: 1px; height: 56px; overflow: hidden; background: rgba(233,237,242,.18); }
+#hero .hero-hint-line i { position: absolute; left: -1px; top: -10px; width: 3px; height: 10px; border-radius: 2px;
+  background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: hero-drop 1.8s var(--ease-in-out) infinite; }
+#hero .hero-hint-label { font: 400 .6rem/1 var(--f-mono); letter-spacing: .32em; text-transform: uppercase; color: var(--mute); }
+@keyframes hero-drop { 0% { transform: translateY(0); opacity: 0 } 15% { opacity: 1 } 85% { opacity: 1 } 100% { transform: translateY(66px); opacity: 0 } }
+
+@media (max-width: 1100px) {
+  #hero .fr-m-side { display: none; }
+  #hero .hero-copy { width: min(78vw, 820px); }
+}
+/* portrait / mobile: chữ phía trên, wafer ở nửa dưới (shader tự đổi bố cục theo tỉ lệ khung) */
+@media (max-aspect-ratio: 1/1), (max-width: 767px) {
+  #hero .hero-scrim { background: linear-gradient(180deg, rgba(4,6,10,.92) 0%, rgba(4,6,10,.7) 48%, rgba(4,6,10,0) 72%); }
+  #hero .hero-copy { left: var(--gutter); right: var(--gutter); top: clamp(88px, 13vh, 140px); translate: none; width: auto; gap: 16px; }
+  #hero .hero-readout { left: var(--gutter); right: auto; bottom: 30px; text-align: left; grid-auto-flow: column; gap: 18px; }
+  #hero .hero-readout > div { padding: 0 0 0 10px; border-right: 0; border-left: 1px solid color-mix(in oklab, var(--accent) 55%, transparent); }
+  #hero .hero-hint { display: none; }
+}
+@media (max-width: 767px) {
+  #hero .hero-frame { inset: 12px; }
+  #hero .fr-m-tr, #hero .fr-m-br, #hero .fr-axis { display: none; }
+  #hero .fr-meta { font-size: .54rem; letter-spacing: .14em; }
+  #hero .hero-name { font-size: 9.4vw; line-height: 1.16; }
+  #hero .hero-lede { font-size: .95rem; }
+  #hero .hero-ctas { gap: 10px; }
+  #hero .hero-ctas .btn-spin > span { padding: .9em 1.4em; }
+  #hero .hero-readout dd { font-size: .78rem; }
+  #hero .hero-readout > div:first-child dd { max-width: 13ch; white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) { #hero .hero-hint-line i { animation: none; top: 22px; } #hero .hero-name::after { display: none; } }
+html.reduced #hero .hero-hint-line i { animation: none; top: 22px; }
+html.reduced #hero .hero-name::after { display: none; }

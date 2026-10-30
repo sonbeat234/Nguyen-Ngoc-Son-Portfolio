@@ -127,6 +127,40 @@ html.reduced [data-reveal] { visibility: visible; }
   mix-blend-mode: multiply;
 }
 
+/* ---------- skip link (bàn phím) ---------- */
+.skip-link { position: fixed; left: 16px; top: 12px; z-index: 400; padding: 10px 16px; border-radius: 999px;
+  background: var(--bone); color: var(--ink); font: 500 .8rem/1 var(--f-body); transform: translateY(-160%);
+  transition: transform .3s var(--ease-out); }
+.skip-link:focus-visible { transform: none; }
+section.chapter:focus { outline: none; }
+
+/* ---------- tiêu đề section dùng chung ---------- */
+.sec-head { display: grid; gap: 14px; margin-bottom: clamp(32px, 6vh, 64px); }
+.sec-title { font: 300 var(--fs-h2)/1.02 var(--f-display); letter-spacing: -.035em; max-width: 16ch; text-wrap: balance; }
+.sec-title em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em;
+  color: color-mix(in oklab, var(--accent) 70%, var(--bone)); }
+.sec-sub { max-width: 52ch; color: color-mix(in oklab, var(--bone) 70%, transparent); font-weight: 300; }
+
+/* ô dữ liệu chưa có (để trống có chủ đích, không chữ giả): skeleton có ánh quét */
+.slot { display: inline-block; vertical-align: middle; width: min(100%, 14em); height: .9em; border-radius: 4px;
+  background: linear-gradient(100deg, rgba(255,255,255,.05) 30%, rgba(255,255,255,.14) 50%, rgba(255,255,255,.05) 70%) 0 0 / 300% 100%;
+  border: 1px dashed rgba(255,255,255,.14); animation: slot-shimmer 2.4s linear infinite; }
+.slot.slot-lg { width: min(100%, 11em); height: 1.1em; }
+.slot.slot-sm { width: 7em; height: .8em; }
+.slot.slot-chip { width: 5.5em; height: 1.4em; border-radius: 999px; }
+@keyframes slot-shimmer { from { background-position: 150% 0 } to { background-position: -150% 0 } }
+
+/* ---------- đường mạch toàn trang (fx/ui/trace.ts) ---------- */
+.trace { position: fixed; left: 0; top: 0; width: 52px; height: 100vh; z-index: 3; pointer-events: none; overflow: hidden; }
+.trace path { fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.trace__base { stroke: rgba(233,237,242,.1); stroke-width: 1; }
+.trace__glow { stroke: color-mix(in oklab, var(--accent) 35%, transparent); stroke-width: 6; }
+.trace__lit { stroke: var(--accent); stroke-width: 1.5; }
+.trace__via { fill: var(--ink); stroke: rgba(233,237,242,.25); stroke-width: 1.2; transition: fill .4s, stroke .4s; }
+.trace__via.is-on { fill: var(--accent); stroke: color-mix(in oklab, var(--accent) 60%, #fff); }
+.trace__head { fill: #fff; filter: drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 10px var(--accent)); }
+@media (max-width: 767px) { .trace { width: 18px; } .trace__glow { stroke-width: 4; } .trace__head { r: 2.4px; } }
+
 /* ---------- progress bar ---------- */
 .progress { position: fixed; top: 0; left: 0; right: 0; height: 1px; z-index: 70; background: var(--accent);
   transform-origin: 0 50%; transform: scaleX(0); box-shadow: 0 0 10px var(--accent); pointer-events: none; }
@@ -216,7 +250,7 @@ html.reduced [data-reveal] { visibility: visible; }
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .grain { animation: none; }
+  .grain, .slot { animation: none; }
   .neon, .neon .tube-off { animation: none; }
 }
-html.reduced .grain, html.reduced .neon, html.reduced .neon .tube-off { animation: none; }
+html.reduced .grain, html.reduced .slot, html.reduced .neon, html.reduced .neon .tube-off { animation: none; }

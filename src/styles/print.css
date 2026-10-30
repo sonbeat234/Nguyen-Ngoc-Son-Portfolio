@@ -1,0 +1,29 @@
+/* In / Lưu PDF: chỉ in tài liệu CV, nền trắng chữ đen, A4. Mọi chuyển động về trạng thái cuối, ô trống bị ẩn. */
+@media print {
+  @page { size: A4; margin: 14mm 14mm 16mm; }
+  html, body { background: #fff !important; color: #111 !important; }
+  #stage, #ambient, .trace, .preloader, .progress, .dock, .rail, .menu, .grain, .cur-dot, .cur-ring, .hud, .skip-link,
+  main > section:not(#cv), #cv .cv-top, #cv .cv-scan, #cv .slot, #cv .cv-block.is-empty, #cv .cv-chips.is-slot { display: none !important; }
+  main { opacity: 1 !important; visibility: visible !important; }
+
+  /* đổi bảng màu ngay trong #cv: mọi color-mix(var(--accent)…) tự theo */
+  #cv { --accent: #1b4f8f; --accent-2: #1b4f8f; --bone: #111; --mute: #555; --line: #d4d4d4; --ink: #fff;
+    padding: 0 !important; color: #111; }
+  #cv .wrap { width: 100%; padding: 0; }
+  #cv, #cv * {
+    opacity: 1 !important; transform: none !important; filter: none !important; visibility: visible !important;
+    clip-path: none !important; animation: none !important; transition: none !important; box-shadow: none !important; text-shadow: none !important;
+  }
+  #cv .cv-doc { background: none !important; border: 0 !important; border-radius: 0; padding: 0 !important; overflow: visible; }
+  #cv .cv-head { border-bottom-color: #1b4f8f; }
+  #cv .cv-name { font-size: 26pt; }
+  #cv .cv-body { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr) !important; gap: 0 10mm; }
+  #cv .cv-block { break-inside: avoid; padding-block: 5mm; }
+  #cv .cv-h-n { background: none !important; color: #1b4f8f !important; }
+  #cv .cv-tl-line { background: #1b4f8f !important; }
+  #cv .cv-tl-node { background: #fff !important; }
+  #cv .cv-meter-bar { background: #e6e6e6 !important; }
+  #cv .cv-meter-bar i { transform: scaleX(var(--p)) !important; background: #1b4f8f !important; }
+  #cv a { color: #111 !important; text-decoration: none; }
+  #cv .cv-foot { margin-top: 6mm; }
+}

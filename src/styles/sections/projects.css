@@ -1,0 +1,39 @@
+/* Projects: card "die" — tilt + spotlight (base .card) + chữ thập probe theo con trỏ + dấu góc reticle. */
+#projects { padding-block: clamp(140px, 20vh, 220px) clamp(120px, 16vh, 180px); }
+#projects .proj-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2vw, 28px); perspective: 1200px; }
+
+#projects .pcard {
+  display: grid; align-content: start; gap: 22px; min-height: 420px; padding: clamp(22px, 2.4vw, 32px);
+  background: linear-gradient(170deg, rgba(16,22,30,.86), rgba(8,11,16,.8));
+  border-color: color-mix(in oklab, var(--accent) 18%, var(--line));
+}
+#projects .pcard > * { transform: translateZ(26px); }
+/* chữ thập probe: hai vạch mảnh bám --mx/--my (tilt.ts) */
+#projects .pc-probe { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .35s; transform: none;
+  background:
+    linear-gradient(color-mix(in oklab, var(--accent) 45%, transparent), color-mix(in oklab, var(--accent) 45%, transparent)) var(--mx, 50%) 0 / 1px 100% no-repeat,
+    linear-gradient(90deg, color-mix(in oklab, var(--accent) 45%, transparent), color-mix(in oklab, var(--accent) 45%, transparent)) 0 var(--my, 50%) / 100% 1px no-repeat; }
+#projects .pcard:hover .pc-probe { opacity: .55; }
+#projects .pc-mark { position: absolute; width: 14px; height: 14px; border: 0 solid color-mix(in oklab, var(--accent) 70%, var(--bone)); transform: none; }
+#projects .pc-tl { top: 10px; left: 10px; border-top-width: 1px; border-left-width: 1px; }
+#projects .pc-br { bottom: 10px; right: 10px; border-bottom-width: 1px; border-right-width: 1px; }
+
+#projects .pc-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+#projects .pc-die { font: 500 .7rem/1 var(--f-mono); letter-spacing: .26em; color: var(--accent); }
+#projects .pc-status { font: 500 .6rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--mute);
+  padding: .55em .9em; border-radius: 999px; border: 1px solid var(--line); }
+#projects .pcard.is-empty .pc-status { border-style: dashed; }
+#projects .pc-title { font: 300 clamp(1.3rem, 1.8vw, 1.7rem)/1.15 var(--f-display); letter-spacing: -.03em; min-height: 2.3em; }
+#projects .pc-fields { display: grid; gap: 14px; margin: 0; }
+#projects .pc-field { display: grid; gap: 6px; padding-top: 12px; border-top: 1px solid var(--line); }
+#projects .pc-field dt { font: 400 .6rem/1 var(--f-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--mute); }
+#projects .pc-field dd { margin: 0; color: color-mix(in oklab, var(--bone) 82%, transparent); font-weight: 300; }
+#projects .pc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+#projects .pc-tags li { font: 400 .68rem/1 var(--f-mono); padding: .45em .7em; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent); }
+#projects .pc-link { display: inline-flex; align-items: center; gap: .5em; width: fit-content; font: 500 .72rem/1 var(--f-mono);
+  letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+#projects .pc-link svg { width: 1em; height: 1em; transition: transform .3s var(--ease-out); }
+#projects .pc-link:hover svg { transform: translateX(4px); }
+
+@media (max-width: 1023px) { #projects .proj-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { #projects .proj-grid { grid-template-columns: 1fr; } #projects .pcard { min-height: 0; } }

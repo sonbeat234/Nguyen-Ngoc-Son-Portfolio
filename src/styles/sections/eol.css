@@ -1,0 +1,41 @@
+/* End of line (footer): câu kết, liên hệ (nếu có), tên outline typeflow, thanh cuối. */
+#eol { min-height: 100vh; min-height: 100svh; display: flex; }
+#eol .eol-inner { display: flex; flex-direction: column; justify-content: flex-end; gap: clamp(26px, 4vh, 44px);
+  padding-top: clamp(140px, 22vh, 240px); padding-bottom: 28px; }
+#eol .eol-line { font-size: clamp(2rem, 5vw, 4.8rem); line-height: 1.04; max-width: 17ch; letter-spacing: -.015em; }
+
+#eol .eol-contact { display: flex; flex-wrap: wrap; gap: 12px; }
+#eol .eol-link { display: inline-flex; align-items: center; gap: .8em; padding: .9em 1.3em; border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent); background: rgba(8,10,16,.6); font-weight: 500;
+  transition: background .3s, color .3s; }
+#eol .eol-link span { font: 400 .62rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
+#eol .eol-link:hover { background: var(--accent); color: var(--ink); }
+#eol .eol-link:hover span { color: var(--ink); }
+
+/* outline typeflow: viền chữ mảnh, tô màu theo con trỏ (hover) / vệt sáng tự chạy (idle, touch) */
+#eol .eol-name { margin: 0; overflow: hidden; padding-block: .14em .04em; }
+#eol .eol-name span {
+  display: block; white-space: nowrap; font: 700 7.3vw/1.12 var(--f-display); letter-spacing: -.055em;
+  color: transparent; -webkit-text-stroke: 1px color-mix(in oklab, var(--bone) 34%, transparent);
+  background-image:
+    radial-gradient(240px circle at var(--mx, -400px) var(--my, -400px), var(--accent), color-mix(in oklab, var(--accent-2) 60%, transparent) 40%, transparent 70%),
+    linear-gradient(100deg, transparent 42%, color-mix(in oklab, var(--accent) 38%, transparent) 50%, transparent 58%);
+  background-size: 100% 100%, 260% 100%; background-repeat: no-repeat;
+  -webkit-background-clip: text; background-clip: text;
+  animation: eol-sheen 7s linear infinite;
+}
+#eol .eol-name.is-hot span { -webkit-text-stroke-color: color-mix(in oklab, var(--accent) 50%, transparent); }
+@keyframes eol-sheen { from { background-position: 0 0, 130% 0; } to { background-position: 0 0, -130% 0; } }
+
+#eol .eol-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
+  padding-top: 22px; border-top: 1px solid var(--line); font-size: .78rem; color: var(--mute); }
+#eol .eol-bar .mono { letter-spacing: .08em; }
+#eol .eol-uptime span { color: var(--accent); font-variant-numeric: tabular-nums; }
+#eol .eol-credit { text-transform: none; letter-spacing: .08em; font-size: .66rem; }
+
+@media (max-width: 767px) {
+  #eol .eol-name span { font-size: 10.6vw; white-space: normal; line-height: 1.16; }
+  #eol .eol-bar { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { #eol .eol-name span { animation: none; } }
+html.reduced #eol .eol-name span { animation: none; }

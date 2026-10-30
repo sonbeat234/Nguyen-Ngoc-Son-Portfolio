@@ -1,9 +1,11 @@
 // Chữ sáng dần theo scroll (manifesto) + highlight gradient cho <em>.
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
+import { state } from "../../core/state";
 
 export function scrubWords(el: HTMLElement) {
   el.dataset.fxScrub = "1";
+  if (state.reduced) return;                       // giảm chuyển động: chữ hiện đủ ngay, không mờ chờ cuộn
   const split = SplitText.create(el, { type: "words" });
   gsap.fromTo(split.words, { opacity: 0.1, color: "#8a8a93" }, {
     opacity: 1, color: "#edebe6", stagger: 0.06, ease: "none",

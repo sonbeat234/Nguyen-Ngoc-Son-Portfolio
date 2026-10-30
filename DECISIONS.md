@@ -20,4 +20,22 @@
 - [2.5] Song song hoá: 4 subagent (A 00–03, B 04–06, C 07–09, D 10–12) theo `CONVENTIONS.md`; mỗi dev server dùng `VITE_CACHE_DIR` riêng để không giẫm cache tối ưu dependency của nhau.
 - [2.5] Sau khi bị ngắt do hết limit: commit checkpoint `wip: partial chapters before limit reset`, spawn lại subagent cho các nhóm còn chương chưa xong, tiếp tục từ code hiện có (không viết lại).
 - [2.5] verify.mjs: `page.setDefaultTimeout(120000)` — nhiều trình duyệt SwiftShader song song làm một screenshot vượt 30s mặc định (chương nặng như c04 raymarch, c10 CRT).
-- [2.5] Ngân sách WebGL: stage + dock luôn sống (2). Vùng đông nhất là 10–11 (CRT + ember + orbital + lumen) → chương 11 phải giữ ≤ 3 context riêng, khuyến khích port Lumen không cần context riêng.
+- [2.5] Ngân sách WebGL: stage + dock luôn sống (2).
+
+## Chuyển sang portfolio IC Design (Nguyễn Ngọc Sơn)
+
+- [pf] Yêu cầu mới thay nội dung SIGNAL → dừng 4 subagent đang dựng chương SIGNAL (tránh sửa chồng `index.html`), commit việc dở vào `af41c3e` rồi mới chuyển hướng.
+- [pf] Giữ nguyên engine (stage 1 context + dissolve, Lenis, GSAP, text FX, dock/rail/menu/cursor, preloader) — tích hợp vào kiến trúc sẵn có thay vì dựng lại.
+- [pf] Mọi dữ liệu cá nhân ở `src/content/profile.ts`; trường chưa có = rỗng → skeleton trên web, ẩn khi in. Không bịa dự án/kỹ năng/liên hệ/ảnh.
+- [pf] Thêm headline ngành (theo ý người dùng) dưới dạng nội dung phổ thông về IC design flow (7 giai đoạn) + marquee thuật ngữ, đặt trong section riêng, không trình bày như kỹ năng/kinh nghiệm cá nhân. Đoạn giới thiệu chỉ mô tả portfolio, không khẳng định kinh nghiệm.
+- [pf] Font: Syncopate/Fragment Mono không có dấu tiếng Việt → tên "Nguyễn Ngọc Sơn" sẽ lẫn font fallback. Chọn Unbounded (display), Geist (body), JetBrains Mono (mono) — cả 3 có subset `vietnamese` trên Google Fonts (đã kiểm tra CSS). Instrument Serif chỉ dùng cho chữ nghiêng tiếng Anh. Preloader `document.fonts.load(face, tên)` để tải đúng subset.
+- [pf] Tên hero tách ký tự KHÔNG dùng mask của SplitText (mask cắt dấu chồng ễ/ọ/ơ), line-height ≥ 1.1.
+- [pf] Shader custom `wafer` (lưới die, notch, thin-film iridescence, wafer-sort flash, chấm mực, zoom vào die theo pin) và `circuit` (route Manhattan 2 lớp, xung tín hiệu) — chủ đề bán dẫn rõ hơn các shader ThreeUI có sẵn. Tái dùng `stream`, `dotmatrix`, `topo`, `ribbon` cho các section sau.
+- [pf] Khung chân dung = package QFN (chân + dây bond + cửa sổ die). Chưa có ảnh thật → placeholder trừu tượng "Portrait — to be added", không tạo ảnh người.
+- [pf] CV: không có file PDF thật trong repo → không hiện nút Download; thay bằng "Print / Save as PDF" (`window.print`) + `print.css` (A4, trắng/đen, chỉ `#cv`, ép trạng thái cuối, đổi biến màu trong `#cv`). Nút Download tự hiện khi `profile.cvFile` có giá trị.
+- [pf] Footer không có liên hệ (chưa có dữ liệu thật) — khối `[data-contact]` bị gỡ khi mảng rỗng. Thay đồng hồ giờ địa phương bằng "session uptime" để không ngầm khẳng định nơi ở.
+- [pf] Design flow: desktop ≥ 900px pin + cuộn ngang; < 900px hoặc reduced → danh sách dọc. Dùng `gsap.matchMedia` để tự dựng lại khi đổi breakpoint.
+- [pf] Đường mạch toàn trang: SVG fixed hẹp 52px, `<g>` dịch theo scrollY (chỉ raster một dải hẹp mỗi frame) thay vì SVG cao bằng cả trang; hình học dựng lại ở mỗi `ScrollTrigger.refresh`.
+- [pf] `scrubWords` bỏ qua khi reduced-motion (chữ không bị mờ chờ cuộn).
+- [pf] Link `#…` trong trang cuộn qua Lenis rồi `focus()` đích (section có `tabindex="-1"`) cho người dùng bàn phím.
+- [pf] Giữ các module hiệu ứng không còn dùng (canvas/three/fx/ui/vendor của SIGNAL) làm thư viện — Vite không đóng gói file không import; các section/CSS riêng của SIGNAL thì xoá. Vùng đông nhất là 10–11 (CRT + ember + orbital + lumen) → chương 11 phải giữ ≤ 3 context riêng, khuyến khích port Lumen không cần context riêng.

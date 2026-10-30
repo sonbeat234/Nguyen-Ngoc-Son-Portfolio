@@ -5,27 +5,31 @@
 
 @property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 @property --r { syntax: "<length>"; inherits: false; initial-value: 0px; }
-@property --accent { syntax: "<color>"; inherits: true; initial-value: #8b7cff; }
-@property --accent-2 { syntax: "<color>"; inherits: true; initial-value: #b9a8ff; }
+@property --accent { syntax: "<color>"; inherits: true; initial-value: #5ce1ff; }
+@property --accent-2 { syntax: "<color>"; inherits: true; initial-value: #a6f0ff; }
 
 :root {
-  /* nền và chữ */
-  --ink: #050506;
-  --ink-2: #0b0b0e;
-  --bone: #edebe6;
-  --mute: #8a8a93;
-  --line: rgba(255,255,255,0.08);
+  /* nền và chữ: đen ánh xanh silicon, trắng lạnh */
+  --ink: #04060a;
+  --ink-2: #0a0e15;
+  --bone: #e9edf2;
+  --mute: #8b93a1;
+  --line: rgba(255,255,255,0.09);
 
-  /* accent đổi theo chương, được tween bằng GSAP */
-  --accent: #8b7cff;
-  --accent-2: #b9a8ff;
+  /* vật liệu bán dẫn (dùng cho chi tiết package, dây bond, lớp layout) */
+  --copper: #e2955a;
+  --gold: #e8c26a;
+  --silicon: #9aa7bb;
 
-  /* typography */
-  --f-display: "Syncopate", "Helvetica Neue", Arial, sans-serif;   /* chữ rộng, tiêu đề lớn */
-  --f-serif: "Instrument Serif", "Newsreader", Georgia, serif;      /* nhấn nghiêng, cảm xúc */
-  --f-body: "Geist", "Inter", system-ui, sans-serif;
-  --f-mono: "Fragment Mono", "JetBrains Mono", ui-monospace, monospace;
-  --f-grotesk: "Space Grotesk", "Geist", system-ui, sans-serif;
+  /* accent đổi theo section, được tween bằng GSAP */
+  --accent: #5ce1ff;
+  --accent-2: #a6f0ff;
+
+  /* typography — Unbounded / Geist / JetBrains Mono đều có subset tiếng Việt (tên có dấu hiển thị một font) */
+  --f-display: "Unbounded", "Geist", system-ui, sans-serif;          /* tiêu đề lớn, tên */
+  --f-serif: "Instrument Serif", "Newsreader", Georgia, serif;        /* nhấn nghiêng — chỉ dùng cho chữ tiếng Anh */
+  --f-body: "Geist", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", "Fragment Mono", ui-monospace, monospace;
 
   --fs-hero: clamp(3.5rem, 11vw, 12rem);
   --fs-h2: clamp(2.4rem, 6vw, 6.5rem);

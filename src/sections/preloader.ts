@@ -1,7 +1,7 @@
-// Chương 00 — Preloader "UPLINK" (spec mục 12/00, cảm hứng uplink-loader.html).
+// Preloader "POWER-ON" (cảm hứng uplink-loader.html): chip khởi động.
 // % = (font tải xong + ảnh decode + từng shader prewarm) / tổng. Log terminal mỗi bước có decode,
-// thanh 16 ô sáng dần. reveal(): chromatic wordmark R/G/B hội tụ + iris mở từ tâm.
-// HỢP ĐỒNG với main.ts (giữ nguyên chữ ký):
+// thanh 16 ô sáng dần. reveal(): tên chromatic R/G/B hội tụ + iris mở từ tâm.
+// HỢP ĐỒNG với main.ts:
 //   initPreloader(): khoá scroll ("preloader"), prewarm stage + font + ảnh, resolve khi tải xong.
 //   reveal(): chạy intro, ẩn .preloader (display:none), mở scroll, phát window event "signal:intro".
 import gsap from "gsap";
@@ -10,18 +10,21 @@ import { lockScroll } from "../core/scroll";
 import { state } from "../core/state";
 import { $, $$ } from "../core/dom";
 import { decodeText } from "../fx/text/decode";
+import { profile } from "../content/profile";
 
 export type Preloader = { reveal: () => Promise<void> };
 
+// mẫu chữ có dấu tiếng Việt để trình duyệt tải cả subset vietnamese (unicode-range) của Google Fonts
+const SAMPLE = `${profile.fullName} Aa09`;
 const FONTS: [string, string][] = [
-  ['700 300px "Syncopate"', "syncopate"],
-  ['400 1em "Instrument Serif"', "instrument-serif"],
+  ['700 1em "Unbounded"', "unbounded-700"],
+  ['300 1em "Unbounded"', "unbounded-300"],
   ['italic 400 1em "Instrument Serif"', "instrument-serif-italic"],
-  ['400 1em "Fragment Mono"', "fragment-mono"],
+  ['400 1em "JetBrains Mono"', "jetbrains-mono"],
   ['300 1em "Geist"', "geist-300"],
   ['400 1em "Geist"', "geist-400"],
 ];
-const IMAGES = [1, 2, 3, 4, 5].map((i) => `/img/gallery-${i}.webp`);
+const IMAGES = profile.portrait ? [profile.portrait] : [];
 const MIN_MS = 1900;
 const LOG_LINES = 6;
 
@@ -65,11 +68,11 @@ export async function initPreloader(): Promise<Preloader> {
   let dotN = 3;
   const dotTimer = setInterval(() => { dotN = (dotN % 3) + 1; dots.textContent = ".".repeat(dotN); }, 360);
 
-  addLog("> uplink handshake … ok");
+  addLog("> power-on reset … ok");
   addLog(`> stage ${stage.ids.length} scenes · 1 context`);
 
   const fonts = Promise.all(FONTS.map(([face, name]) =>
-    withTimeout(document.fonts.load(face), 4000).then(() => step(`> loading ${name}.woff2 … ok`))));
+    withTimeout(document.fonts.load(face, SAMPLE), 4000).then(() => step(`> loading ${name} … ok`))));
   const images = Promise.all(IMAGES.map((src) => {
     const img = new Image();
     img.decoding = "async";
@@ -83,8 +86,8 @@ export async function initPreloader(): Promise<Preloader> {
   const elapsed = performance.now() - t0;
   if (elapsed < MIN_MS) await wait(MIN_MS - elapsed);
   await gsap.to(shown, { v: 100, duration: 0.35, ease: "power1.out", overwrite: true, onUpdate: paint });
-  addLog("> signal locked · 100%");
-  status.textContent = "Uplink established";
+  addLog("> boot complete · 100%");
+  status.textContent = "System ready";
   clearInterval(dotTimer);
   dots.textContent = "";
 

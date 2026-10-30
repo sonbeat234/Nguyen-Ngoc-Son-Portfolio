@@ -10,6 +10,7 @@ import { initMenu } from "./menu";
 import { initCursor } from "./cursor";
 import { initMagnetic } from "./magnetic";
 import { initTilt } from "./tilt";
+import { initTrace } from "./trace";
 
 function initProgress() {
   const bar = $(".progress");
@@ -30,6 +31,7 @@ function initAmbient() {
 export function initGlobalLayers() {
   initProgress();
   initAmbient();
+  initTrace();
   initRail();
   initDock();
   initMenu();

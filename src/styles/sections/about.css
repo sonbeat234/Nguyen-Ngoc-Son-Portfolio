@@ -1,0 +1,121 @@
+/* Profile: package chip (khung chân dung) + giới thiệu + datasheet + vòng điểm. */
+#about { padding-block: clamp(120px, 18vh, 200px) clamp(100px, 14vh, 160px); }
+#about .about-grid {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(32px, 6vw, 110px); row-gap: 40px;
+  align-items: start;
+}
+#about .about-head { grid-column: 1 / -1; }
+
+/* ---------- package QFN ---------- */
+#about .pkg { position: relative; width: min(100%, 460px); aspect-ratio: 1; margin: 0; justify-self: center; transform-style: preserve-3d; }
+#about .pkg-body {
+  position: absolute; inset: 7%; border-radius: 5%;
+  background:
+    radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.07), transparent 55%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.012) 0 1px, transparent 1px 3px),
+    linear-gradient(160deg, #161b24, #0b0e14 60%, #07090d);
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 40px 80px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(0,0,0,.6);
+}
+#about .pkg-body::after { /* spotlight theo con trỏ (tilt.ts đặt --mx/--my) */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent) 22%, transparent), transparent 60%);
+}
+#about .pkg.is-hot .pkg-body::after { opacity: 1; }
+#about .pkg-dot { position: absolute; left: 6%; top: 6%; width: 3.2%; aspect-ratio: 1; border-radius: 50%;
+  background: rgba(255,255,255,.18); box-shadow: inset 0 1px 2px rgba(0,0,0,.6); }
+
+/* dây bond (vàng), vẽ dần bằng stroke-dashoffset */
+#about .pkg-wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#about .pkg-wires path { fill: none; stroke: color-mix(in oklab, var(--gold) 85%, #fff); stroke-width: .32; opacity: .75; }
+
+/* chân: kim loại, tín hiệu chạy vòng (lệch pha theo --n), chỉ chạy khi package trong màn */
+#about .pkg-pins { position: absolute; inset: 0; }
+#about .pin { position: absolute; display: block; border-radius: 1px; opacity: .35; transition: opacity .6s var(--ease-out);
+  background: linear-gradient(90deg, #6d7685, #d9dee6 50%, #6d7685); }
+#about .pin-t, #about .pin-b { width: 3%; height: 7%; left: calc(7% + 86% * (0.16 + var(--i) * 0.075556) - 1.5%); }
+#about .pin-t { top: 0; }
+#about .pin-b { bottom: 0; left: calc(7% + 86% * (0.84 - var(--i) * 0.075556) - 1.5%); }
+#about .pin-l, #about .pin-r { width: 7%; height: 3%; background: linear-gradient(180deg, #6d7685, #d9dee6 50%, #6d7685); }
+#about .pin-r { right: 0; top: calc(7% + 86% * (0.16 + var(--i) * 0.075556) - 1.5%); }
+#about .pin-l { left: 0; top: calc(7% + 86% * (0.84 - var(--i) * 0.075556) - 1.5%); }
+#about .pkg.is-powered .pin { opacity: 1; transition-delay: calc(var(--n) * 18ms); }
+#about .pkg.is-live .pin { animation: pin-chase 3.2s linear infinite; animation-delay: calc(var(--n) * 0.08s - 3.2s); }
+#about .pkg.is-hot .pin { box-shadow: 0 0 10px color-mix(in oklab, var(--accent) 70%, transparent); }
+@keyframes pin-chase {
+  0%, 6%, 100% { filter: none; }
+  2% { filter: brightness(1.6) drop-shadow(0 0 6px var(--accent)); }
+}
+
+/* cửa sổ die + ảnh / placeholder */
+#about .pkg-die {
+  position: absolute; inset: 18%; border-radius: 3px; overflow: hidden;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 7px),
+    conic-gradient(from 210deg at 60% 40%, #1b2a3a, #2a1f3d, #183228, #1b2a3a);
+  border: 1px solid color-mix(in oklab, var(--gold) 45%, transparent);
+  box-shadow: inset 0 0 0 4px rgba(4,6,10,.55), inset 0 0 30px rgba(0,0,0,.6);
+  transition: box-shadow .5s;
+}
+#about .pkg.is-hot .pkg-die { box-shadow: inset 0 0 0 4px rgba(4,6,10,.55), inset 0 0 30px rgba(0,0,0,.6), 0 0 34px color-mix(in oklab, var(--accent) 35%, transparent); }
+#about .pkg-photo { position: absolute; inset: 5%; border-radius: 2px; overflow: hidden; background: #0a0d13; }
+#about .pkg-photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.9) contrast(1.05); }
+#about .pkg-ph { position: absolute; inset: 0; display: grid; place-items: center;
+  background:
+    linear-gradient(transparent 49.5%, color-mix(in oklab, var(--accent) 30%, transparent) 50%, transparent 50.5%),
+    linear-gradient(90deg, transparent 49.5%, color-mix(in oklab, var(--accent) 30%, transparent) 50%, transparent 50.5%),
+    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 60%); }
+#about .pkg-ph-label { padding: .7em 1em; border: 1px dashed color-mix(in oklab, var(--accent) 45%, transparent); background: rgba(4,6,10,.75);
+  font: 500 .64rem/1.5 var(--f-mono); letter-spacing: .22em; text-transform: uppercase; text-align: center; color: color-mix(in oklab, var(--accent) 60%, var(--bone)); }
+#about .pkg-scan { position: absolute; inset: 0; pointer-events: none; transform: translateY(-110%);
+  background: linear-gradient(180deg, transparent 44%, color-mix(in oklab, var(--accent) 55%, transparent) 50%, transparent 56%); mix-blend-mode: screen; }
+#about .pkg-cap { position: absolute; left: 0; right: 0; bottom: -30px; text-align: center; }
+
+/* ---------- chữ + datasheet ---------- */
+#about .about-text { display: grid; gap: clamp(32px, 5vh, 52px); }
+#about .about-intro { font: 300 clamp(1.3rem, 2.1vw, 1.95rem)/1.4 var(--f-body); letter-spacing: -.01em; max-width: 30ch; }
+#about .about-intro strong { font-weight: 500; }
+
+#about .ds { width: 100%; border-collapse: collapse; font: 400 .9rem/1.4 var(--f-mono); }
+#about .ds-cap { caption-side: top; text-align: left; padding: 0 0 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 55%, transparent);
+  font: 500 .66rem/1 var(--f-mono); letter-spacing: .24em; text-transform: uppercase; color: color-mix(in oklab, var(--accent) 70%, var(--bone)); }
+#about .ds-rev { float: right; color: var(--mute); }
+#about .ds thead th { padding: 12px 10px 8px 0; text-align: left; font: 400 .6rem/1 var(--f-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--mute); }
+#about .ds tbody tr { position: relative; border-bottom: 1px solid var(--line); transition: background .3s; }
+#about .ds tbody tr:hover { background: color-mix(in oklab, var(--accent) 8%, transparent); }
+#about .ds td, #about .ds tbody th { padding: 14px 10px 14px 0; vertical-align: baseline; }
+#about .ds-pin { width: 3.2em; color: var(--accent); }
+#about .ds tbody th { text-align: left; font-weight: 400; color: var(--mute); width: 34%; }
+#about .ds-val { color: var(--bone); font-family: var(--f-body); font-size: 1.02rem; font-weight: 500; }
+
+/* ---------- vòng điểm ---------- */
+#about .scores { display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px); }
+#about .score { position: relative; width: 150px; margin: 0; }
+#about .score svg { width: 100%; height: auto; transform: rotate(-90deg); overflow: visible; }
+#about .score circle { fill: none; }
+#about .score-ticks { stroke: rgba(233,237,242,.22); stroke-width: 4; stroke-dasharray: .4 2.1; }
+#about .score-track { stroke: rgba(233,237,242,.08); stroke-width: 6; }
+#about .score-arc { stroke: var(--accent); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 100 100; stroke-dashoffset: 100;
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 60%, transparent)); transition: stroke-dashoffset 1.8s var(--ease-out); }
+#about .score.is-on .score-arc { stroke-dashoffset: calc(100 - var(--p) * 100); }
+#about .score figcaption { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 2px; text-align: center; }
+#about .score-num { font: 500 2rem/1 var(--f-mono); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+#about .score-label { font: 500 .66rem/1 var(--f-mono); letter-spacing: .26em; color: var(--accent); }
+#about .score-max { font: 400 .62rem/1 var(--f-mono); color: var(--mute); }
+
+@media (max-width: 899px) {
+  #about .about-grid { grid-template-columns: 1fr; row-gap: 56px; }
+  #about .pkg { width: min(80vw, 380px); }
+  #about .about-intro { max-width: none; }
+}
+@media (max-width: 480px) {
+  #about .ds tbody th { width: auto; }
+  #about .ds td, #about .ds tbody th { padding: 12px 8px 12px 0; }
+  #about .ds-val { font-size: .95rem; }
+  #about .score { width: 132px; }
+}
+@media (prefers-reduced-motion: reduce) { #about .pkg.is-live .pin { animation: none; } #about .score-arc { transition: none; } }
+html.reduced #about .pkg.is-live .pin { animation: none; }
+html.reduced #about .score-arc { transition: none; }

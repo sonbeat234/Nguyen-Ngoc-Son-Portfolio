@@ -3,297 +3,348 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SIGNAL · A studio for living interfaces</title>
-    <meta name="description" content="SIGNAL is a studio for living interfaces: a scroll story through twelve worlds built from ThreeUI shaders, particles and kinetic type." />
-    <meta name="theme-color" content="#050506" />
+    <title>Nguyễn Ngọc Sơn · IC Design &amp; Semiconductor Portfolio</title>
+    <meta name="description" content="Portfolio and CV of Nguyễn Ngọc Sơn — integrated circuit design and semiconductor. FPT University, Hanoi." />
+    <meta name="theme-color" content="#04060a" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Inter:wght@300;400&family=Space+Grotesk:wght@400;600&family=Syncopate:wght@400;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@300;500;700&display=swap" />
   </head>
   <body>
+    <a class="skip-link" href="#about">Skip to content</a>
+
     <canvas id="stage" aria-hidden="true"></canvas>
     <canvas id="ambient" aria-hidden="true"></canvas>
 
-    <!-- c00:start — preloader (subagent A sở hữu nội dung bên trong .preloader) -->
-    <div class="preloader" role="status" aria-label="Loading SIGNAL">
-      <span class="sr-only">Loading SIGNAL</span>
+    <!-- Đường mạch toàn trang: fx/ui/trace.ts dựng path theo vị trí các section và "vẽ" theo tiến độ cuộn -->
+    <svg class="trace" aria-hidden="true" focusable="false">
+      <g class="trace__g">
+        <path class="trace__base" />
+        <path class="trace__glow" />
+        <path class="trace__lit" />
+        <g class="trace__vias"></g>
+      </g>
+      <circle class="trace__head" r="3.2" />
+    </svg>
+
+    <div class="preloader" role="status" aria-label="Loading portfolio">
+      <span class="sr-only">Loading portfolio</span>
       <div class="pre-pool" aria-hidden="true"></div>
       <div class="pre-marks" aria-hidden="true"><i class="pre-mk pre-tl"></i><i class="pre-mk pre-tr"></i><i class="pre-mk pre-bl"></i><i class="pre-mk pre-br"></i></div>
       <div class="pre-center" aria-hidden="true">
         <svg class="pre-mark" viewBox="0 0 120 120">
-          <defs>
-            <mask id="pre-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
-              <rect width="120" height="120" fill="#fff"/>
-              <g class="pre-wave pre-wave-a"><path d="M-120 50 C-100 32 -80 32 -60 50 S-20 68 0 50 S40 32 60 50 S100 68 120 50 S160 32 180 50 S220 68 240 50" fill="none" stroke="#000" stroke-width="7"/></g>
-              <g class="pre-wave pre-wave-b"><path d="M-120 74 C-100 60 -80 60 -60 74 S-20 88 0 74 S40 60 60 74 S100 88 120 74 S160 60 180 74 S220 88 240 74" fill="none" stroke="#000" stroke-width="3.6"/></g>
-            </mask>
-          </defs>
-          <circle cx="60" cy="60" r="40" fill="currentColor" mask="url(#pre-cut)"/>
-          <circle class="pre-orbit" cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width=".7" stroke-dasharray="1.5 5.5"/>
+          <g class="pre-pins" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <path d="M46 30v-9M56 30v-9M66 30v-9M76 30v-9M46 90v9M56 90v9M66 90v9M76 90v9M30 46h-9M30 56h-9M30 66h-9M30 76h-9M90 46h9M90 56h9M90 66h9M90 76h9" />
+          </g>
+          <rect x="30" y="30" width="60" height="60" rx="5" fill="none" stroke="currentColor" stroke-width="2" />
+          <rect class="pre-die" x="44" y="44" width="32" height="32" rx="2" fill="currentColor" />
+          <circle cx="37" cy="37" r="2" fill="currentColor" />
+          <circle class="pre-orbit" cx="60" cy="60" r="56" fill="none" stroke="currentColor" stroke-width=".7" stroke-dasharray="1.5 5.5" />
         </svg>
         <div class="pre-count"><span class="pre-num">000</span><span class="pre-pct">%</span></div>
-        <div class="pre-barlabel"><span>UPLINK</span><span class="pre-dots">...</span></div>
+        <div class="pre-barlabel"><span>POWER-ON</span><span class="pre-dots">...</span></div>
         <div class="pre-bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-        <p class="pre-status">Establishing secure uplink</p>
+        <p class="pre-status">Booting portfolio</p>
       </div>
       <ol class="pre-log" aria-hidden="true"></ol>
-      <p class="pre-sig" aria-hidden="true">SIGNAL STUDIO · BUILD 2026.10</p>
-      <div class="pre-rgb" aria-hidden="true"><span class="r">SIGNAL</span><span class="g">SIGNAL</span><span class="b">SIGNAL</span></div>
+      <p class="pre-sig" aria-hidden="true">NNS · PORTFOLIO · REV 2026</p>
+      <div class="pre-rgb" aria-hidden="true"><span class="r">Nguyễn Ngọc Sơn</span><span class="g">Nguyễn Ngọc Sơn</span><span class="b">Nguyễn Ngọc Sơn</span></div>
     </div>
-    <!-- c00:end -->
 
     <div class="progress" aria-hidden="true"></div>
 
     <header class="dock" data-dock-frame>
       <canvas class="dock__field" aria-hidden="true"></canvas>
       <nav class="dock__nav" aria-label="Primary" data-dock-state="idle" data-dock-max="0.00">
-        <a class="dock__item dock__logo" href="#c01" data-dock-item aria-label="SIGNAL, back to origin">
-          <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 18c4-6 8-6 13 0s9 6 13 0" fill="none" stroke="var(--accent)" stroke-width="1.8"/><path d="M5 12c3.5-4 7-4 11 0s7.5 4 11 0" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"/></svg>
+        <a class="dock__item dock__logo" href="#hero" data-dock-item aria-label="Nguyễn Ngọc Sơn — back to the top">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="8" y="8" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <rect x="12.5" y="12.5" width="7" height="7" rx="1" fill="var(--accent)" />
+            <path d="M12 8V4M16 8V4M20 8V4M12 24v4M16 24v4M20 24v4M8 12H4M8 16H4M8 20H4M24 12h4M24 16h4M24 20h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+          </svg>
         </a>
-        <span class="dock__item dock__chapter" aria-live="polite"><b class="dock__num">01</b><span class="dock__label">Origin</span></span>
+        <span class="dock__item dock__chapter" aria-live="polite"><b class="dock__num">01</b><span class="dock__label">Power-on</span></span>
         <button class="dock__item" type="button" data-dock-item data-menu-open aria-expanded="false" aria-controls="menu">Menu</button>
-        <a class="dock__item btn btn-pill" href="#c11" data-dock-item>Contact</a>
+        <a class="dock__item btn btn-pill" href="#cv" data-dock-item>CV</a>
       </nav>
     </header>
 
-    <nav class="rail" aria-label="Chapters"></nav>
+    <nav class="rail" aria-label="Sections"></nav>
 
-    <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Chapters" aria-hidden="true">
+    <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Sections" aria-hidden="true">
       <button class="btn btn-spin menu__close" type="button" data-menu-close><span>Close · Esc</span></button>
       <ol class="menu__list"></ol>
-      <p class="label menu__foot">Hover a chapter to preview its world</p>
+      <p class="label menu__foot">Hover a section to preview its scene</p>
     </div>
 
     <main id="top">
-      <!-- c01:start -->
-      <section class="chapter" id="c01" data-scene="nebula" data-accent="#8b7cff" data-accent2="#b9a8ff" data-title="Origin">
+      <!-- 01 · POWER-ON (hero) — nền: shader wafer -->
+      <section class="chapter hero" id="hero" tabindex="-1" data-scene="wafer" data-accent="#5ce1ff" data-accent2="#a6f0ff" data-title="Power-on">
         <div class="pin">
-          <div class="c01-wm" aria-hidden="true"><canvas></canvas></div>
-          <div class="c01-frame" aria-hidden="true">
-            <div class="c01-frame-inner">
-              <i class="c01-corner c01-tl"></i><i class="c01-corner c01-tr"></i><i class="c01-corner c01-bl"></i><i class="c01-corner c01-br"></i>
-              <i class="c01-grid c01-grid-v"></i><i class="c01-grid c01-grid-h"></i>
-              <span class="c01-meta c01-m-tl">SYS-2.9</span>
-              <span class="c01-meta c01-m-tr">NEURAL.NET // ACTIVE</span>
-              <span class="c01-meta c01-m-bl" data-frame-coords>X 0.500  Y 0.500</span>
-              <span class="c01-meta c01-m-br" data-frame-clock>00:00:00 UTC</span>
-              <span class="c01-meta c01-m-side"><b>[</b> PRT <b>=</b> ECHO-9 <b>]</b></span>
+          <div class="hero-frame" aria-hidden="true">
+            <div class="hero-frame-inner">
+              <i class="fr-c fr-tl"></i><i class="fr-c fr-tr"></i><i class="fr-c fr-bl"></i><i class="fr-c fr-br"></i>
+              <i class="fr-axis fr-axis-v"></i><i class="fr-axis fr-axis-h"></i>
+              <span class="fr-meta fr-m-tl">Si wafer · Ø 300 mm</span>
+              <span class="fr-meta fr-m-tr">Probe · <b>active</b></span>
+              <span class="fr-meta fr-m-bl" data-frame-coords>X 0.500  Y 0.500</span>
+              <span class="fr-meta fr-m-br" data-frame-clock>00:00:00 UTC</span>
+              <span class="fr-meta fr-m-side">Reticle <b>26 × 33 mm</b></span>
             </div>
           </div>
-          <div class="c01-copy hero-copy">
-            <p class="eyebrow c01-eyebrow" data-decode="manual">001 / A studio for living interfaces</p>
-            <h1 class="c01-title serif-i" data-reveal="chars" data-reveal-manual><span class="sr-only">SIGNAL — </span>We build interfaces that breathe.</h1>
-            <p class="c01-lede">Shaders, particles and kinetic type, tuned until every surface answers the hand that moves it.</p>
-            <div class="c01-ctas">
-              <a class="btn btn-spin" href="#c11" data-magnetic="0.35" data-cursor="DEMO"><span>Request demo <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 8h9.2M8.8 4.2 12.6 8l-3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span></a>
-              <a class="btn btn-glass" href="#c09" data-magnetic="0.35"><span><i class="avatar c01-avatar" aria-hidden="true"></i>Start a project <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 8h9.2M8.8 4.2 12.6 8l-3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span></a>
+          <div class="hero-scrim" aria-hidden="true"></div>
+
+          <div class="hero-copy">
+            <p class="eyebrow hero-eyebrow" data-decode="manual">Portfolio · IC Design &amp; Semiconductor</p>
+            <h1 class="hero-name">
+              <span class="hero-line">Nguyễn Ngọc</span>
+              <span class="hero-line">Sơn</span>
+            </h1>
+            <p class="hero-tag serif-i">Designing at the scale of nanometres.</p>
+            <p class="hero-lede">A portfolio on integrated circuit design and semiconductor technology — from a line of RTL to structures etched in silicon.</p>
+            <div class="hero-ctas">
+              <a class="btn btn-spin" href="#projects" data-magnetic="0.35" data-cursor="VIEW"><span>View projects <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 8h9.2M8.8 4.2 12.6 8l-3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.4" /></svg></span></a>
+              <a class="btn btn-glass" href="#cv" data-magnetic="0.35"><span><i class="hero-chip" aria-hidden="true"></i>Open CV <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 8h9.2M8.8 4.2 12.6 8l-3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.4" /></svg></span></a>
             </div>
           </div>
-          <div class="c01-hint" aria-hidden="true"><span class="c01-hint-line"><i></i></span><span class="c01-hint-label">Scroll</span></div>
+
+          <dl class="hero-readout">
+            <div><dt>Education</dt><dd data-decode="manual">FPT University, Hanoi</dd></div>
+            <div><dt>IELTS</dt><dd data-decode="manual">6.0</dd></div>
+            <div><dt>TOEIC</dt><dd data-decode="manual">750</dd></div>
+          </dl>
+
+          <div class="hero-hint" aria-hidden="true"><span class="hero-hint-line"><i></i></span><span class="hero-hint-label">Scroll</span></div>
         </div>
       </section>
-      <!-- c01:end -->
 
-      <!-- c02:start -->
-      <section class="chapter" id="c02" data-scene="stream" data-accent="#a7f3d0" data-accent2="#38d1f5" data-title="Transit">
-        <div class="pin"></div>
-      </section>
-      <!-- c02:end -->
-
-      <!-- c03:start -->
-      <section class="chapter" id="c03" data-scene="topo" data-accent="#edebe6" data-accent2="#8a8a93" data-title="Manifesto">
-        <div class="pin"></div>
-      </section>
-      <!-- c03:end -->
-
-      <!-- c04:start -->
-      <section class="chapter" id="c04" data-scene="liquid" data-accent="#d9dce3" data-accent2="#9aa3b5" data-title="Form">
-        <div class="pin">
-          <svg class="c04-luma" aria-hidden="true" focusable="false"><filter id="c04-luma" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0.55 0.55 0.55 0 -0.14"/></filter></svg>
-          <div class="c04-vortex" aria-hidden="true"><canvas></canvas></div>
-          <canvas class="c04-wire" aria-hidden="true"></canvas>
-          <header class="c04-head">
-            <p class="eyebrow" data-decode>004 / Form</p>
-            <h2 class="c04-title display">Form follows feeling</h2>
+      <!-- 02 · PROFILE — nền: shader đi dây metal -->
+      <section class="chapter about" id="about" tabindex="-1" data-scene="circuit" data-accent="#f0a061" data-accent2="#ffd2a6" data-title="Profile">
+        <div class="wrap about-grid">
+          <header class="sec-head about-head">
+            <p class="eyebrow" data-decode>01 / Profile</p>
+            <h2 class="sec-title" data-reveal="lines">Where logic <em class="serif-i">becomes</em> physics.</h2>
           </header>
-          <div class="c04-cards">
-            <article class="card c04-card" data-tilt>
-              <svg class="c04-icon" viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="8" width="22" height="15" rx="2.5"/><path d="M9 4.5h14M12 27.5h8M5 15.5h22"/></svg>
-              <h3 class="c04-card-title" data-reveal="words">One stage</h3>
-              <p class="c04-card-copy">Every shader world composites through a single WebGL canvas.</p>
-              <p class="c04-stat"><b data-from="0" data-to="13">0</b><span>worlds, one context</span></p>
-            </article>
-            <article class="card c04-card" data-tilt>
-              <svg class="c04-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4c5.2 7 8.2 11 8.2 15.2a8.2 8.2 0 0 1-16.4 0C7.8 15 10.8 11 16 4z"/><path d="M11.6 19.6a4.4 4.4 0 0 0 4.4 4.4"/></svg>
-              <h3 class="c04-card-title" data-reveal="words">Liquid chrome</h3>
-              <p class="c04-card-copy">A raymarched form that boils when you scroll faster.</p>
-              <p class="c04-stat"><b data-from="0" data-to="60">0</b><span>frames a second</span></p>
-            </article>
-            <article class="card c04-card" data-tilt>
-              <svg class="c04-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 7.5h20M16 7.5v19M11 26.5h10"/><path d="M4 17h3M25 17h3" opacity=".5"/></svg>
-              <h3 class="c04-card-title" data-reveal="words">Kinetic type</h3>
-              <p class="c04-card-copy">Letters that decode, scrub, skew and orbit with you.</p>
-              <p class="c04-stat"><b data-from="0" data-to="40">0</b><i>+</i><span>live effects</span></p>
-            </article>
-            <article class="card c04-card" data-tilt>
-              <svg class="c04-icon" viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="5" width="22" height="22" rx="3"/><path d="M5 16h22M16 5v22" opacity=".45"/><path d="M5.5 26.5 26.5 5.5"/></svg>
-              <h3 class="c04-card-title" data-reveal="words">Zero templates</h3>
-              <p class="c04-card-copy">Every chapter art-directed. Nothing off the shelf.</p>
-              <p class="c04-stat"><b data-from="100" data-to="0">100</b><span>templates used</span></p>
-            </article>
+
+          <!-- Khung chân dung dạng package chip (QFN nhìn từ trên). Ảnh thật: đặt profile.portrait trong src/content/profile.ts -->
+          <figure class="pkg" data-tilt="0.7" data-cursor="DIE">
+            <div class="pkg-pins" aria-hidden="true"></div>
+            <div class="pkg-body">
+              <svg class="pkg-wires" aria-hidden="true" focusable="false"></svg>
+              <i class="pkg-dot" aria-hidden="true"></i>
+              <div class="pkg-die">
+                <!-- TODO: thay placeholder bằng ảnh chân dung thật (public/img/portrait.webp + profile.portrait) -->
+                <div class="pkg-photo" data-portrait></div>
+                <i class="pkg-scan" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figcaption class="pkg-cap label">Portrait · die window</figcaption>
+          </figure>
+
+          <div class="about-text">
+            <p class="about-intro" data-scrub>I'm <strong>Nguyễn Ngọc Sơn</strong>. This portfolio collects my work in <em>integrated circuit design</em> and <em>semiconductor</em> technology — the projects, the design flow behind them, and the details that make a chip work.</p>
+
+            <table class="ds">
+              <caption class="ds-cap"><span>Datasheet · personal</span><span class="ds-rev">Rev. 2026</span></caption>
+              <thead><tr><th scope="col">Pin</th><th scope="col">Parameter</th><th scope="col">Value</th></tr></thead>
+              <tbody data-datasheet></tbody>
+            </table>
+
+            <div class="scores" data-scores></div>
           </div>
-          <p class="c04-hint label">Move through the rings · press to pull them in</p>
         </div>
       </section>
-      <!-- c04:end -->
 
-      <!-- c05:start — không data-scene: lasers.ts set weight laser0..3 -->
-      <section class="chapter" id="c05" data-preview="laser0" data-accent="#5cf2c4" data-accent2="#b78cff" data-title="Amplify">
+      <!-- 03 · DESIGN FLOW — các headline ngành: 7 giai đoạn từ spec tới tape-out (nội dung phổ thông, không phải kinh nghiệm cá nhân) -->
+      <section class="chapter flow" id="flow" tabindex="-1" data-scene="stream" data-accent="#a08cff" data-accent2="#d3c8ff" data-title="Design flow">
         <div class="pin">
-          <svg class="c05-luma" aria-hidden="true" focusable="false"><filter id="c05-luma" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0.9 0.9 0.9 0 -0.03"/></filter></svg>
-          <header class="c05-head">
-            <p class="eyebrow" data-decode>005 / Amplify</p>
-            <h2 class="c05-title">Four ways to <em class="serif-i">amplify</em> a signal</h2>
+          <header class="flow-head wrap">
+            <p class="eyebrow" data-decode>02 / The IC design flow</p>
+            <h2 class="sec-title" data-reveal="lines">From specification <em class="serif-i">to silicon.</em></h2>
+            <p class="flow-sub">Seven stages every digital chip passes through on its way to the fab.</p>
           </header>
-          <div class="c05-track">
-            <article class="c05-panel">
-              <div class="c05-copy">
-                <p class="c05-num" data-decode="repeat">05.1</p>
-                <h3 class="c05-name neon">Atmospheric Blade</h3>
-                <p class="c05-stat"><span class="c05-count" data-to="240">0</span><small>Hz carrier</small></p>
-                <p class="c05-desc">A single blade of light cuts through the haze.<br />Push harder and the air thickens around it.</p>
-              </div>
-            </article>
-            <article class="c05-panel">
-              <div class="c05-copy">
-                <p class="c05-num" data-decode="repeat">05.2</p>
-                <h3 class="c05-name neon">Vanishing Array</h3>
-                <p class="c05-stat"><span class="c05-count" data-to="1024">0</span><small>beams aimed</small></p>
-                <p class="c05-desc">Parallel beams converge on one vanishing point.<br />Every frame re-aims the whole array.</p>
-              </div>
-              <figure class="c05-viz c05-viz--predictive" aria-hidden="true"><canvas></canvas><figcaption class="label">Predictive arc · live</figcaption></figure>
-            </article>
-            <article class="c05-panel">
-              <div class="c05-copy">
-                <p class="c05-num" data-decode="repeat">05.3</p>
-                <h3 class="c05-name neon">Prism Aperture</h3>
-                <p class="c05-stat"><span class="c05-count" data-to="7">0</span><small>spectral bands</small></p>
-                <p class="c05-desc">White light enters, seven colours leave.<br />The aperture breathes with your cursor.</p>
-              </div>
-            </article>
-            <article class="c05-panel">
-              <div class="c05-copy">
-                <p class="c05-num" data-decode="repeat">05.4</p>
-                <h3 class="c05-name neon">Halftone Relay</h3>
-                <p class="c05-stat"><span class="c05-count" data-to="98.6" data-dec="1">0</span><small>% signal kept</small></p>
-                <p class="c05-desc">Dots hand the beam along, relay to relay.<br />Almost nothing is lost in transit.</p>
-              </div>
-              <figure class="c05-viz c05-viz--pixel" aria-hidden="true"><canvas></canvas><figcaption class="label">Data pixel arc · relay load</figcaption></figure>
-            </article>
+
+          <div class="flow-meter" aria-hidden="true">
+            <span class="flow-count mono"><b data-flow-index>01</b> / 07</span>
+            <span class="flow-bar"><i></i></span>
+            <span class="flow-stage-name mono" data-flow-name>Specification</span>
           </div>
-          <div class="c05-scan" aria-hidden="true"></div>
-          <div class="c05-meter" aria-hidden="true">
-            <i></i>
-            <ol><li>Blade</li><li>Array</li><li>Prism</li><li>Relay</li></ol>
-          </div>
-        </div>
-      </section>
-      <!-- c05:end -->
 
-      <!-- c06:start -->
-      <section class="chapter" id="c06" data-scene="bell" data-accent="#d89b3f" data-accent2="#4e9b8a" data-title="Resonance">
-        <div class="pin"></div>
-      </section>
-      <!-- c06:end -->
-
-      <!-- c07:start -->
-      <section class="chapter" id="c07" data-scene="dotmatrix" data-accent="#00e5ff" data-accent2="#edebe6" data-title="Works">
-        <div class="pin"></div>
-      </section>
-      <!-- c07:end -->
-
-      <!-- c08:start — không data-scene: canvas Flow Field phủ kín -->
-      <section class="chapter" id="c08" data-accent="#e07850" data-accent2="#d4a574" data-title="Flow">
-        <div class="pin"></div>
-      </section>
-      <!-- c08:end -->
-
-      <!-- c09:start -->
-      <section class="chapter" id="c09" data-scene="emerald" data-accent="#1fd17a" data-accent2="#a7f3d0" data-title="Clarity">
-        <div class="pin"></div>
-      </section>
-      <!-- c09:end -->
-
-      <!-- c10:start — không data-scene: CRT phủ kín -->
-      <section class="chapter" id="c10" data-accent="#7dff9a" data-accent2="#ffb347" data-title="Signal Lost">
-        <div class="pin">
-          <div class="c10-wrap">
-            <header class="c10-head">
-              <p class="eyebrow c10-eyebrow" data-decode>010 / Signal lost</p>
-              <div class="c10-neon" data-glitch>
-                <canvas aria-hidden="true"></canvas>
-                <h2 class="sr-only">Signal lost, image holding</h2>
-              </div>
-            </header>
-
-            <div class="c10-stage">
-              <aside class="c10-readout c10-readout--l" aria-label="Input">
-                <p class="label">Input</p>
-                <p class="c10-ch mono" data-glitch>CH 01 · TERMINAL</p>
-                <ol class="c10-chan" aria-hidden="true">
-                  <li class="is-on"><b>01</b>Terminal</li>
-                  <li><b>02</b>Cinematic</li>
-                  <li><b>03</b>Blue screen</li>
-                  <li><b>04</b>Nintendo</li>
-                </ol>
-              </aside>
-
-              <div class="c10-tv" aria-hidden="true">
-                <div class="c10-tv__body">
-                  <div class="c10-bezel">
-                    <div class="c10-screen">
-                      <div class="c10-picture"><canvas class="c10-crt"></canvas></div>
-                      <span class="c10-dot"></span>
-                      <span class="c10-glass"></span>
-                    </div>
-                  </div>
-                  <div class="c10-panel">
-                    <span class="c10-brand">SIGNAL <b>CT-10</b></span>
-                    <span class="c10-knob c10-knob--ch"><i></i></span>
-                    <span class="c10-knob c10-knob--vol"><i></i></span>
-                    <span class="c10-grille"></span>
-                    <span class="c10-leds"><i class="c10-led c10-led--power"></i><i class="c10-led c10-led--sync"></i></span>
-                  </div>
+          <div class="flow-viewport">
+            <ol class="flow-track">
+              <li class="stage" data-name="Specification">
+                <div class="stage-copy">
+                  <p class="stage-num mono">Stage 01</p>
+                  <h3 class="stage-title">Specification</h3>
+                  <p class="stage-text">Every chip starts as a contract: what it must do, how fast it must run, how much power it may burn and how much silicon it may occupy.</p>
+                  <p class="stage-tags mono">Function · Performance · Power · Area</p>
                 </div>
-                <div class="c10-feet"><i></i><i></i></div>
-              </div>
+                <div class="stage-viz viz-spec" aria-hidden="true">
+                  <svg viewBox="0 0 240 220">
+                    <g class="spec-grid"><polygon points="120,20 215,185 25,185" /><polygon points="120,73 183,185 57,185" transform="translate(0,-18)" /><polygon points="120,126 151,185 89,185" transform="translate(0,-36)" /></g>
+                    <g class="spec-axes"><line x1="120" y1="130" x2="120" y2="20" /><line x1="120" y1="130" x2="215" y2="185" /><line x1="120" y1="130" x2="25" y2="185" /></g>
+                    <polygon class="spec-shape" points="120,52 186,168 60,166" />
+                    <g class="spec-pts"><circle cx="120" cy="52" r="3.5" /><circle cx="186" cy="168" r="3.5" /><circle cx="60" cy="166" r="3.5" /></g>
+                    <text x="120" y="12">PERFORMANCE</text><text x="226" y="206">AREA</text><text x="14" y="206">POWER</text>
+                  </svg>
+                </div>
+              </li>
 
-              <aside class="c10-readout c10-readout--r" aria-label="Sync">
-                <p class="label">Sync</p>
-                <p class="mono c10-lost" data-glitch>NO CARRIER</p>
-                <p class="mono c10-hold">HOLD 00:00</p>
-                <p class="c10-note muted">The picture is the last frame we received. Scroll to change channel.</p>
-              </aside>
-            </div>
+              <li class="stage" data-name="Architecture">
+                <div class="stage-copy">
+                  <p class="stage-num mono">Stage 02</p>
+                  <h3 class="stage-title">Architecture</h3>
+                  <p class="stage-text">The design is partitioned into blocks — control, datapath, memory, interfaces — and the trade-offs between them are settled before any logic is written.</p>
+                  <p class="stage-tags mono">Partitioning · Interfaces · Trade-offs</p>
+                </div>
+                <div class="stage-viz viz-arch" aria-hidden="true">
+                  <svg viewBox="0 0 260 200">
+                    <g class="arch-bus"><path d="M60 64h70M130 64v72M130 136h70M130 64h70M60 136h70" /><path class="arch-flow" d="M60 64h70M130 64v72M130 136h70M130 64h70M60 136h70" /></g>
+                    <g class="arch-blocks">
+                      <rect x="10" y="40" width="70" height="48" rx="4" /><text x="45" y="69">CTRL</text>
+                      <rect x="180" y="40" width="70" height="48" rx="4" /><text x="215" y="69">ALU</text>
+                      <rect x="10" y="112" width="70" height="48" rx="4" /><text x="45" y="141">I/O</text>
+                      <rect x="180" y="112" width="70" height="48" rx="4" /><text x="215" y="141">MEM</text>
+                      <rect class="arch-core" x="108" y="84" width="44" height="32" rx="3" /><text x="130" y="104">BUS</text>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+
+              <li class="stage" data-name="RTL design">
+                <div class="stage-copy">
+                  <p class="stage-num mono">Stage 03</p>
+                  <h3 class="stage-title">RTL design</h3>
+                  <p class="stage-text">Behaviour is described at register-transfer level in Verilog, SystemVerilog or VHDL — hardware written as code, one clock edge at a time.</p>
+                  <p class="stage-tags mono">Verilog · SystemVerilog · VHDL</p>
+                </div>
+                <div class="stage-viz viz-rtl" aria-hidden="true">
+<pre><code><span class="ln"><i class="k">module</i> counter #(<i class="k">parameter</i> W = <i class="n">4</i>) (</span>
+<span class="ln">  <i class="k">input</i>  <i class="t">logic</i>         clk, rst_n, en,</span>
+<span class="ln">  <i class="k">output</i> <i class="t">logic</i> [W-<i class="n">1</i>:<i class="n">0</i>] q</span>
+<span class="ln">);</span>
+<span class="ln">  <i class="k">always_ff</i> @(<i class="k">posedge</i> clk <i class="k">or negedge</i> rst_n)</span>
+<span class="ln">    <i class="k">if</i> (!rst_n)  q &lt;= <i class="n">'0</i>;</span>
+<span class="ln">    <i class="k">else if</i> (en) q &lt;= q + <i class="n">1'b1</i>;</span>
+<span class="ln"><i class="k">endmodule</i></span></code></pre>
+                </div>
+              </li>
+
+              <li class="stage" data-name="Verification">
+                <div class="stage-copy">
+                  <p class="stage-num mono">Stage 04</p>
+                  <h3 class="stage-title">Functional verification</h3>
+                  <p class="stage-text">Testbenches, assertions and coverage try to break the design in simulation, long before silicon gets the chance.</p>
+                  <p class="stage-tags mono">Testbench · Assertions · Coverage · UVM</p>
+                </div>
+                <div class="stage-viz viz-wave" aria-hidden="true"><canvas></canvas></div>
+              </li>
+
+              <li class="stage" data-name="Synthesis">
+                <div class="stage-copy">
+                  <p class="stage-num mono">Stage 05</p>
+                  <h3 class="stage-title">Logic synthesis</h3>
+                  <p class="stage-text">RTL is mapped onto a standard-cell library and optimised against timing constraints, producing a gate-level netlist.</p>
+                  <p class="stage-tags mono">Standard cells · SDC · Netlist</p>
+                </div>
+                <div class="stage-viz viz-synth" aria-hidden="true">
+                  <!-- minh hoạ netlist mức cổng (XOR / AND + 2 DFF), không phải sơ đồ chính xác -->
+                  <svg viewBox="0 0 280 200">
+                    <g class="syn-wires">
+                      <path d="M14 46h40M14 46v54h40M232 60h30v-48h-226v26h18M232 140h30v52h-238v-58h30M188 60h22M188 140h22M128 50h22M128 120h22M70 100h26v30h36M232 60v40h-136" />
+                      <path class="syn-flow" d="M14 46h40M14 46v54h40M232 60h30v-48h-226v26h18M232 140h30v52h-238v-58h30M188 60h22M188 140h22M128 50h22M128 120h22M70 100h26v30h36M232 60v40h-136" />
+                    </g>
+                    <g class="syn-gates">
+                      <path d="M54 30q30 0 40 16q-10 16 -40 16q8 -16 0 -32z" /><path d="M48 30q8 16 0 32" /><text x="76" y="50">XOR</text>
+                      <path d="M54 88h20a14 14 0 0 1 0 28h-20z" /><text x="68" y="106">AND</text>
+                      <path d="M132 112q30 0 40 16q-10 16 -40 16q8 -16 0 -32z" /><path d="M126 112q8 16 0 32" /><text x="154" y="132">XOR</text>
+                      <rect x="150" y="38" width="38" height="44" rx="2" /><text x="169" y="64">DFF</text>
+                      <rect x="210" y="40" width="22" height="40" rx="2" /><text x="221" y="64">q0</text>
+                      <rect x="150" y="118" width="38" height="44" rx="2" /><text x="169" y="144">DFF</text>
+                      <rect x="210" y="120" width="22" height="40" rx="2" /><text x="221" y="144">q1</text>
+                      <text x="8" y="40">en</text>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+
+              <li class="stage" data-name="Physical design">
+                <div class="stage-copy">
+                  <p class="stage-num mono">Stage 06</p>
+                  <h3 class="stage-title">Physical design</h3>
+                  <p class="stage-text">Floorplanning, placement, clock-tree synthesis and routing turn the netlist into polygons on stacked metal layers.</p>
+                  <p class="stage-tags mono">Floorplan · Placement · CTS · Routing</p>
+                </div>
+                <div class="stage-viz viz-pnr" aria-hidden="true"><canvas></canvas></div>
+              </li>
+
+              <li class="stage" data-name="Signoff &amp; tape-out">
+                <div class="stage-copy">
+                  <p class="stage-num mono">Stage 07</p>
+                  <h3 class="stage-title">Signoff &amp; tape-out</h3>
+                  <p class="stage-text">Static timing, DRC, LVS and power checks must all come back clean. Then the GDSII layout is released to the fab.</p>
+                  <p class="stage-tags mono">STA · DRC · LVS · GDSII</p>
+                </div>
+                <div class="stage-viz viz-signoff" aria-hidden="true">
+                  <div class="layers">
+                    <i style="--l:0">Substrate</i><i style="--l:1">Diffusion</i><i style="--l:2">Poly</i><i style="--l:3">Metal 1</i><i style="--l:4">Metal 2</i><i style="--l:5">Metal 3</i>
+                  </div>
+                  <ul class="checks mono"><li>STA</li><li>DRC</li><li>LVS</li><li>GDSII → fab</li></ul>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div class="flow-marquee marquee" aria-hidden="true">
+            <div data-marquee data-speed="46">RTL&nbsp;design<i>◆</i>Functional&nbsp;verification<i>◆</i>Logic&nbsp;synthesis<i>◆</i>Static&nbsp;timing&nbsp;analysis<i>◆</i>Floorplanning<i>◆</i>Place&nbsp;&amp;&nbsp;route<i>◆</i>Clock-tree&nbsp;synthesis<i>◆</i>DRC&nbsp;/&nbsp;LVS<i>◆</i>Tape-out<i>◆</i></div>
           </div>
         </div>
       </section>
-      <!-- c10:end -->
 
-      <!-- c11:start -->
-      <section class="chapter" id="c11" data-scene="orb" data-accent="#8f86ff" data-accent2="#ff8a3a" data-title="Core">
-        <div class="pin"></div>
+      <!-- 04 · PROJECTS — dữ liệu ở src/content/profile.ts → projects (TODO: điền dự án thật) -->
+      <section class="chapter projects" id="projects" tabindex="-1" data-scene="dotmatrix" data-accent="#6ef0b4" data-accent2="#b9ffd9" data-title="Projects">
+        <div class="wrap">
+          <header class="sec-head">
+            <p class="eyebrow" data-decode>03 / Projects</p>
+            <h2 class="sec-title" data-reveal="lines">Work, <em class="serif-i">die by die.</em></h2>
+            <p class="sec-sub" data-projects-sub></p>
+          </header>
+          <div class="proj-grid" data-projects></div>
+        </div>
       </section>
-      <!-- c11:end -->
 
-      <!-- c12:start -->
-      <section class="chapter" id="c12" data-scene="ribbon" data-accent="#38d1f5" data-accent2="#a855f7" data-title="Footer">
-        <div class="pin"></div>
+      <!-- 05 · CV — dựng từ src/content/profile.ts; in được (styles/print.css) -->
+      <section class="chapter cv" id="cv" tabindex="-1" data-scene="topo" data-accent="#f2c86b" data-accent2="#ffe3a3" data-title="CV">
+        <div class="wrap">
+          <header class="sec-head cv-top">
+            <div>
+              <p class="eyebrow" data-decode>04 / Curriculum vitae</p>
+              <h2 class="sec-title" data-reveal="lines">Curriculum <em class="serif-i">vitae.</em></h2>
+            </div>
+            <div class="cv-actions" data-cv-actions></div>
+          </header>
+          <article class="cv-doc" data-cv aria-label="Curriculum vitae"></article>
+        </div>
       </section>
-      <!-- c12:end -->
+
+      <!-- 06 · END OF LINE (footer) -->
+      <section class="chapter eol" id="eol" tabindex="-1" data-scene="ribbon" data-accent="#7cc8ff" data-accent2="#b49cff" data-title="End of line">
+        <footer class="eol-inner wrap">
+          <p class="eyebrow" data-decode>05 / End of line</p>
+          <p class="eol-line serif-i" data-reveal="words">Thanks for following the signal all the way down.</p>
+          <!-- TODO: liên hệ thật (email, LinkedIn, GitHub…) → profile.contact trong src/content/profile.ts. Trống = không hiện gì. -->
+          <ul class="eol-contact" data-contact></ul>
+          <p class="eol-name" aria-hidden="true"><span>Nguyễn Ngọc Sơn</span></p>
+          <div class="eol-bar">
+            <p class="mono">© 2026 Nguyễn Ngọc Sơn</p>
+            <p class="mono eol-uptime" aria-hidden="true">Session uptime <span data-uptime>00:00:00</span></p>
+            <button class="btn btn-dotborder" type="button" data-top data-magnetic="0.3"><span>Back to power-on ↑</span></button>
+          </div>
+          <p class="eol-credit label">Shader &amp; motion effects adapted from ThreeUI (MIT) · Built with GSAP, Lenis &amp; WebGL</p>
+        </footer>
+      </section>
     </main>
 
-    <div class="scanlines" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
 
     <script type="module" src="/src/main.ts"></script>
