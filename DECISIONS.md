@@ -18,4 +18,6 @@
 - [2] Menu mở: `main` mờ + `inert` để `stage.force()` preview hiện rõ phía sau; focus về nút Menu khi đóng.
 - [2] Ambient starfield trôi theo chiều cuộn và tăng tốc theo vận tốc (bản gốc chỉ trôi lên đều).
 - [2.5] Song song hoá: 4 subagent (A 00–03, B 04–06, C 07–09, D 10–12) theo `CONVENTIONS.md`; mỗi dev server dùng `VITE_CACHE_DIR` riêng để không giẫm cache tối ưu dependency của nhau.
+- [2.5] Sau khi bị ngắt do hết limit: commit checkpoint `wip: partial chapters before limit reset`, spawn lại subagent cho các nhóm còn chương chưa xong, tiếp tục từ code hiện có (không viết lại).
+- [2.5] verify.mjs: `page.setDefaultTimeout(120000)` — nhiều trình duyệt SwiftShader song song làm một screenshot vượt 30s mặc định (chương nặng như c04 raymarch, c10 CRT).
 - [2.5] Ngân sách WebGL: stage + dock luôn sống (2). Vùng đông nhất là 10–11 (CRT + ember + orbital + lumen) → chương 11 phải giữ ≤ 3 context riêng, khuyến khích port Lumen không cần context riêng.

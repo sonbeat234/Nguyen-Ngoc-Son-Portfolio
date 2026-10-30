@@ -24,6 +24,28 @@ Spec: `../threeui-main/PROMPT_SIGNAL_SCROLL_SITE.md` · Quy tắc: `../threeui-m
 - [x] index.html có 12 khung section + preloader; main.ts import sẵn mọi init + CSS chương; stub cho từng file
 - [x] scripts/verify.mjs nhận --port --out --chapters --steps --viewports --reduced --boundaries; scripts/sheet.mjs
 - [ ] Subagent A (00–03), B (04–06), C (07–09), D (10–12) xong và báo cáo
+
+### Trạng thái sau khi bị ngắt do hết limit (checkpoint `991cde9`)
+
+tsc sạch. Verify dev server, từng nhóm chạy tuần tự `--steps 3 --boundaries` (desktop + mobile): **0 lỗi console/WebGL/HTTP, không tràn ngang, đỉnh 3 context** ở cả 4 nhóm. Chạy 2 trình duyệt SwiftShader song song thì `page.screenshot` quá 30s → đã nâng timeout mặc định trong verify.mjs lên 120s.
+
+| Ch | File | Trạng thái | Ghi chú / lỗi |
+|---|---|---|---|
+| 00 Preloader | preloader.ts, c00.css | xong | đếm 000→100, log decode, 16 ô, chromatic + iris |
+| 01 Origin | hero.ts, c01.css, ParticleWordmark, precisionFrame | xong, cần chỉnh | headline/eyebrow đè lên wordmark hạt (mobile: "We build" nằm ngay trên "SIGNAL", khó đọc) |
+| 02 Transit | warp.ts | chưa làm | stub; chỉ có scene `stream` |
+| 03 Manifesto | manifesto.ts | chưa làm | stub; chỉ có scene `topo` |
+| 04 Form | chrome.ts, c04.css, WireframeForms | xong | blob + 4 card + đếm + vortex (desktop) / reveal (mobile) |
+| 05 Amplify | lasers.ts, c05.css | xong | 4 panel ngang, weight laser0..3, predictive/pixel arc |
+| 06 Resonance | resonance.ts | dở | stub section; đã có `fx/ui/gauges.ts`, chưa có AudioWordmark, markup, CSS |
+| 07 Works | orbit.ts | dở | stub section; đã có `canvas/Grainient.ts`, `fx/ui/characterWave.ts` |
+| 08 Flow | flow.ts | dở | stub section; đã có `canvas/simplex.ts`, `canvas/FlowField.ts`, `three/WovenCloth.ts` |
+| 09 Clarity | glass.ts | dở | stub section; đã có `fx/ui/toggle.ts`, `sparkBadge.ts`, `liquidMetal.ts` |
+| 10 Signal Lost | signal.ts, c10.css, NeonSign | xong | CRT 4 kênh, neon canvas, scanline, glitch |
+| 11 Core | core.ts | chưa làm | stub; chỉ có scene `orb` |
+| 12 Footer | footer.ts | chưa làm | stub; chỉ có scene `ribbon` |
+
+→ Spawn lại cả 4 nhóm (mỗi nhóm còn ít nhất 1 chương chưa xong): A (02, 03 + chỉnh 01), B (06), C (07, 08, 09), D (11, 12).
 - [ ] Tích hợp: build + verify toàn trang, context ≤ 6, sửa xung đột
 
 ## Phase 3: Preloader + chương 01–04

@@ -34,6 +34,8 @@ const SIZES = { desktop: { width: 1440, height: 900 }, mobile: { width: 375, hei
 async function run(name) {
   const viewport = SIZES[name];
   const page = await browser.newPage({ viewport, deviceScaleFactor: 1, isMobile: name === "mobile", hasTouch: name === "mobile" });
+  // SwiftShader + nhiều trình duyệt verify song song: một frame có thể mất hàng chục giây
+  page.setDefaultTimeout(120000);
   if (reduced) await page.emulateMedia({ reducedMotion: "reduce" });
   page.on("console", (m) => {
     const t = m.text();
