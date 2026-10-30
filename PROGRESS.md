@@ -30,6 +30,14 @@ Nội dung: `src/content/profile.ts`. Hướng dẫn: `README.md`.
 - In CV (Playwright `page.pdf`, media print): 1 trang A4 trắng/đen, khối trống (Projects, Skills) bị ẩn, thanh điểm đúng tỉ lệ.
 - Chưa đo được: fps trên máy thật (headless SwiftShader ~20–25 fps, không đại diện).
 
+## Vòng cải thiện 2 (sau khi deploy Cloudflare Pages)
+- [x] Con trỏ hệ thống hình probe theo accent (không trễ) + ring bám nhanh hơn, bỏ mix-blend
+- [x] Sửa CTA hero kẹt lệch 24px / magnetic bị kéo lê (xung đột CSS transition `transform` với GSAP)
+- [x] Bớt reflow mỗi frame (stage.measure ở tick early), starfield 20fps khi đứng yên
+- [x] Tên outline footer + marquee sạch nét (paint-order), nút back-to-top mới, chấm mực wafer khi zoom
+- [x] Favicon + Open Graph; verify.mjs thêm `--base`, viewport laptop/tablet
+- Kiểm chứng: tsc + build sạch; verify desktop/laptop/tablet/mobile + reduced: 0 lỗi, 2 WebGL context; bản deploy (`--base https://nguyen-ngoc-son-portfolio.pages.dev`) 0 lỗi; kiểm tra con trỏ bằng Playwright: CSS cursor = SVG, ring cách con trỏ ~5px sau 100ms khi nhảy 300px, hover nút bật trạng thái hot.
+
 <details><summary>Lịch sử SIGNAL (trước khi chuyển sang portfolio)</summary>
 
 Phase 0–2 hoàn tất (engine, stage, lớp toàn cục, text FX). Chương 00, 01, 04, 05, 10 đã xong; 02, 03, 06–09, 11, 12 còn dở khi chuyển hướng. Toàn bộ nằm trong commit `af41c3e`.

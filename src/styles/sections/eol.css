@@ -12,11 +12,21 @@
 #eol .eol-link:hover { background: var(--accent); color: var(--ink); }
 #eol .eol-link:hover span { color: var(--ink); }
 
-/* outline typeflow: viền chữ mảnh, tô màu theo con trỏ (hover) / vệt sáng tự chạy (idle, touch) */
+/* outline typeflow — 2 lớp:
+   .eol-base: viền 2px vẽ TRƯỚC phần ruột (paint-order) với ruột màu nền → che nét chồng bên trong của font variable,
+              chỉ còn nửa viền ngoài 1px sạch;
+   .eol-fill: chữ trong suốt phủ đúng chỗ, tô màu theo con trỏ (hover) / vệt sáng tự chạy (idle, touch). */
 #eol .eol-name { margin: 0; overflow: hidden; padding-block: .14em .04em; }
-#eol .eol-name span {
+#eol .eol-name-in { position: relative; display: block; }
+#eol .eol-base, #eol .eol-fill {
   display: block; white-space: nowrap; font: 700 7.3vw/1.12 var(--f-display); letter-spacing: -.055em;
-  color: transparent; -webkit-text-stroke: 1px color-mix(in oklab, var(--bone) 34%, transparent);
+}
+#eol .eol-base {
+  color: var(--ink); -webkit-text-stroke: 2px color-mix(in oklab, var(--bone) 38%, transparent);
+  paint-order: stroke fill; transition: -webkit-text-stroke-color .4s;
+}
+#eol .eol-fill {
+  position: absolute; inset: 0; color: transparent;
   background-image:
     radial-gradient(240px circle at var(--mx, -400px) var(--my, -400px), var(--accent), color-mix(in oklab, var(--accent-2) 60%, transparent) 40%, transparent 70%),
     linear-gradient(100deg, transparent 42%, color-mix(in oklab, var(--accent) 38%, transparent) 50%, transparent 58%);
@@ -24,7 +34,7 @@
   -webkit-background-clip: text; background-clip: text;
   animation: eol-sheen 7s linear infinite;
 }
-#eol .eol-name.is-hot span { -webkit-text-stroke-color: color-mix(in oklab, var(--accent) 50%, transparent); }
+#eol .eol-name.is-hot .eol-base { -webkit-text-stroke-color: color-mix(in oklab, var(--accent) 60%, transparent); }
 @keyframes eol-sheen { from { background-position: 0 0, 130% 0; } to { background-position: 0 0, -130% 0; } }
 
 #eol .eol-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
@@ -34,8 +44,8 @@
 #eol .eol-credit { text-transform: none; letter-spacing: .08em; font-size: .66rem; }
 
 @media (max-width: 767px) {
-  #eol .eol-name span { font-size: 10.6vw; white-space: normal; line-height: 1.16; }
+  #eol .eol-base, #eol .eol-fill { font-size: 10.6vw; white-space: normal; line-height: 1.16; }
   #eol .eol-bar { flex-direction: column; align-items: flex-start; }
 }
-@media (prefers-reduced-motion: reduce) { #eol .eol-name span { animation: none; } }
-html.reduced #eol .eol-name span { animation: none; }
+@media (prefers-reduced-motion: reduce) { #eol .eol-fill { animation: none; } }
+html.reduced #eol .eol-fill { animation: none; }

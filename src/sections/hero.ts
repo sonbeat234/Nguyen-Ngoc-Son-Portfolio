@@ -49,7 +49,8 @@ export function initHero() {
       }, 0.1)
       .from(q(".hero-tag"), { y: 24, opacity: 0, filter: "blur(6px)", duration: 1, ease: "power3.out" }, 0.6)
       .from(q(".hero-lede"), { y: 20, opacity: 0, duration: 0.9, ease: "power3.out" }, 0.75)
-      .from(q(".hero-ctas > *"), { y: 24, opacity: 0, duration: 0.9, ease: "power3.out", stagger: 0.1 }, 0.85)
+      // yPercent (không phải y): CTA có data-magnetic, magnetic.ts điều khiển x/y — tránh hai tween giành cùng thuộc tính
+      .from(q(".hero-ctas > *"), { yPercent: 60, opacity: 0, duration: 0.9, ease: "power3.out", stagger: 0.1 }, 0.85)
       .from(q(".hero-readout > div"), { x: 24, opacity: 0, duration: 0.8, ease: "power3.out", stagger: 0.08 }, 0.95)
       .from(q(".hero-hint"), { opacity: 0, duration: 0.8 }, 1.3)
       .add(() => name.classList.add("is-scanned"), 0.2);

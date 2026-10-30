@@ -91,7 +91,8 @@ void main(){
   // ---- wafer sort: die loé như đang probe, die gần chuột sáng, die hỏng có chấm mực ----
   float flash = pow(max(0.0, sin(u_time * 0.7 + h * 37.0)), 60.0);
   float probe = smoothstep(0.22, 0.0, length(dc - mw));
-  float ink = smoothstep(0.16, 0.13, length(f - 0.5)) * step(0.975, h);
+  // chấm mực chỉ đọc được ở tầm nhìn cả wafer; khi zoom vào die thì mờ đi (không phình thành vết loang)
+  float ink = smoothstep(0.16, 0.13, length(f - 0.5)) * step(0.975, h) * (1.0 - smoothstep(1.3, 2.6, z));
   dieCol += u_accent * (flash * 0.35 + probe * 0.22) * (1.0 - core * 0.5);
   dieCol = mix(dieCol, vec3(0.6, 0.07, 0.1), ink * 0.85);
 

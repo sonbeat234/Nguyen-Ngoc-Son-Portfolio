@@ -1,7 +1,8 @@
 // Kiểm tra headless: screenshot từng chương ở desktop + mobile, gom lỗi console/WebGL, đếm WebGL context.
 //
-//   node scripts/verify.mjs [--port 4173] [--out verify] [--chapters c01,c02] [--steps 1]
-//                           [--viewports desktop,mobile] [--reduced] [--boundaries] [--path "/?debug"]
+//   node scripts/verify.mjs [--port 4173] [--out verify] [--chapters hero,about] [--steps 1]
+//                           [--viewports desktop,laptop,tablet,mobile] [--reduced] [--boundaries] [--path "/?debug"]
+//                           [--base https://site.pages.dev]
 //
 // Server phải chạy sẵn: `npx vite --port 5174 --strictPort` (dev) hoặc `npm run build && npx vite preview --port 4173`.
 // --chapters c00 chụp thêm preloader trong lúc tải. --steps N chụp N điểm đều trong quãng pin của mỗi chương.
@@ -20,8 +21,9 @@ const steps = Math.max(1, Number(opt("steps", "1")));
 const viewports = opt("viewports", "desktop,mobile").split(",");
 const reduced = flag("reduced");
 const boundaries = flag("boundaries");
-const url = `http://localhost:${port}${opt("path", "/?debug")}`;
-const origin = `http://localhost:${port}`;
+// --base https://….pages.dev để kiểm tra bản đã deploy thay cho server cục bộ
+const origin = opt("base", `http://localhost:${port}`).replace(/\/$/, "");
+const url = `${origin}${opt("path", "/?debug")}`;
 
 fs.mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({
@@ -29,7 +31,10 @@ const browser = await chromium.launch({
 });
 const errors = [];
 const report = { url, reduced, chapters: [], contexts: {}, peakContexts: 0, overflow: {}, edges: {}, errors };
-const SIZES = { desktop: { width: 1440, height: 900 }, mobile: { width: 375, height: 812 } };
+const SIZES = {
+  desktop: { width: 1440, height: 900 }, laptop: { width: 1280, height: 720 },
+  tablet: { width: 820, height: 1180 }, mobile: { width: 375, height: 812 },
+};
 
 async function run(name) {
   const viewport = SIZES[name];

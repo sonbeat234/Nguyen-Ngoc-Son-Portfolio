@@ -110,19 +110,20 @@ export class ShaderStage {
     }
   }
 
-  render() {
+  /** đọc layout một lượt — gọi ở tick "early", trước mọi lệnh ghi DOM của frame (tránh ép reflow) */
+  measure() {
     this.resize();
     const vh = state.h;
-
-    // 1) đọc layout một lượt
     for (const s of this.scenes.values()) {
       if (!s.el) continue;
       const r = s.el.getBoundingClientRect();
       s.weight = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0)) / vh;
       s.progress = clamp(-r.top / Math.max(1, r.height - vh));
     }
+  }
 
-    // 2) chọn ≤ 2 scene, sắp theo thứ tự trang (giữ dissolve ổn định khi đổi bên trội)
+  render() {
+    // chọn ≤ 2 scene, sắp theo thứ tự trang (giữ dissolve ổn định khi đổi bên trội)
     const all = [...this.scenes.values()];
     const forced = all.find((s) => s.forced);
     const active = forced ? [forced] : all

@@ -221,22 +221,33 @@ section.chapter:focus { outline: none; }
 .menu__link {
   display: flex; align-items: baseline; gap: .8em; width: fit-content;
   font: 700 clamp(1.6rem, 4.6vh, 3.4rem)/1.05 var(--f-display); letter-spacing: -.02em; text-transform: uppercase;
-  color: color-mix(in oklab, var(--bone) 55%, transparent); transition: color .35s, transform .5s var(--ease-out);
+  color: color-mix(in oklab, var(--bone) 55%, transparent); transition: color .35s, translate .5s var(--ease-out);
 }
 .menu__link small { font: 400 .7rem/1 var(--f-mono); letter-spacing: .2em; color: var(--mute); }
-.menu__link:hover, .menu__link:focus-visible { color: var(--bone); transform: translateX(14px); }
+.menu__link:hover, .menu__link:focus-visible { color: var(--bone); translate: 14px 0; }
 .menu__link:hover small { color: var(--accent); }
 .menu__close { position: absolute; top: 22px; right: var(--gutter); }
 .menu__foot { margin-top: 3vh; }
 
 /* ---------- cursor ---------- */
-.cur-dot, .cur-ring { position: fixed; left: 0; top: 0; pointer-events: none; z-index: 100; mix-blend-mode: difference; }
-.cur-dot { width: 6px; height: 6px; border-radius: 50%; background: #fff; }
-.cur-ring { width: 36px; height: 36px; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--accent) 70%, #fff); display: grid; place-items: center; transition: border-color .4s; }
-.cur-label { font: 500 6px/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: #fff; opacity: 0; transition: opacity .2s; }
-.cur-ring.has-label { background: color-mix(in oklab, var(--accent) 25%, transparent); }
+/* con trỏ hệ thống hình "probe" (--cur do cursor.ts đặt theo accent) + vòng ring trang trí bám theo */
+@media (pointer: fine) {
+  html.has-cursor, html.has-cursor body { cursor: var(--cur), crosshair; }
+  html.has-cursor :is(a, button, [data-cursor], [data-cursor] *, a *, button *) { cursor: var(--cur-hot), pointer; }
+}
+.cur-ring {
+  position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center; opacity: 0; will-change: transform;
+  border: 1.5px solid color-mix(in oklab, var(--accent) 75%, #fff);
+  box-shadow: 0 0 14px color-mix(in oklab, var(--accent) 30%, transparent), inset 0 0 8px color-mix(in oklab, var(--accent) 20%, transparent);
+  transition: opacity .3s, background-color .3s, border-color .3s;
+}
+.cur-ring.is-on { opacity: .85; }
+.cur-ring.is-hot { border-color: var(--accent); }
+.cur-ring.has-label { background: color-mix(in oklab, var(--accent) 20%, rgba(4,6,10,.45)); }
+.cur-label { font: 600 5.5px/1 var(--f-mono); letter-spacing: .18em; text-transform: uppercase; color: #fff; opacity: 0; transition: opacity .2s; white-space: nowrap; }
 .cur-ring.has-label .cur-label { opacity: 1; }
-@media (pointer: fine) { html.has-cursor, html.has-cursor a, html.has-cursor button, html.has-cursor [data-cursor] { cursor: none; } }
+html.menu-open .cur-ring { border-color: var(--bone); }
 
 /* ---------- preloader (khung; chương 00 styling chi tiết ở chapters/c00.css) ---------- */
 .preloader { position: fixed; inset: 0; z-index: 200; background: var(--ink); --r: 0px;

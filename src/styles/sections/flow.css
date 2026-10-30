@@ -134,7 +134,7 @@
 /* marquee thuật ngữ ngành */
 #flow .flow-marquee { margin-top: clamp(10px, 2vh, 20px); padding-block: 10px; border-block: 1px solid var(--line); }
 #flow .flow-marquee [data-marquee] { gap: 0; font: 300 clamp(1.1rem, 2.2vw, 2rem)/1 var(--f-display); letter-spacing: -.02em;
-  color: transparent; -webkit-text-stroke: 1px color-mix(in oklab, var(--bone) 45%, transparent); white-space: nowrap; }
+  color: var(--ink); -webkit-text-stroke: 2px color-mix(in oklab, var(--bone) 48%, transparent); paint-order: stroke fill; white-space: nowrap; }
 #flow .flow-marquee i { font-style: normal; padding-inline: .7em; color: var(--accent); -webkit-text-stroke: 0; font-size: .5em; vertical-align: middle; }
 
 @media (max-height: 820px) and (min-width: 900px) {

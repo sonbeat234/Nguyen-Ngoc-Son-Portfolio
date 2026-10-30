@@ -31,12 +31,14 @@ export function createAmbientStarfield(canvas: HTMLCanvasElement, count = 70) {
       // tốc độ gốc 0.01–0.03 px/frame (60fps) + kéo theo vận tốc cuộn
       const push = 60 * dt * (1 + Math.abs(state.scroll.smooth) * 60) * (state.reduced ? 0.25 : 1);
       const dir = state.scroll.direction;
+      ctx.fillStyle = "#fff";
       for (const s of stars) {
         s.y -= s.drift * push * dir;
         if (s.y < 0) s.y += H; else if (s.y > H) s.y -= H;
-        ctx.fillStyle = `rgba(255,255,255,${s.opacity})`;
+        ctx.globalAlpha = s.opacity;
         ctx.fillRect(s.x, s.y, s.size, s.size);
       }
+      ctx.globalAlpha = 1;
     },
     dispose() { removeEventListener("resize", resize); },
   };

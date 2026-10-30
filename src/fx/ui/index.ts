@@ -25,7 +25,14 @@ function initProgress() {
 
 function initAmbient() {
   const stars = createAmbientStarfield($<HTMLCanvasElement>("#ambient"));
-  onTick((_, dt) => stars.render(dt));
+  // canvas toàn màn: đứng yên thì sao trôi rất chậm → 20fps là đủ (bớt upload texture mỗi frame); đang cuộn thì mỗi frame
+  let acc = 0;
+  onTick((_, dt) => {
+    acc += dt;
+    if (Math.abs(state.scroll.smooth) < 0.02 && acc < 0.05) return;
+    stars.render(acc);
+    acc = 0;
+  });
 }
 
 export function initGlobalLayers() {

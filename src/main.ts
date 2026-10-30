@@ -43,6 +43,7 @@ document.documentElement.classList.toggle("reduced", state.reduced);
 document.documentElement.classList.toggle("touch", state.touch);
 history.scrollRestoration = "manual";
 
+onTick(() => stage.measure(), "early");
 onTick(() => stage.render(), "late");
 if (state.debug) {
   (window as unknown as { __lenis: unknown }).__lenis = lenis;

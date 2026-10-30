@@ -24,7 +24,8 @@ export function initEol() {
   } else list.remove();
 
   const name = $(".eol-name", sec);
-  const fill = $("span", name);
+  const inner = $(".eol-name-in", name);
+  const fill = $(".eol-fill", name);
   name.addEventListener("pointermove", (e) => {
     const r = fill.getBoundingClientRect();
     fill.style.setProperty("--mx", `${e.clientX - r.left}px`);
@@ -33,7 +34,7 @@ export function initEol() {
   name.addEventListener("pointerenter", () => name.classList.add("is-hot"));
   name.addEventListener("pointerleave", () => name.classList.remove("is-hot"));
   if (!state.reduced) {
-    gsap.fromTo(fill, { yPercent: 45, opacity: 0.2 }, {
+    gsap.fromTo(inner, { yPercent: 45, opacity: 0.2 }, {
       yPercent: 0, opacity: 1, ease: "none",
       scrollTrigger: { trigger: name, start: "top bottom", end: "top 60%", scrub: true },
     });
