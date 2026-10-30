@@ -3,9 +3,121 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SIGNAL</title>
+    <title>SIGNAL · A studio for living interfaces</title>
+    <meta name="description" content="SIGNAL is a studio for living interfaces: a scroll story through twelve worlds built from ThreeUI shaders, particles and kinetic type." />
+    <meta name="theme-color" content="#050506" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Inter:wght@300;400&family=Space+Grotesk:wght@400;600&family=Syncopate:wght@400;700&display=swap" />
   </head>
   <body>
+    <canvas id="stage" aria-hidden="true"></canvas>
+    <canvas id="ambient" aria-hidden="true"></canvas>
+
+    <!-- c00:start — preloader (subagent A sở hữu nội dung bên trong .preloader) -->
+    <div class="preloader" role="status" aria-label="Loading SIGNAL">
+    </div>
+    <!-- c00:end -->
+
+    <div class="progress" aria-hidden="true"></div>
+
+    <header class="dock" data-dock-frame>
+      <canvas class="dock__field" aria-hidden="true"></canvas>
+      <nav class="dock__nav" aria-label="Primary" data-dock-state="idle" data-dock-max="0.00">
+        <a class="dock__item dock__logo" href="#c01" data-dock-item aria-label="SIGNAL, back to origin">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 18c4-6 8-6 13 0s9 6 13 0" fill="none" stroke="var(--accent)" stroke-width="1.8"/><path d="M5 12c3.5-4 7-4 11 0s7.5 4 11 0" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"/></svg>
+        </a>
+        <span class="dock__item dock__chapter" aria-live="polite"><b class="dock__num">01</b><span class="dock__label">Origin</span></span>
+        <button class="dock__item" type="button" data-dock-item data-menu-open aria-expanded="false" aria-controls="menu">Menu</button>
+        <a class="dock__item btn btn-pill" href="#c11" data-dock-item>Contact</a>
+      </nav>
+    </header>
+
+    <nav class="rail" aria-label="Chapters"></nav>
+
+    <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Chapters" aria-hidden="true">
+      <button class="btn btn-spin menu__close" type="button" data-menu-close><span>Close · Esc</span></button>
+      <ol class="menu__list"></ol>
+      <p class="label menu__foot">Hover a chapter to preview its world</p>
+    </div>
+
+    <main id="top">
+      <!-- c01:start -->
+      <section class="chapter" id="c01" data-scene="nebula" data-accent="#8b7cff" data-accent2="#b9a8ff" data-title="Origin">
+        <div class="pin"></div>
+      </section>
+      <!-- c01:end -->
+
+      <!-- c02:start -->
+      <section class="chapter" id="c02" data-scene="stream" data-accent="#a7f3d0" data-accent2="#38d1f5" data-title="Transit">
+        <div class="pin"></div>
+      </section>
+      <!-- c02:end -->
+
+      <!-- c03:start -->
+      <section class="chapter" id="c03" data-scene="topo" data-accent="#edebe6" data-accent2="#8a8a93" data-title="Manifesto">
+        <div class="pin"></div>
+      </section>
+      <!-- c03:end -->
+
+      <!-- c04:start -->
+      <section class="chapter" id="c04" data-scene="liquid" data-accent="#d9dce3" data-accent2="#9aa3b5" data-title="Form">
+        <div class="pin"></div>
+      </section>
+      <!-- c04:end -->
+
+      <!-- c05:start — không data-scene: lasers.ts set weight laser0..3 -->
+      <section class="chapter" id="c05" data-preview="laser0" data-accent="#5cf2c4" data-accent2="#b78cff" data-title="Amplify">
+        <div class="pin"></div>
+      </section>
+      <!-- c05:end -->
+
+      <!-- c06:start -->
+      <section class="chapter" id="c06" data-scene="bell" data-accent="#d89b3f" data-accent2="#4e9b8a" data-title="Resonance">
+        <div class="pin"></div>
+      </section>
+      <!-- c06:end -->
+
+      <!-- c07:start -->
+      <section class="chapter" id="c07" data-scene="dotmatrix" data-accent="#00e5ff" data-accent2="#edebe6" data-title="Works">
+        <div class="pin"></div>
+      </section>
+      <!-- c07:end -->
+
+      <!-- c08:start — không data-scene: canvas Flow Field phủ kín -->
+      <section class="chapter" id="c08" data-accent="#e07850" data-accent2="#d4a574" data-title="Flow">
+        <div class="pin"></div>
+      </section>
+      <!-- c08:end -->
+
+      <!-- c09:start -->
+      <section class="chapter" id="c09" data-scene="emerald" data-accent="#1fd17a" data-accent2="#a7f3d0" data-title="Clarity">
+        <div class="pin"></div>
+      </section>
+      <!-- c09:end -->
+
+      <!-- c10:start — không data-scene: CRT phủ kín -->
+      <section class="chapter" id="c10" data-accent="#7dff9a" data-accent2="#ffb347" data-title="Signal Lost">
+        <div class="pin"></div>
+      </section>
+      <!-- c10:end -->
+
+      <!-- c11:start -->
+      <section class="chapter" id="c11" data-scene="orb" data-accent="#8f86ff" data-accent2="#ff8a3a" data-title="Core">
+        <div class="pin"></div>
+      </section>
+      <!-- c11:end -->
+
+      <!-- c12:start -->
+      <section class="chapter" id="c12" data-scene="ribbon" data-accent="#38d1f5" data-accent2="#a855f7" data-title="Footer">
+        <div class="pin"></div>
+      </section>
+      <!-- c12:end -->
+    </main>
+
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

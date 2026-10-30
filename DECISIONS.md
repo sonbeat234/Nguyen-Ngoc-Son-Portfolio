@@ -5,3 +5,17 @@
 - [0] gsap resolve thành 3.15.0 (`^3.13` cho phép) — mọi plugin (ScrollTrigger, SplitText, Flip) vẫn miễn phí trong gói `gsap`.
 - [0] Vendor qua `tsc` strict mà không lỗi nên không thêm `// @ts-nocheck` vào file nào.
 - [0] npm 11 cảnh báo postinstall của esbuild chưa được duyệt trong `allowScripts`; build vẫn chạy qua gói platform của esbuild nên không đổi chính sách cài.
+- [1] Thêm `core/gl.ts`: bọc `HTMLCanvasElement.getContext` để đếm context WebGL đang sống và `releaseCanvas()` gọi `WEBGL_lose_context` — vì `renderer.dispose()` của Three r128 và `dispose()` của CRT không trả context; lazy mount/unmount lặp lại sẽ chạm "too many active WebGL contexts".
+- [1] `mountVendor(section, canvas, create(canvas), frame)`: khác spec ở chỗ `create` nhận canvas, và sau unmount canvas có context WebGL được thay bằng bản clone (canvas đã loseContext không tạo lại được context). Handle trả về `{ r, canvas, active }`; style nên đặt trên wrapper, không trên canvas.
+- [1] `lockScroll(on, reason)` giữ một tập lý do (preloader/menu/hidden) thay vì bật/tắt trực tiếp — để chuyển tab trong lúc preloader không mở khoá scroll.
+- [1] `loop.ts` tự hạ `scroll.velocity` về 0 (damp) vì Lenis không phát "scroll" khi đứng yên → tránh `scroll.smooth` kẹt ở giá trị cuối. Lenis raf đăng ký ticker với `prioritize` để chạy trước tick chính.
+- [1] Composite thêm uniform `u_glitch` (dải nhiễu ngang + RGB split mạnh hơn) điều khiển qua `stage.glitch` cho chương 10; scenes.ts thêm "blob nổ" (liquid p > 0.85) và "orb trắng dần" (orb p > 0.8) theo mục 12/04, 12/11.
+- [1] verify.mjs thêm cờ Chromium `--enable-unsafe-swiftshader` (Chrome mới chặn WebGL SwiftShader nếu thiếu), kiểm tra request lỗi cùng origin, tràn ngang, số context, `--boundaries` để chụp dissolve; thêm `scripts/sheet.mjs` ghép contact sheet.
+- [2] Accent đổi chương bằng IntersectionObserver với dải giữa viewport (rootMargin -49.5%) thay vì đo coverage mỗi frame: tương đương "chương chiếm phần lớn màn" mà không đọc layout.
+- [2] Dock: `topDockController` vendor tự chạy RAF nội bộ (không sửa được nếu không đổi vendor) — chấp nhận, chi phí nhỏ. Glass particle field render từ `onTick` ở 30fps, 60fps khi hover; `heightGrowth/drop = 0` vì pill cắt tràn.
+- [2] Text FX + magnetic/tilt quét toàn trang SAU khi mọi section init (đánh dấu phần tử đã xử lý) để section tạo DOM động vẫn được áp; mỗi hiệu ứng có API theo phần tử (`decodeTo`, `splitReveal`, `addSkew`, `marquee`, `magnetic`, `tilt`…).
+- [2] `[data-reveal]` ẩn tới khi SplitText tách xong (tránh nháy chữ thô); reduced-motion → fade đơn giản.
+- [2] Menu mở: `main` mờ + `inert` để `stage.force()` preview hiện rõ phía sau; focus về nút Menu khi đóng.
+- [2] Ambient starfield trôi theo chiều cuộn và tăng tốc theo vận tốc (bản gốc chỉ trôi lên đều).
+- [2.5] Song song hoá: 4 subagent (A 00–03, B 04–06, C 07–09, D 10–12) theo `CONVENTIONS.md`; mỗi dev server dùng `VITE_CACHE_DIR` riêng để không giẫm cache tối ưu dependency của nhau.
+- [2.5] Ngân sách WebGL: stage + dock luôn sống (2). Vùng đông nhất là 10–11 (CRT + ember + orbital + lumen) → chương 11 phải giữ ≤ 3 context riêng, khuyến khích port Lumen không cần context riêng.

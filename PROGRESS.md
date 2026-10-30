@@ -10,15 +10,21 @@ Spec: `../threeui-main/PROMPT_SIGNAL_SCROLL_SITE.md` · Quy tắc: `../threeui-m
 - [x] git init + commit
 
 ## Phase 1: Core engine
-- [ ] core/math, state, loop, scroll, quality, lazy, dom, vendor (spec mục 4, 11)
-- [ ] ShaderStage + composite + scenes (spec mục 5), shader nebula/topo (mục 6)
-- [ ] Trang test tạm: 12 section rỗng có data-scene, cuộn thấy dissolve giữa mọi scene, không lỗi console
-- [ ] Debug HUD `?debug`
+- [x] core/math, state, loop, scroll, quality, lazy, dom, vendor (spec mục 4, 11) + core/gl (đếm/giải phóng context), core/hud
+- [x] ShaderStage + composite + scenes (spec mục 5), shader nebula/topo (mục 6)
+- [x] Trang test tạm: 12 section rỗng có data-scene, cuộn thấy dissolve giữa mọi scene, không lỗi console
+- [x] Debug HUD `?debug`
 
 ## Phase 2: Hệ thống thiết kế + lớp toàn cục
-- [ ] tokens.css, base.css, @font-face, buttons.css (8 kiểu nút)
-- [ ] cursor, magnetic, tilt + spotlight, accent theo chương, dock, rail, progress, grain, menu fullscreen + stage.force
-- [ ] text FX: decode, reveal, scrub, glitch, velocity skew, marquee, text path, neon
+- [x] tokens.css, base.css, @font-face, buttons.css (8 kiểu nút)
+- [x] cursor, magnetic, tilt + spotlight, accent theo chương, dock, rail, progress, grain, menu fullscreen + stage.force
+- [x] text FX: decode, reveal, scrub, glitch, velocity skew, marquee, text path, neon (CSS; bản canvas ở chương 10)
+
+## Phase 2.5: Quy ước chung + chia việc song song (CONVENTIONS.md)
+- [x] index.html có 12 khung section + preloader; main.ts import sẵn mọi init + CSS chương; stub cho từng file
+- [x] scripts/verify.mjs nhận --port --out --chapters --steps --viewports --reduced --boundaries; scripts/sheet.mjs
+- [ ] Subagent A (00–03), B (04–06), C (07–09), D (10–12) xong và báo cáo
+- [ ] Tích hợp: build + verify toàn trang, context ≤ 6, sửa xung đột
 
 ## Phase 3: Preloader + chương 01–04
 - [ ] 00 Preloader (prewarm, log, đếm, chromatic intro, iris)
@@ -48,3 +54,4 @@ Spec: `../threeui-main/PROMPT_SIGNAL_SCROLL_SITE.md` · Quy tắc: `../threeui-m
 ## Nhật ký kiểm chứng
 
 - Phase 0: `npx tsc --noEmit` sạch (vendor strict, không cần `@ts-nocheck`). Node 24.20, npm 11.19, gsap 3.15.0, lenis 1.3.27, three128 = three 0.128.0, vite 7.3.7, TS 5.9.3.
+- Phase 1–2: tsc sạch; `vite build` OK (JS 740 kB / gzip 213 kB, CSS 18.8 kB); verify preview desktop+mobile 12 chương: 0 lỗi console, WebGL context đỉnh 2 (stage + dock), không tràn ngang. Screenshot: cả 13 scene stage đều có hình. `--boundaries`: dissolve A/B mix 0.50 ở mọi ranh giới có scene (nebula→stream, stream→topo, topo→liquid, liquid→laser0, laser3→bell, bell→dotmatrix, orb→ribbon); c08/c10 không scene → stage fade về nền qua u_level. Draw call stage: 2–3/frame (≤ 2 scene + composite).
