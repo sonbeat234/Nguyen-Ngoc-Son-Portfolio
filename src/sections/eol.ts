@@ -3,17 +3,69 @@
 //   touch / không hover: vệt sáng tự chạy (CSS). Chữ trồi lên theo cuộn khi vào chương.
 // - Liên hệ: CHỈ render khi profile.contact có dữ liệu thật; trống thì gỡ hẳn khối.
 // - Session uptime (cập nhật 1 lần/giây), nút "Back to power-on" tua ngược về đầu trang qua mọi dissolve.
+// - V4: biển neon "THANKS" (canvas/NeonSign — port glassblown-neon.html): ống thuỷ tinh màu palette, bật đèn lần lượt
+//   khi vào màn, thỉnh thoảng một chữ chập chờn. Hiệu ứng nặng duy nhất của section: mount/unmount qua core/lazy.
+//   Biển là trang trí (aria-hidden); chữ thật là câu cảm ơn ngay dưới. Reduced: đèn sáng tĩnh.
 import gsap from "gsap";
 import { $ } from "../core/dom";
 import { state } from "../core/state";
 import { onTick } from "../core/loop";
 import { scrollTo } from "../core/scroll";
+import { lazyMount } from "../core/lazy";
 import { profile, esc } from "../content/profile";
+import { createNeonSign, type NeonPalette } from "../canvas/NeonSign";
+import { palette, css, mixRgb } from "../stage/palette";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+/** bảng màu ống neon suy ra từ palette (PRIMARY lõi, PRIMARY_2 quầng, BONE tim sáng) */
+function neonPalette(): NeonPalette {
+  const P = palette;
+  return {
+    spill: [css(P.primary), css(P.primary2)], bloom: [css(P.primary), css(P.primary2)],
+    core: [css(P.primary), css(P.primary2), css(P.bone)],
+    glass: [css(mixRgb(P.panel, P.primary, 0.28)), css(mixRgb(P.ink, P.primary, 0.16))], spec: css(P.bone, 0.5),
+    tip: [css(mixRgb(P.panel, P.primary, 0.2)), css(P.primary2, 0.2), css(P.bone, 0.14)],
+    electrode: [css(P.bone, 0.95), css(P.primary, 0.62), css(P.primary, 0)], elecEdge: css(P.primary2, 0.3),
+  };
+}
+
+function initNeon(sec: HTMLElement) {
+  const board = $(".eol-neon", sec);
+  const canvas = $<HTMLCanvasElement>("canvas", board);
+  const pal = neonPalette();
+  let neon: ReturnType<typeof createNeonSign> | null = null;
+  let off: (() => void) | null = null, ro: ResizeObserver | null = null, lit = false, visible = false;
+  const io = new IntersectionObserver(([e]) => {
+    visible = e.isIntersecting;
+    if (visible && neon && !lit) { lit = true; neon.ignite(0.25); }
+  }, { threshold: 0.4 });
+  io.observe(board);
+  let kickAt = 4;
+  lazyMount(sec, {
+    mount() {
+      neon = createNeonSign(board, canvas, {
+        layouts: [{ minAspect: 0, lines: ["THANKS"] }],
+        palette: () => pal,
+        faulty: (_l, _n, i) => i === 4,
+        reduced: state.reduced,
+      });
+      ro = new ResizeObserver(() => neon?.resize());
+      ro.observe(board);
+      if (visible && !lit) { lit = true; neon.ignite(0.25); }
+      off = onTick((t, dt) => {
+        if (!visible || !neon) return;
+        neon.render(dt);
+        if (t > kickAt) { kickAt = t + 5 + Math.random() * 6; neon.kick(2); }   // thỉnh thoảng chập chờn
+      });
+    },
+    unmount() { off?.(); ro?.disconnect(); neon?.dispose(); neon = null; off = null; lit = false; },
+  });
+}
+
 export function initEol() {
   const sec = $("#eol");
+  initNeon(sec);
 
   const list = $("[data-contact]", sec);
   if (profile.contact.length) {

@@ -12,6 +12,8 @@ export type VendorHandle<T> = {
   canvas: HTMLCanvasElement;
   /** false = tạm ngưng render (vd lớp warp đang opacity 0) */
   active: boolean;
+  /** gỡ hẳn renderer + trả WebGL context, không mount lại nữa */
+  stop: () => void;
 };
 
 /**
@@ -24,10 +26,10 @@ export function mountVendor<T extends R>(
   create: (canvas: HTMLCanvasElement) => T,
   frame: (r: T) => void = (r) => r.render(),
 ): VendorHandle<T> {
-  const h: VendorHandle<T> = { r: null, canvas, active: true };
+  const h: VendorHandle<T> = { r: null, canvas, active: true, stop: () => {} };
   let off: (() => void) | null = null, ro: ResizeObserver | null = null, io: IntersectionObserver | null = null;
   const vis = { on: false };
-  lazyMount(section, {
+  const lazy = lazyMount(section, {
     mount() {
       const r = create(h.canvas);
       h.r = r;
@@ -50,5 +52,6 @@ export function mountVendor<T extends R>(
       }
     },
   });
+  h.stop = () => lazy.stop();
   return h;
 }

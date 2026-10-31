@@ -129,7 +129,7 @@
         <div class="wrap about-grid">
           <header class="sec-head about-head" data-shield>
             <p class="eyebrow" data-decode>01 / Profile</p>
-            <h2 class="sec-title" data-reveal="lines">Where logic <em class="serif-i">becomes</em> physics.</h2>
+            <h2 class="sec-title" data-reveal="flip">Where logic <em class="serif-i">becomes</em> physics.</h2>
           </header>
 
           <!-- Khung chân dung dạng package chip (QFN nhìn từ trên). Ảnh thật: đặt profile.portrait trong src/content/profile.ts -->
@@ -342,6 +342,8 @@
       <section class="chapter eol" id="eol" tabindex="-1" data-scene="ribbon" data-accent="#8B7BFF" data-accent2="#2EE6C5" data-title="End of line">
         <footer class="eol-inner wrap">
           <p class="eyebrow" data-decode>05 / End of line</p>
+          <!-- biển neon "THANKS" (canvas 2D, trang trí; chữ thật là câu ngay dưới) — sections/eol.ts -->
+          <div class="eol-neon" aria-hidden="true"><canvas></canvas></div>
           <p class="eol-line serif-i" data-reveal="words">Thanks for following the signal all the way down.</p>
           <!-- TODO: liên hệ thật (email, LinkedIn, GitHub…) → profile.contact trong src/content/profile.ts. Trống = không hiện gì. -->
           <ul class="eol-contact" data-contact></ul>

@@ -36,14 +36,20 @@
   margin: 0; font: 300 clamp(3rem, 7.4vw, 8.6rem)/1.1 var(--f-display); letter-spacing: -.045em;
   color: var(--bone); perspective: 800px; position: relative;
 }
-#hero .hero-line { display: block; white-space: nowrap; }
-#hero .hero-line + .hero-line { font-weight: 700; letter-spacing: -.05em; }
+#hero .hero-line { display: block; white-space: nowrap; --wb: 300; }
+#hero .hero-line + .hero-line { font-weight: 700; letter-spacing: -.05em; --wb: 700; }
 #hero .hero-ch {
   --k: 0;
   color: color-mix(in oklab, var(--accent) calc(var(--k) * 100%), var(--bone));
   text-shadow: 0 0 calc(var(--k) * 28px) color-mix(in oklab, var(--accent) calc(var(--k) * 70%), transparent);
+  /* sóng độ đậm theo con trỏ (Unbounded variable wght 200–900; ô ký tự đã khoá bề rộng trong hero.ts) */
+  font-variation-settings: "wght" calc(var(--wb) + var(--k) * 380);
+  text-align: center;
   will-change: transform;
 }
+/* hạt hội tụ thành tên (WebGL, chỉ sống ~2 s lúc intro) */
+#hero .hero-particles { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+#hero .hero-particles canvas { display: block; width: 100%; height: 100%; }
 /* vệt quét sáng chạy qua tên một lần sau intro */
 #hero .hero-name::after {
   content: ""; position: absolute; inset: -4% -2%; pointer-events: none; opacity: 0; mix-blend-mode: screen;

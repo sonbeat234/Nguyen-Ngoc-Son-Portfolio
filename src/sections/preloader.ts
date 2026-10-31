@@ -99,10 +99,10 @@ export async function initPreloader(): Promise<Preloader> {
 
   await Promise.all([fonts, images, shaders]);
   performance.mark("preloader:loaded");          // verify.mjs đo quãng loaded → done (≤ 2.2 s, lặp phiên ≤ 0.8 s)
-  await withTimeout(document.fonts.ready, fast ? 300 : 1500);
+  await withTimeout(document.fonts.ready, fast ? 150 : 400);   // các face cần dùng đã load ở trên; chỉ chờ phần còn lại một chút
   const elapsed = performance.now() - t0;
   if (!fast && elapsed < MIN_MS) await wait(MIN_MS - elapsed);
-  await gsap.to(shown, { v: 100, duration: fast ? 0.1 : 0.25, ease: "power1.out", overwrite: true, onUpdate: paint });
+  await gsap.to(shown, { v: 100, duration: fast ? 0.1 : 0.2, ease: "power1.out", overwrite: true, onUpdate: paint });
   addLog("> boot complete · 100%");
   status.textContent = "System ready";
   clearInterval(dotTimer);
@@ -144,15 +144,15 @@ export async function initPreloader(): Promise<Preloader> {
         tl.to([".pre-center", ".pre-log", ".pre-marks", ".pre-sig"], { opacity: 0, y: -8, duration: 0.3, ease: "power2.in" }, 0)
           .set(".pre-rgb", { autoAlpha: 1 }, 0.1)
           // 3 kênh lệch nhau rồi hội tụ (screen cộng sáng); chữ BONE glow PRIMARY hiện lên khi khớp
-          .fromTo(".pre-rgb .r", { x: -16, y: -2 }, { x: 0, y: 0, duration: 0.6, ease: "expo.out" }, 0.1)
-          .fromTo(".pre-rgb .b", { x: 16, y: 2 }, { x: 0, y: 0, duration: 0.6, ease: "expo.out" }, 0.1)
-          .fromTo(".pre-rgb .g", { y: 5, scaleX: 1.02 }, { y: 0, scaleX: 1, duration: 0.6, ease: "expo.out" }, 0.1)
-          .fromTo(".pre-rgb .f", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power2.out" }, 0.42)
-          .to(".pre-rgb .r, .pre-rgb .g, .pre-rgb .b", { opacity: 0, duration: 0.3 }, 0.6)
+          .fromTo(".pre-rgb .r", { x: -16, y: -2 }, { x: 0, y: 0, duration: 0.5, ease: "expo.out" }, 0.08)
+          .fromTo(".pre-rgb .b", { x: 16, y: 2 }, { x: 0, y: 0, duration: 0.5, ease: "expo.out" }, 0.08)
+          .fromTo(".pre-rgb .g", { y: 5, scaleX: 1.02 }, { y: 0, scaleX: 1, duration: 0.5, ease: "expo.out" }, 0.08)
+          .fromTo(".pre-rgb .f", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 0.34)
+          .to(".pre-rgb .r, .pre-rgb .g, .pre-rgb .b", { opacity: 0, duration: 0.25 }, 0.5)
           // iris mở có viền sáng PRIMARY (preloader::after đọc --r, --rim)
-          .set(root, { "--rim": 1 }, 0.55)
-          .fromTo(root, { "--r": "0px" }, { "--r": `${R}px`, duration: 0.9, ease: "expo.inOut" }, 0.55)
-          .add(open, 0.85);
+          .set(root, { "--rim": 1 }, 0.44)
+          .fromTo(root, { "--r": "0px" }, { "--r": `${R}px`, duration: 0.82, ease: "expo.inOut" }, 0.44)
+          .add(open, 0.66);
       });
     },
   };

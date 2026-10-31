@@ -4,14 +4,16 @@
 // In: nút "Print / Save as PDF" (window.print) + styles/print.css chỉ in tài liệu, nền trắng chữ đen,
 // ẩn mọi ô trống. Nút Download chỉ hiện khi profile.cvFile trỏ tới file thật trong public/.
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { $, $$ } from "../core/dom";
 import { state } from "../core/state";
 import { profile, isFilled, esc } from "../content/profile";
+import { decodeGroup } from "../fx/text/decode";
 
 const slot = (what: string, size = "") => `<span class="slot ${size}" aria-hidden="true"></span><span class="sr-only">${what} not added yet</span>`;
 
 function head(n: string, title: string) {
-  return `<h4 class="cv-h"><span class="cv-h-n" aria-hidden="true">${n}</span><span data-decode>${title}</span></h4>`;
+  return `<h4 class="cv-h"><span class="cv-h-n" aria-hidden="true">${n}</span><span data-article-heading>${title}</span></h4>`;
 }
 
 function renderCv() {
@@ -96,6 +98,9 @@ export function initCv() {
   $("[data-print]", actions).addEventListener("click", () => window.print());
 
   const blocks = $$(".cv-block", doc);
+  // V4: tiêu đề mục decode kiểu Article Headings — cả nhóm lần lượt (stagger 140 ms, preserve .3, tail .18)
+  const headings = $$("[data-article-heading]", doc);
+  if (!state.reduced) ScrollTrigger.create({ trigger: $(".cv-body", doc), start: "top 78%", once: true, onEnter: () => decodeGroup(headings) });
   if (state.reduced) { doc.classList.add("is-on"); return; }
 
   gsap.timeline({ scrollTrigger: { trigger: doc, start: "top 84%", once: true } })

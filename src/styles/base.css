@@ -142,8 +142,14 @@ section.chapter:focus { outline: none; }
 /* ---------- tiêu đề section dùng chung ---------- */
 .sec-head { display: grid; gap: 14px; margin-bottom: clamp(32px, 6vh, 64px); }
 .sec-title { font: 300 var(--fs-h2)/1.02 var(--f-display); letter-spacing: -.035em; max-width: 16ch; text-wrap: balance; }
-.sec-title em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em;
-  color: color-mix(in oklab, var(--accent) 70%, var(--bone)); }
+.sec-title em { --em: color-mix(in oklab, var(--accent) 70%, var(--bone));
+  font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; color: var(--em); }
+/* reveal "flip" xong: vệt gradient PRIMARY_2 → SIGNAL quét qua chữ nghiêng một lần (bóng chữ tắt để không phủ gradient) */
+.sec-title.is-swept em { padding-inline: .05em; text-shadow: none; color: transparent; -webkit-background-clip: text; background-clip: text;
+  background: linear-gradient(100deg, var(--em) 0 38%, var(--primary-2) 46%, var(--signal) 52%, var(--em) 60% 100%) 100% 0 / 260% 100% no-repeat;
+  -webkit-background-clip: text; animation: em-sweep 1.8s var(--ease-in-out) .1s both; }
+@keyframes em-sweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.fx-ch { display: inline-block; }
 .sec-sub { max-width: 52ch; color: color-mix(in oklab, var(--bone) 70%, transparent); font-weight: 300; }
 
 /* ô dữ liệu chưa có (để trống có chủ đích, không chữ giả): skeleton có ánh quét */
