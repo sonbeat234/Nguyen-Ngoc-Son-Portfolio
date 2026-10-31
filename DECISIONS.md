@@ -72,6 +72,8 @@
 - [v4] Profile title dùng reveal "flip" (SplitText chars, không mask, `from: "center"`), xong thì `revert()` DOM rồi em nhận vệt gradient CSS; `text-shadow` của tiêu đề tắt trên em (bóng phủ lên chữ clip-text).
 - [v4] Neon "THANKS": thêm glyph K vào NeonSign; bảng màu ống suy ra từ palette. Hiệu ứng nặng duy nhất của End of line (canvas 2D, không tốn WebGL context).
 
+- [v4] Reflog: nhánh `v4-theme-projects` do một tiến trình khác tạo lúc 12:36 rồi xoá lúc 12:39 (checkout về `main`), nên các commit v4 ban đầu rơi vào `main` cục bộ → tạo lại `v4-theme-projects` tại HEAD và đưa `main` về `4cecf32` (= `origin/main`). Không mất commit, không merge, không push.
+
 ### Hiệu ứng V4
 
 | # | Tên | Vị trí | Nguồn (ThreeUI) | Giấy phép | Chi phí |
