@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  // GitHub Pages serves this project under /<repository-name>/.
+  base: process.env.GITHUB_ACTIONS ? "/Nguyen-Ngoc-Son-Portfolio/" : "/",
   // mỗi dev server song song (subagent) dùng cache riêng: VITE_CACHE_DIR=node_modules/.vite-A
   cacheDir: process.env.VITE_CACHE_DIR ?? "node_modules/.vite",
   server: { port: 5173 },
