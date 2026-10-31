@@ -11,6 +11,7 @@ import "./styles/sections/hero.css";
 import "./styles/sections/about.css";
 import "./styles/sections/flow.css";
 import "./styles/sections/projects.css";
+import "./styles/sections/project-view.css";
 import "./styles/sections/cv.css";
 import "./styles/sections/eol.css";
 import "./styles/print.css";
@@ -53,7 +54,7 @@ if (state.debug) {
 // link trong trang (#id): cuộn mượt qua Lenis (đi qua mọi dissolve) rồi chuyển focus tới đích cho bàn phím
 document.addEventListener("click", (e) => {
   const a = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
-  if (!a || a.closest("#menu")) return;
+  if (!a || a.closest("#menu") || a.hash.startsWith("#project/")) return;   // #project/<slug>: projectView xử lý
   const target = document.getElementById(a.hash.slice(1));
   if (!target) return;
   e.preventDefault();

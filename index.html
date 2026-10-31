@@ -127,7 +127,7 @@
       <!-- 02 · PROFILE — nền: shader đi dây metal -->
       <section class="chapter about" id="about" tabindex="-1" data-scene="circuit" data-accent="#B48CFF" data-accent2="#E3D2FF" data-title="Profile">
         <div class="wrap about-grid">
-          <header class="sec-head about-head">
+          <header class="sec-head about-head" data-shield>
             <p class="eyebrow" data-decode>01 / Profile</p>
             <h2 class="sec-title" data-reveal="lines">Where logic <em class="serif-i">becomes</em> physics.</h2>
           </header>
@@ -164,13 +164,13 @@
       <!-- 03 · DESIGN FLOW — các headline ngành: 7 giai đoạn từ spec tới tape-out (nội dung phổ thông, không phải kinh nghiệm cá nhân) -->
       <section class="chapter flow" id="flow" tabindex="-1" data-scene="stream" data-accent="#6F8BFF" data-accent2="#BFCBFF" data-title="Design flow">
         <div class="pin">
-          <header class="flow-head wrap">
+          <header class="flow-head wrap" data-shield>
             <p class="eyebrow" data-decode>02 / The IC design flow</p>
             <h2 class="sec-title" data-reveal="lines">From specification <em class="serif-i">to silicon.</em></h2>
             <p class="flow-sub">Seven stages every digital chip passes through on its way to the fab.</p>
           </header>
 
-          <div class="flow-meter" aria-hidden="true">
+          <div class="flow-meter" aria-hidden="true" data-shield>
             <span class="flow-count mono"><b data-flow-index>01</b> / 07</span>
             <span class="flow-bar"><i></i></span>
             <span class="flow-stage-name mono" data-flow-name>Specification</span>
@@ -310,9 +310,14 @@
       <!-- 04 · PROJECTS — dữ liệu ở src/content/profile.ts → projects (TODO: điền dự án thật) -->
       <section class="chapter projects" id="projects" tabindex="-1" data-scene="dotmatrix" data-accent="#5EC8FF" data-accent2="#2EE6C5" data-title="Projects">
         <div class="wrap">
-          <header class="sec-head">
+          <!-- bố cục kiểu Gallery Heading (ghi chú nhỏ hai bên tiêu đề); tiêu đề trượt từng từ: fx/text/slideHeading.ts -->
+          <header class="sec-head proj-head" data-shield>
             <p class="eyebrow" data-decode>03 / Projects</p>
-            <h2 class="sec-title" data-reveal="lines">Work, <em class="serif-i">die by die.</em></h2>
+            <div class="proj-head-row">
+              <p class="proj-head-note mono" aria-hidden="true"><span data-proj-count>(03) dies</span><span>IC design</span><span>Semiconductor</span></p>
+              <h2 class="sec-title">Work, <em class="serif-i">die by die.</em></h2>
+              <p class="proj-head-note proj-head-note-r mono" aria-hidden="true"><span>Wafer map</span><span>Open a die</span><span>Book · Scroll</span></p>
+            </div>
             <p class="sec-sub" data-projects-sub></p>
           </header>
           <div class="proj-grid" data-projects></div>
@@ -350,6 +355,28 @@
         </footer>
       </section>
     </main>
+
+    <!-- Trang chi tiết dự án (sections/projectView.ts): mở bằng Flip từ card, chế độ sách (desktop) / cuộn -->
+    <div class="pv" id="project-view" role="dialog" aria-modal="true" aria-labelledby="pv-title" hidden>
+      <div class="pv-backdrop" aria-hidden="true"></div>
+      <div class="pv-frame">
+        <header class="pv-head">
+          <i class="pv-progress" aria-hidden="true"><b></b></i>
+          <p class="pv-die mono" data-pv-die>DIE 01</p>
+          <h2 class="pv-title" id="pv-title" data-pv-title>Project</h2>
+          <div class="pv-tools">
+            <button class="pv-btn" type="button" data-pv-mode>Scroll view</button>
+            <button class="pv-btn pv-close" type="button" data-pv-close aria-label="Close project">Close <kbd aria-hidden="true">Esc</kbd></button>
+          </div>
+        </header>
+        <div class="pv-body" data-pv-body></div>
+        <nav class="pv-nav" aria-label="Other projects">
+          <button class="pv-btn" type="button" data-pv-prev></button>
+          <span class="pv-nav-dot" aria-hidden="true">·</span>
+          <button class="pv-btn" type="button" data-pv-next></button>
+        </nav>
+      </div>
+    </div>
 
     <div class="grain" aria-hidden="true"></div>
 

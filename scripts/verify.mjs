@@ -2,7 +2,7 @@
 //
 //   node scripts/verify.mjs [--port 4173] [--out verify] [--chapters hero,about] [--steps 1]
 //                           [--viewports desktop,laptop,tablet,mobile] [--reduced] [--boundaries] [--path "/?debug"]
-//                           [--base https://site.pages.dev]
+//                           [--base https://site.pages.dev] [--projects]
 //
 // Server phải chạy sẵn: `npx vite --port 5174 --strictPort` (dev) hoặc `npm run build && npx vite preview --port 4173`.
 // --chapters c00 chụp thêm preloader trong lúc tải. --steps N chụp N điểm đều trong quãng pin của mỗi chương.
@@ -100,8 +100,76 @@ async function run(name) {
   return ids;
 }
 
-for (const v of viewports) report.chapters = await run(v);
+// --projects: kịch bản overlay chi tiết dự án (sách trên desktop/laptop/tablet ≥ 900px, cuộn trên mobile)
+async function projects(name) {
+  const viewport = SIZES[name];
+  const page = await browser.newPage({ viewport, deviceScaleFactor: 1, isMobile: name === "mobile", hasTouch: name === "mobile" });
+  page.setDefaultTimeout(120000);
+  if (reduced) await page.emulateMedia({ reducedMotion: "reduce" });
+  page.on("console", (m) => { if (m.type() === "error") errors.push(`[${name} projects] ${m.type()}: ${m.text()}`); });
+  page.on("pageerror", (e) => errors.push(`[${name} projects] pageerror: ${e.message}`));
+  const ready = () => page.waitForFunction(() => { const p = document.querySelector(".preloader"); return !p || getComputedStyle(p).display === "none"; }, null, { timeout: 120000 });
+  const shot = (f) => page.screenshot({ path: path.join(out, `${name}-pv-${f}.png`) });
+  const pv = report.projects[name] = {};
+
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+  await ready();
+  await page.waitForTimeout(800);
+  await page.evaluate(() => { const y = scrollY + document.getElementById("projects").getBoundingClientRect().top + innerHeight * 0.3; window.__lenis.scrollTo(y, { immediate: true, force: true }); });
+  await page.waitForTimeout(2200);
+  await page.focus(".pcard .pc-hit");
+  await page.keyboard.press("Enter");                       // bàn phím: Enter trên card mở overlay
+  await page.waitForTimeout(1800);
+  pv.open = await page.evaluate(() => ({ hidden: document.getElementById("project-view").hidden, mode: document.getElementById("project-view").dataset.mode, hash: location.hash, mainInert: document.querySelector("main").inert }));
+  await shot("1-open");
+  if (pv.open.mode === "book") {
+    await page.keyboard.press("ArrowRight"); await page.waitForTimeout(1500);
+    await page.keyboard.press("ArrowRight"); await page.waitForTimeout(1500);
+    pv.afterArrows = await page.$eval(".pv-pageno", (e) => e.textContent);
+    await shot("2-arrows");
+    // kéo góc trang nửa chừng rồi chụp trang đang lật dở
+    const c = await page.$eval(".pv-corner-next", (e) => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height * 0.86 }; });
+    const pw = await page.$eval(".pv-spread", (e) => e.getBoundingClientRect().width / 2);
+    await page.mouse.move(c.x, c.y);
+    await page.mouse.down();
+    for (let k = 1; k <= 12; k++) { await page.mouse.move(c.x - (pw * 0.62 * k) / 12, c.y - k * 2); await page.waitForTimeout(30); }
+    await page.waitForTimeout(400);
+    pv.dragMid = await page.evaluate(() => ({ strips: document.querySelectorAll(".pv-strip").length, tt: getComputedStyle(document.querySelector(".pv-curl") ?? document.body).getPropertyValue("--tt"), buildMs: window.__bookBuildMs ?? null }));
+    await shot("3-drag");
+    await page.mouse.up();
+    await page.waitForTimeout(1400);
+    pv.afterDrag = await page.$eval(".pv-pageno", (e) => e.textContent);
+  } else {
+    // chế độ cuộn: 3 vị trí
+    for (const [k, f] of [[1, 0.0], [2, 0.45], [3, 0.85]]) {
+      await page.$eval(".pv-scroll", (e, f) => e.scrollTo(0, (e.scrollHeight - e.clientHeight) * f), f);
+      await page.waitForTimeout(1600);
+      await shot(`scroll-${k}`);
+    }
+  }
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(1600);
+  pv.afterEsc = await page.evaluate(() => ({ hidden: document.getElementById("project-view").hidden, focusOnCard: document.activeElement?.classList.contains("pc-hit") ?? false, hash: location.hash, mainInert: document.querySelector("main").inert }));
+  if (!pv.afterEsc.hidden || !pv.afterEsc.focusOnCard) errors.push(`[${name} projects] Esc: overlay hidden=${pv.afterEsc.hidden} focusOnCard=${pv.afterEsc.focusOnCard}`);
+
+  // mở thẳng link #project/die-01: overlay phải hiện sau preloader
+  await page.goto(`${url.split("#")[0]}#project/die-01`, { waitUntil: "domcontentloaded" });
+  await ready();
+  await page.waitForTimeout(2200);
+  pv.deepLink = await page.evaluate(() => ({ hidden: document.getElementById("project-view").hidden, title: document.getElementById("pv-title").textContent }));
+  if (pv.deepLink.hidden) errors.push(`[${name} projects] deep link #project/die-01 did not open the overlay`);
+  await shot("4-deeplink");
+  await page.close();
+}
+
+if (flag("projects")) {
+  report.projects = {};
+  for (const v of viewports) await projects(v);
+} else {
+  for (const v of viewports) report.chapters = await run(v);
+}
 fs.writeFileSync(path.join(out, "report.json"), JSON.stringify(report, null, 2));
+if (report.projects) console.log(JSON.stringify(report.projects, null, 1));
 console.log(`contexts peak ${report.peakContexts}; per chapter ${JSON.stringify(report.contexts)}`);
 console.log(errors.length ? errors.join("\n") : `OK: ${report.chapters.length} chapters, no console errors`);
 await browser.close();
