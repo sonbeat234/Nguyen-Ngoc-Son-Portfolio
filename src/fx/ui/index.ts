@@ -11,6 +11,7 @@ import { initCursor } from "./cursor";
 import { initMagnetic } from "./magnetic";
 import { initTilt } from "./tilt";
 import { initTrace } from "./trace";
+import { initShield } from "./shield";
 
 function initProgress() {
   const bar = $(".progress");
@@ -47,6 +48,7 @@ export function initGlobalLayers() {
 }
 
 export function initInteractions(root: ParentNode = document) {
+  initShield(root);
   initMagnetic(root);
   initTilt(root);
 }

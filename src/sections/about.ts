@@ -3,9 +3,13 @@
 // - Dây bond vàng từ pad trên die ra chân, vẽ dần khi vào màn; cửa sổ die có tia quét.
 // - Datasheet cá nhân (giá trị decode lần lượt) + vòng điểm IELTS / TOEIC đầy dần, số đếm lên.
 // - Parallax nhiều lớp: package, cột chữ và nền trôi với tốc độ khác nhau.
+// - V4 đọc chữ: cột chữ nằm trên panel kính; shader `circuit` nhận u_textRect = vùng cột chữ (uv) để tối hẳn
+//   phần nền ngay sau chữ (đo ở tick "early", chỉ khi section đang hiện).
 import gsap from "gsap";
 import { $, $$ } from "../core/dom";
 import { state } from "../core/state";
+import { onTick } from "../core/loop";
+import { stage } from "../stage/instance";
 import { profile, esc, type Score } from "../content/profile";
 
 const PINS = 10;                       // chân mỗi cạnh
@@ -18,6 +22,22 @@ export function initAbout() {
   renderScores($("[data-scores]", sec));
   buildPackage($(".pkg", sec));
   animate(sec);
+  trackTextRect(sec);
+}
+
+/** vùng cột chữ (uv 0..1, y lên) → uniform u_textRect của shader circuit. Mảng dùng lại, không cấp phát trong tick. */
+function trackTextRect(sec: HTMLElement) {
+  const text = $(".about-text", sec);
+  const rect = [1, 1, 0, 0];
+  let visible = false;
+  new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(sec);
+  onTick(() => {
+    if (!visible) return;
+    const r = text.getBoundingClientRect();
+    rect[0] = r.left / state.w; rect[2] = r.right / state.w;
+    rect[1] = 1 - r.bottom / state.h; rect[3] = 1 - r.top / state.h;
+    stage.set("circuit", "u_textRect", rect);
+  }, "early");
 }
 
 function renderDatasheet(tbody: HTMLElement) {

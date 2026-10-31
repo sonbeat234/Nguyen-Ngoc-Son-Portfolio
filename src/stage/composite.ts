@@ -20,6 +20,10 @@ uniform float u_tintAmtA;
 uniform vec3  u_tintLoB;
 uniform vec3  u_tintHiB;
 uniform float u_tintAmtB;
+// "shield" sau khối chữ (fx/ui/shield.ts): tối đa 6 hình chữ nhật px (x0 y0 x1 y1, gốc dưới trái);
+// trong vùng nền chỉ còn 28% độ sáng, viền mềm ra ngoài ~56px
+uniform vec4  u_shield[6];
+uniform float u_shieldN;
 
 float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
 float vnoise(vec2 p){
@@ -70,6 +74,15 @@ void main(){
     float edge = 1.0 - abs(m * 2.0 - 1.0);
     col += u_edge * pow(edge, 6.0) * 0.55;        // viền phát sáng ở mép dissolve
   }
+
+  float sh = 0.0;
+  for (int i = 0; i < 6; i++) {
+    if (float(i) >= u_shieldN) break;
+    vec4 r = u_shield[i];
+    vec2 o = max(r.xy - gl_FragCoord.xy, gl_FragCoord.xy - r.zw);
+    sh = max(sh, 1.0 - smoothstep(-24.0, 56.0, max(o.x, o.y)));
+  }
+  col = mix(col, u_bg + (col - u_bg) * 0.28, sh);
 
   col = mix(u_bg, col, u_level);
   float vig = smoothstep(1.3, 0.3, length(c * vec2(u_res.x / u_res.y, 1.0) * 0.9));

@@ -26,9 +26,9 @@
   position: relative; flex: 0 0 min(74vw, 1020px); height: min(100%, 540px); align-self: center;
   display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(24px, 3vw, 48px);
   padding: clamp(24px, 3vw, 44px); border-radius: var(--radius);
-  background: linear-gradient(160deg, color-mix(in oklab, var(--panel) 82%, transparent), color-mix(in oklab, var(--panel) 72%, transparent));
+  background: linear-gradient(160deg, color-mix(in oklab, var(--panel) 92%, transparent), color-mix(in oklab, var(--panel) 86%, transparent));
   border: 1px solid var(--line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  opacity: .42; transform: scale(.97); transition: opacity .7s var(--ease-out), transform .9s var(--ease-out), border-color .6s;
+  opacity: .55; transform: scale(.97); transition: opacity .7s var(--ease-out), transform .9s var(--ease-out), border-color .6s;
 }
 #flow .stage.is-active { opacity: 1; transform: none; border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
 #flow .stage::before { /* via nối thẻ với bus */
@@ -37,10 +37,10 @@
 }
 #flow .stage.is-seen::before { transform: none; }
 #flow .stage-copy { display: grid; gap: 14px; align-content: center; }
-#flow .stage-num { font-size: .68rem; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); }
+#flow .stage-num { font-size: .68rem; letter-spacing: .26em; text-transform: uppercase; color: color-mix(in oklab, var(--accent) 70%, var(--bone)); }
 #flow .stage-title { font: 300 clamp(1.6rem, 2.9vw, 2.8rem)/1.05 var(--f-display); letter-spacing: -.035em; }
 #flow .stage-text { color: color-mix(in oklab, var(--bone) 74%, transparent); font-weight: 300; max-width: 40ch; }
-#flow .stage-tags { font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
+#flow .stage-tags { font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in oklab, var(--mute) 80%, var(--bone)); }
 
 #flow .stage-viz {
   position: relative; height: 100%; min-height: 240px; border-radius: 12px; overflow: hidden;

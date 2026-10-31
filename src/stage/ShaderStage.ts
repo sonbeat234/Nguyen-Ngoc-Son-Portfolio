@@ -62,6 +62,10 @@ export class ShaderStage {
   bg: [number, number, number] = [0.02, 0.02, 0.026];
   /** 0..1: nhiễu dải ngang + RGB split mạnh hơn (chương Signal Lost) */
   glitch = 0;
+  /** vùng chữ cần làm tối nền (px CSS, y xuống: left top right bottom) — fx/ui/shield.ts ghi ở tick "early" */
+  readonly shields = new Float32Array(24);
+  shieldN = 0;
+  private shieldPx = new Float32Array(24);
   /** debug: scene A/B, mix và số draw call của frame gần nhất */
   last = { a: "", b: "", mix: 0, draws: 0, w: 0, h: 0 };
 
@@ -166,6 +170,15 @@ export class ShaderStage {
     this.setU(c, "u_edge", (B ?? A)?.def.edge ?? [0.55, 0.75, 1.0]);
     const tA = A?.def.tint, tB = B?.def.tint;
     this.setU(c, "u_tintLoA", tA?.lo ?? [0, 0, 0]); this.setU(c, "u_tintHiA", tA?.hi ?? [1, 1, 1]); this.setU(c, "u_tintAmtA", tA?.amount ?? 0);
+    // shield: đổi px CSS (y xuống) → px stage (y lên)
+    const sx = this.W / Math.max(1, this.canvas.clientWidth), sy = this.H / Math.max(1, this.canvas.clientHeight);
+    for (let i = 0; i < this.shieldN; i++) {
+      const k = i * 4, s = this.shields, o = this.shieldPx;
+      o[k] = s[k] * sx; o[k + 1] = this.H - s[k + 3] * sy; o[k + 2] = s[k + 2] * sx; o[k + 3] = this.H - s[k + 1] * sy;
+    }
+    const shLoc = this.loc(c, "u_shield[0]");
+    if (shLoc) gl.uniform4fv(shLoc, this.shieldPx);
+    this.setU(c, "u_shieldN", this.shieldN);
     this.setU(c, "u_tintLoB", tB?.lo ?? [0, 0, 0]); this.setU(c, "u_tintHiB", tB?.hi ?? [1, 1, 1]); this.setU(c, "u_tintAmtB", tB?.amount ?? 0);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     draws++;

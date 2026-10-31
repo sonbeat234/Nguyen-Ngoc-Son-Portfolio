@@ -56,13 +56,18 @@ canvas.layer { display: block; }
 html.js [data-reveal]:not(.is-split) { visibility: hidden; }
 html.reduced [data-reveal] { visibility: visible; }
 
-/* scrub words: từ nhấn <em> nhận gradient accent chạy ngang khi sáng */
+/* scrub words: từ nhấn <em> — nửa trái gradient PRIMARY → SIGNAL, nửa phải --mute; scrub.ts quét position 100% → 0% */
 [data-scrub] em {
-  font-family: var(--f-serif); font-style: italic;
-  background: linear-gradient(90deg, var(--accent) 0 50%, currentColor 50% 100%);
+  font-family: var(--f-serif); font-style: italic; padding-inline: .04em;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--signal) 50%, var(--mute) 50%, var(--mute) 100%);
   background-size: 200% 100%; background-position-x: 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
+[data-scrub].is-lit em { background-position-x: 0%; }
+
+/* chữ dài nằm thẳng trên shader (không có panel phía sau): bóng mảnh tách chữ khỏi nền sáng */
+.sec-sub, .hero-lede, .hero-tag, .flow-sub, .eol-line, .eol-credit, .eol-bar, .sec-head .eyebrow, .hero-eyebrow,
+.flow-meter, .sec-title { text-shadow: 0 1px 2px rgb(0 0 0 / .6); }
 
 /* neon (bản CSS nhanh, spec 7.7) */
 .neon {
