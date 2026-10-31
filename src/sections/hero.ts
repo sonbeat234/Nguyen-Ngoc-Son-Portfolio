@@ -10,24 +10,42 @@ import { $, $$ } from "../core/dom";
 import { state } from "../core/state";
 import { onTick } from "../core/loop";
 import { damp } from "../core/math";
-import { mountVendor } from "../core/vendor";
+import { mountVendor, type VendorHandle } from "../core/vendor";
 import { initPrecisionFrame } from "../fx/ui/precisionFrame";
 import { decodeText } from "../fx/text/decode";
 import { createParticleName, type NameLine } from "../three/ParticleWordmark";
+
+type ParticleName = ReturnType<typeof createParticleName>;
 import { palette } from "../stage/palette";
 
-/** hạt hội tụ thành tên: canvas phủ cả pin, điểm đích = vị trí thật của từng ký tự đã tách */
-function particleName(sec: HTMLElement, name: HTMLElement, chars: HTMLElement[]) {
-  const pin = $(".pin", sec);
+// renderer hạt tạo + biên dịch shader TRONG pha tải (main.ts gọi prewarmHeroParticles trước khi preloader xong),
+// intro chỉ còn lấy mẫu điểm đích → không khựng. Gắn qua mountVendor (lazy mount + trả context khi stop()).
+let particles: { h: VendorHandle<ParticleName>; host: HTMLElement; ox: number; oy: number } | null = null;
+
+export function prewarmHeroParticles() {
+  if (state.reduced) return;
+  const sec = $("#hero"), pin = $(".pin", sec);
   const host = document.createElement("div");
   host.className = "hero-particles";
   host.setAttribute("aria-hidden", "true");
   host.innerHTML = "<canvas></canvas>";
   pin.appendChild(host);
-  let ox = 0, oy = 0;
-  const h = mountVendor(sec, $<HTMLCanvasElement>("canvas", host), (cv) => {
+  const p = { host, ox: 0, oy: 0, h: null as unknown as VendorHandle<ParticleName> };
+  p.h = mountVendor(sec, $<HTMLCanvasElement>("canvas", host),
+    (cv) => createParticleName(cv, [palette.primary, palette.signal, palette.bone]),
+    (r) => r.render(state.mouse.x - p.ox, state.mouse.y - p.oy));
+  particles = p;
+}
+
+/** hạt hội tụ thành tên: canvas phủ cả pin, điểm đích = vị trí thật của từng ký tự đã tách */
+function particleName(sec: HTMLElement, name: HTMLElement, chars: HTMLElement[]) {
+  const pin = $(".pin", sec);
+  /** chạy hội tụ → chữ DOM hiện → hạt tắt → trả context. null nếu renderer chưa sẵn (fallback). */
+  return () => {
+    const p = particles, r = p?.h.r;
+    if (!p || !r) { p?.h.stop(); p?.host.remove(); return null; }
     const box = pin.getBoundingClientRect();
-    ox = box.left; oy = box.top;
+    p.ox = box.left; p.oy = box.top;
     const probe = document.createElement("canvas").getContext("2d")!;
     const lines: NameLine[] = [];
     $$(".hero-line", name).forEach((ln) => {
@@ -41,13 +59,8 @@ function particleName(sec: HTMLElement, name: HTMLElement, chars: HTMLElement[])
       // vẽ TỪNG ký tự tại vị trí ô SplitText của nó (chữ tách mất kerning → khớp DOM hơn vẽ cả dòng)
       chars.filter((c) => ln.contains(c)).forEach((c) => lines.push({ text: c.textContent ?? "", font, letterSpacing: "0px", x: c.getBoundingClientRect().left - box.left, baseline }));
     });
-    return createParticleName(cv, lines, { w: box.width, h: box.height }, [palette.primary, palette.signal, palette.bone]);
-  }, (r) => r.render(state.mouse.x - ox, state.mouse.y - oy));
-
-  /** chạy hội tụ → chữ DOM hiện → hạt tắt → trả context. null nếu renderer chưa sẵn (fallback). */
-  return () => {
-    const r = h.r;
-    if (!r) { h.stop(); host.remove(); return null; }
+    r.setLines(lines, { w: box.width, h: box.height });
+    const h = p.h, host = p.host;
     const u = r.uniforms;
     return gsap.timeline({ onComplete: () => { h.stop(); host.remove(); } })
       .set(chars, { opacity: 0 }, 0)

@@ -39,7 +39,9 @@ const SELECTORS = [
 const DIM_OK = ["[data-scrub] > div", "[data-scrub] em"];
 
 fs.mkdirSync(out, { recursive: true });
-const browser = await chromium.launch({ args: ["--ignore-gpu-blocklist", "--enable-webgl", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+const browser = await chromium.launch({ args: args.includes("--gpu")
+    ? ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"]          // GPU thật (Windows) — số đo thời gian đại diện hơn
+    : ["--ignore-gpu-blocklist", "--enable-webgl", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
 const helper = await browser.newPage();
 const results = [];
 const errors = [];

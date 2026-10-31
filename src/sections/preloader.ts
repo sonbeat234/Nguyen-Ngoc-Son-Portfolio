@@ -99,10 +99,11 @@ export async function initPreloader(): Promise<Preloader> {
 
   await Promise.all([fonts, images, shaders]);
   performance.mark("preloader:loaded");          // verify.mjs đo quãng loaded → done (≤ 2.2 s, lặp phiên ≤ 0.8 s)
-  await withTimeout(document.fonts.ready, fast ? 150 : 400);   // các face cần dùng đã load ở trên; chỉ chờ phần còn lại một chút
+  if (!fast) await withTimeout(document.fonts.ready, 250);   // các face cần dùng đã load ở trên; chỉ chờ phần còn lại một chút
   const elapsed = performance.now() - t0;
   if (!fast && elapsed < MIN_MS) await wait(MIN_MS - elapsed);
-  await gsap.to(shown, { v: 100, duration: fast ? 0.1 : 0.2, ease: "power1.out", overwrite: true, onUpdate: paint });
+  if (fast) { shown.v = 100; paint(); }
+  else await gsap.to(shown, { v: 100, duration: 0.15, ease: "power1.out", overwrite: true, onUpdate: paint });
   addLog("> boot complete · 100%");
   status.textContent = "System ready";
   clearInterval(dotTimer);
@@ -136,9 +137,9 @@ export async function initPreloader(): Promise<Preloader> {
           tl.to([".pre-center", ".pre-log", ".pre-marks", ".pre-sig"], { opacity: 0, duration: 0.18, ease: "power2.in" }, 0)
             .set(".pre-rgb", { autoAlpha: 1 }, 0)
             .set(".pre-rgb .f", { opacity: 1 }, 0)
-            .set(root, { "--rim": 1 }, 0.08)
-            .fromTo(root, { "--r": "0px" }, { "--r": `${R}px`, duration: 0.45, ease: "expo.in" }, 0.08)
-            .add(open, 0.2);
+            .set(root, { "--rim": 1 }, 0.02)
+            .fromTo(root, { "--r": "0px" }, { "--r": `${R}px`, duration: 0.32, ease: "expo.in" }, 0.02)
+            .add(open, 0.12);
           return;
         }
         tl.to([".pre-center", ".pre-log", ".pre-marks", ".pre-sig"], { opacity: 0, y: -8, duration: 0.3, ease: "power2.in" }, 0)
@@ -150,9 +151,9 @@ export async function initPreloader(): Promise<Preloader> {
           .fromTo(".pre-rgb .f", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 0.34)
           .to(".pre-rgb .r, .pre-rgb .g, .pre-rgb .b", { opacity: 0, duration: 0.25 }, 0.5)
           // iris mở có viền sáng PRIMARY (preloader::after đọc --r, --rim)
-          .set(root, { "--rim": 1 }, 0.44)
-          .fromTo(root, { "--r": "0px" }, { "--r": `${R}px`, duration: 0.82, ease: "expo.inOut" }, 0.44)
-          .add(open, 0.66);
+          .set(root, { "--rim": 1 }, 0.38)
+          .fromTo(root, { "--r": "0px" }, { "--r": `${R}px`, duration: 0.78, ease: "expo.inOut" }, 0.38)
+          .add(open, 0.6);
       });
     },
   };

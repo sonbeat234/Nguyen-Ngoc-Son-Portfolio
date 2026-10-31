@@ -29,6 +29,7 @@ export function initDock() {
   const fit = () => field.resize(dock.clientWidth, dock.clientHeight);
   new ResizeObserver(fit).observe(dock);
   fit();
+  field.render(performance.now());   // vẽ ngay một lần: biên dịch shader rơi vào pha tải của preloader, không vào intro
   let hover = false;
   dock.addEventListener("pointerenter", () => (hover = true));
   dock.addEventListener("pointerleave", () => (hover = false));

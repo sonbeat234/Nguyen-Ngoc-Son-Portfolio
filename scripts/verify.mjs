@@ -2,7 +2,7 @@
 //
 //   node scripts/verify.mjs [--port 4173] [--out verify] [--chapters hero,about] [--steps 1]
 //                           [--viewports desktop,laptop,tablet,mobile] [--reduced] [--boundaries] [--path "/?debug"]
-//                           [--base https://site.pages.dev] [--projects]
+//                           [--base https://site.pages.dev] [--projects] [--gpu]
 //
 // Server phải chạy sẵn: `npx vite --port 5174 --strictPort` (dev) hoặc `npm run build && npx vite preview --port 4173`.
 // --chapters c00 chụp thêm preloader trong lúc tải. --steps N chụp N điểm đều trong quãng pin của mỗi chương.
@@ -27,7 +27,9 @@ const url = `${origin}${opt("path", "/?debug")}`;
 
 fs.mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({
-  args: ["--ignore-gpu-blocklist", "--enable-webgl", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
+  args: args.includes("--gpu")
+    ? ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"]          // GPU thật (Windows) — số đo thời gian đại diện hơn
+    : ["--ignore-gpu-blocklist", "--enable-webgl", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
 });
 const errors = [];
 const report = { url, reduced, chapters: [], contexts: {}, peakContexts: 0, overflow: {}, edges: {}, errors };
@@ -62,6 +64,18 @@ async function run(name) {
     return !p || getComputedStyle(p).display === "none";
   }, null, { timeout: 120000 });
   await page.waitForTimeout(600);
+  // thời gian preloader: tài nguyên tải xong → preloader biến mất (≤ 2.2 s), mở lại trong phiên (≤ 0.8 s)
+  if (name === viewports[0] && !report.preloader) {
+    const tail = () => page.evaluate(() => {
+      const t = (n) => performance.getEntriesByName(n)[0]?.startTime;
+      return Math.round(t("preloader:done") - t("preloader:loaded"));
+    });
+    const first = await tail();
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.waitForFunction(() => performance.getEntriesByName("preloader:done").length > 0, null, { timeout: 120000 });
+    report.preloader = { firstMs: first, repeatMs: await tail() };
+    await page.waitForTimeout(600);
+  }
 
   const ids = (await page.$$eval("section.chapter", (els) => els.map((e) => e.id))).filter((id) => !only.length || only.includes(id));
   for (const id of ids) {

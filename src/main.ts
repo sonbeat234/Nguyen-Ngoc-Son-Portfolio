@@ -16,6 +16,7 @@ import "./styles/sections/cv.css";
 import "./styles/sections/eol.css";
 import "./styles/print.css";
 
+import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { state } from "./core/state";
 import { onTick } from "./core/loop";
@@ -27,7 +28,7 @@ import { initGlobalLayers, initInteractions } from "./fx/ui";
 import { initTextFx } from "./fx/text";
 
 import { initPreloader } from "./sections/preloader";
-import { initHero } from "./sections/hero";
+import { initHero, prewarmHeroParticles } from "./sections/hero";
 import { initAbout } from "./sections/about";
 import { initDesignFlow } from "./sections/designFlow";
 import { initProjects } from "./sections/projects";
@@ -63,16 +64,28 @@ document.addEventListener("click", (e) => {
 });
 
 async function boot() {
-  const pre = await initPreloader();
-  initGlobalLayers();
+  // ?debug: thời gian khởi tạo từng phần (verify.mjs đọc window.__bootTimes)
+  const times: Record<string, number> = {};
+  const timed = async (label: string, fn: () => unknown) => { const t = performance.now(); await fn(); times[label] = Math.round(performance.now() - t); };
+  const preloading = initPreloader();
+  // lớp toàn cục (dock có WebGL riêng: biên dịch shader) khởi tạo TRONG pha tải, song song với font/shader stage —
+  // coi như prewarm, để phần đuôi sau khi tải xong chỉ còn khởi tạo section + intro
+  await timed("global", initGlobalLayers);
+  prewarmHeroParticles();                   // renderer hạt hero: tạo + biên dịch shader trong pha tải
+  const pre = await preloading;
+  performance.mark("boot:preloader-ready");
   for (const [name, init] of SECTIONS) {
-    try { await init(); }
+    try { await timed(name, init); }
     catch (err) { console.error(`[portfolio] init ${name} failed`, err); }
   }
-  initTextFx();
-  initInteractions();
-  ScrollTrigger.refresh();
+  await timed("textfx", () => initTextFx());
+  await timed("interactions", () => initInteractions());
+  await timed("refresh", () => ScrollTrigger.refresh());
+  if (state.debug) (window as unknown as { __bootTimes: unknown }).__bootTimes = times;
   document.fonts.ready.then(() => ScrollTrigger.refresh());
+  performance.mark("boot:sections-ready");
+  // chờ một nhịp ticker: sau một tác vụ dài, timeline tạo ngay sẽ "nhảy cóc" (lagSmoothing 0) và bỏ qua intro
+  await new Promise<void>((r) => gsap.delayedCall(0.001, r));
   await pre.reveal();
 }
 

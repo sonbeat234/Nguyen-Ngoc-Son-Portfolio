@@ -210,55 +210,73 @@ function sampleLines(lines: NameLine[], w: number, h: number, step: number) {
   return new Float32Array(out);
 }
 
-export function createParticleName(canvas: HTMLCanvasElement, lines: NameLine[], box: { w: number; h: number }, colors: [number, number, number][]) {
+/**
+ * Hai pha: tạo (renderer + material, BIÊN DỊCH shader ngay — gọi trong pha tải của preloader như prewarm của stage)
+ * rồi setLines() lúc intro (font đã tải, layout xong) mới lấy mẫu điểm đích. Nhờ vậy intro không bị khựng vì biên dịch.
+ */
+export function createParticleName(canvas: HTMLCanvasElement, colors: [number, number, number][]) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "high-performance" });
   renderer.setClearColor(0x000000, 0);
   const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(0, box.w, 0, -box.h, -2000, 2000);
-
-  let step = state.mobile ? 3 : 2;
-  let xy = sampleLines(lines, box.w, box.h, step);
-  while (xy.length / 2 > MAX_POINTS && step < 8) xy = sampleLines(lines, box.w, box.h, ++step);
-  const n = xy.length / 2;
-  const target = new Float32Array(n * 3), scatter = new Float32Array(n * 3), seed = new Float32Array(n);
-  const R = Math.max(box.w, box.h) * 0.9;
-  for (let i = 0; i < n; i++) {
-    target[i * 3] = xy[i * 2]; target[i * 3 + 1] = -xy[i * 2 + 1];
-    const th = Math.random() * Math.PI * 2, rr = R * (0.35 + Math.random() * 0.75);
-    scatter[i * 3] = box.w * 0.5 + Math.cos(th) * rr;
-    scatter[i * 3 + 1] = -box.h * 0.5 + Math.sin(th) * rr * 0.6;
-    scatter[i * 3 + 2] = (Math.random() - 0.5) * 400;
-    seed[i] = Math.random();
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(target.slice(), 3));
-  geo.setAttribute("a_target", new THREE.BufferAttribute(target, 3));
-  geo.setAttribute("a_scatter", new THREE.BufferAttribute(scatter, 3));
-  geo.setAttribute("a_seed", new THREE.BufferAttribute(seed, 1));
+  const camera = new THREE.OrthographicCamera(0, 1, 0, -1, -2000, 2000);
   const uniforms = {
-    u_time: { value: 0 }, u_assemble: { value: 0 }, u_fade: { value: 0 }, u_size: { value: step * 1.15 }, u_pr: { value: 1 },
+    u_time: { value: 0 }, u_assemble: { value: 0 }, u_fade: { value: 0 }, u_size: { value: 2.3 }, u_pr: { value: 1 },
     u_mouse: { value: new THREE.Vector2(-9999, -9999) },
     u_c0: { value: new THREE.Vector3(...colors[0]) }, u_c1: { value: new THREE.Vector3(...colors[1]) }, u_c2: { value: new THREE.Vector3(...colors[2]) },
   };
   const mat = new THREE.ShaderMaterial({ uniforms, vertexShader: NAME_VERT, fragmentShader: NAME_FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  let geo = new THREE.BufferGeometry();
+  for (const [k, size] of [["position", 3], ["a_target", 3], ["a_scatter", 3], ["a_seed", 1]] as const) geo.setAttribute(k, new THREE.BufferAttribute(new Float32Array(size), size));
   const points = new THREE.Points(geo, mat);
   points.frustumCulled = false;
   scene.add(points);
+  renderer.compile(scene, camera);
+  renderer.render(scene, camera);                       // ép link chương trình ngay (không dồn vào intro)
+  let count = 0, W = 1, H = 1;
 
   const resize = (w: number, h: number) => {
+    W = Math.max(1, w); H = Math.max(1, h);
     const pr = Math.min(devicePixelRatio || 1, 1.75) * state.quality;
     renderer.setPixelRatio(pr);
-    renderer.setSize(Math.max(1, w), Math.max(1, h), false);
+    renderer.setSize(W, H, false);
     uniforms.u_pr.value = pr;
   };
-  resize(box.w, box.h);
 
   return {
     uniforms,
-    count: n,
+    get count() { return count; },
     resize,
+    /** nạp điểm đích từ các dòng chữ trong hộp box (px CSS) */
+    setLines(lines: NameLine[], box: { w: number; h: number }) {
+      let step = state.mobile ? 3 : 2;
+      let xy = sampleLines(lines, box.w, box.h, step);
+      while (xy.length / 2 > MAX_POINTS && step < 8) xy = sampleLines(lines, box.w, box.h, ++step);
+      const n = (count = xy.length / 2);
+      const target = new Float32Array(n * 3), scatter = new Float32Array(n * 3), seed = new Float32Array(n);
+      const R = Math.max(box.w, box.h) * 0.9;
+      for (let i = 0; i < n; i++) {
+        target[i * 3] = xy[i * 2]; target[i * 3 + 1] = -xy[i * 2 + 1];
+        const th = Math.random() * Math.PI * 2, rr = R * (0.35 + Math.random() * 0.75);
+        scatter[i * 3] = box.w * 0.5 + Math.cos(th) * rr;
+        scatter[i * 3 + 1] = -box.h * 0.5 + Math.sin(th) * rr * 0.6;
+        scatter[i * 3 + 2] = (Math.random() - 0.5) * 400;
+        seed[i] = Math.random();
+      }
+      geo.dispose();
+      geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(target.slice(), 3));
+      geo.setAttribute("a_target", new THREE.BufferAttribute(target, 3));
+      geo.setAttribute("a_scatter", new THREE.BufferAttribute(scatter, 3));
+      geo.setAttribute("a_seed", new THREE.BufferAttribute(seed, 1));
+      points.geometry = geo;
+      uniforms.u_size.value = step * 1.15;
+      camera.right = box.w; camera.bottom = -box.h;
+      camera.updateProjectionMatrix();
+      if (box.w !== W || box.h !== H) resize(box.w, box.h);
+    },
     /** mx, my: con trỏ theo px của canvas (y xuống) */
     render(mx = -9999, my = -9999) {
+      if (!count) return;
       uniforms.u_time.value = state.time;
       uniforms.u_mouse.value.set(mx, -my);
       renderer.render(scene, camera);
