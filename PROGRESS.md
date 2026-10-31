@@ -5,20 +5,30 @@ Nội dung: `src/content/profile.ts`. Hướng dẫn: `README.md`.
 
 ## Vòng V4 (`../threeui-main/PROMPT_V4_THEME_PROJECTS.md`, nhánh `v4-theme-projects`)
 - [x] Ảnh before (verify-v4-before — chụp từ bản build đóng băng của `main`, desktop + mobile, 3 điểm mỗi section, 0 lỗi)
-- [ ] Token màu mới, bỏ hex rải rác, shader theo palette, giữ đổi màu theo section
-- [ ] Con trỏ chuẩn (mũi tên / bàn tay) đổi màu theo section, bỏ ring + nhãn
-- [ ] Loading screen màu mới + motion mới, thời gian ≤ 2.2 s
-- [ ] Profile: dim shader vùng chữ, panel, scrub mới, contrast đạt
-- [ ] Contrast đạt ở mọi section (contrast.json)
-- [ ] Mở rộng type Project + ví dụ trong README
-- [ ] Card bấm được, Flip mở/đóng, URL / Back / Esc / focus
-- [ ] Chế độ sách: lật cong giấy, kéo / phím / chuột / bấm, chỉ số trang
-- [ ] Chế độ cuộn: Lenis riêng, reveal, gallery ngang, nhớ lựa chọn
-- [ ] ≥ 10 hiệu ứng chữ/chuyển động mới, có bảng trong DECISIONS
-- [ ] Reduced-motion + mobile đầy đủ
-- [ ] verify (4 viewport + reduced + --projects) 0 lỗi, WebGL ≤ 4
-- [ ] Tự xem contact sheet, so sánh before/after
-- [ ] Cập nhật README / DECISIONS / PROGRESS, commit nhánh v4
+- [x] Token màu mới, bỏ hex rải rác, shader theo palette, giữ đổi màu theo section
+- [x] Con trỏ chuẩn (mũi tên / bàn tay) đổi màu theo section, bỏ ring + nhãn
+- [x] Loading screen màu mới + motion mới, thời gian ≤ 2.2 s
+- [x] Profile: dim shader vùng chữ, panel, scrub mới, contrast đạt
+- [x] Contrast đạt ở mọi section (contrast.json)
+- [x] Mở rộng type Project + ví dụ trong README
+- [x] Card bấm được, Flip mở/đóng, URL / Back / Esc / focus
+- [x] Chế độ sách: lật cong giấy, kéo / phím / chuột / bấm, chỉ số trang
+- [x] Chế độ cuộn: Lenis riêng, reveal, gallery ngang, nhớ lựa chọn
+- [x] ≥ 10 hiệu ứng chữ/chuyển động mới, có bảng trong DECISIONS (17 mục)
+- [x] Reduced-motion + mobile đầy đủ
+- [x] verify (4 viewport + reduced + --projects) 0 lỗi, WebGL ≤ 4
+- [x] Tự xem contact sheet, so sánh before/after
+- [x] Cập nhật README / DECISIONS / PROGRESS, commit nhánh v4
+
+### Nhật ký kiểm chứng V4 (bản build `verify-v4-dist`, preview cổng riêng)
+- `npx tsc --noEmit` sạch; `npm run build` OK (JS ~805 kB / gzip ~237 kB).
+- `verify.mjs --steps 3 --gpu` desktop / laptop / tablet / mobile (`verify-v4/`): **0 lỗi** console / pageerror / HTTP, tràn ngang 0 ở cả 4 khung, đỉnh **3** WebGL context (stage + dock thường trực, hạt hero ~2 s lúc intro). Lượt SwiftShader desktop + mobile (`verify-v4-sw/`): 0 lỗi, đỉnh 3.
+- `--reduced` (`verify-v4-reduced/`): 0 lỗi, đỉnh 2, nội dung đủ.
+- `--projects --gpu` desktop / laptop / tablet / mobile (`verify-v4-projects/`): Enter trên card mở overlay (main `inert`, hash `#project/die-01`); desktop + laptop = sách: ← → hai lần → "Page 5–6 / 8", kéo góc nửa chừng chụp được trang đang cong (dựng dải 2–2.5 ms; quality hạ cấp → 8 dải), thả → "Page 7–8 / 8"; tablet 820px + mobile = chế độ cuộn (3 vị trí). Esc đóng và trả focus về card; Back của trình duyệt đóng overlay; mở thẳng `/#project/die-01` → overlay hiện sau preloader. `--projects --reduced`: 0 lỗi, mặc định chế độ cuộn.
+- `contrast.mjs --gpu` desktop + mobile × 6 section × 3 vị trí × 3 khung (`verify-v4/contrast.json`): **270 khối, 0 khối dưới ngưỡng** (chữ thường ≥ 4.5:1, chữ lớn ≥ 3:1). Lần đo đầu (trước khi sửa) trượt 9 khối: tiêu đề Design flow 1.4:1 trên dải sáng shader, nhãn stage, caption package, `em` lúc chưa sáng → sửa bằng shield composite + nền thẻ đậm hơn + em không mờ.
+- Preloader (mark `preloader:loaded` → `preloader:done`): GPU thật (Intel UHD qua ANGLE D3D11) lần đầu **1.50 s**, mở lại trong phiên **0.48–0.68 s**; SwiftShader 2.27 s / 1.14 s (biên dịch shader bằng CPU — không đại diện).
+- Before/after: `verify-v4/compare-desktop.png`, `verify-v4/compare-mobile.png` (loading, hero, profile, flow, projects, sách / chế độ cuộn, CV, end of line).
+- Chưa đo được: fps / long task khi lật trang trên máy thật bằng DevTools Performance (headless chỉ đo được thời gian dựng dải 2–3 ms); cảm giác kéo trang bằng chuột/touch thật.
 
 ## Chuyển đổi SIGNAL → portfolio
 - [x] Dừng 4 subagent SIGNAL, commit checkpoint `af41c3e` (toàn bộ việc dở được giữ trong git)

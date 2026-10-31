@@ -166,6 +166,15 @@ async function projects(name) {
   pv.afterEsc = await page.evaluate(() => ({ hidden: document.getElementById("project-view").hidden, focusOnCard: document.activeElement?.classList.contains("pc-hit") ?? false, hash: location.hash, mainInert: document.querySelector("main").inert }));
   if (!pv.afterEsc.hidden || !pv.afterEsc.focusOnCard) errors.push(`[${name} projects] Esc: overlay hidden=${pv.afterEsc.hidden} focusOnCard=${pv.afterEsc.focusOnCard}`);
 
+  // mở lại bằng chuột rồi bấm Back của trình duyệt: overlay phải đóng
+  await page.click(".pcard .pc-hit");
+  await page.waitForTimeout(1800);
+  const reopened = await page.evaluate(() => !document.getElementById("project-view").hidden);
+  await page.goBack();
+  await page.waitForTimeout(1800);
+  pv.afterBack = await page.evaluate(() => ({ hidden: document.getElementById("project-view").hidden, hash: location.hash, mainInert: document.querySelector("main").inert }));
+  if (!reopened || !pv.afterBack.hidden || pv.afterBack.mainInert) errors.push(`[${name} projects] Back: reopened=${reopened} hidden=${pv.afterBack.hidden} mainInert=${pv.afterBack.mainInert}`);
+
   // mở thẳng link #project/die-01: overlay phải hiện sau preloader
   await page.goto(`${url.split("#")[0]}#project/die-01`, { waitUntil: "domcontentloaded" });
   await ready();
