@@ -1,13 +1,23 @@
-/* Preloader "POWER-ON" (cảm hứng uplink-loader.html): readout phát sáng, thanh 16 ô, dấu góc, log terminal. */
-.preloader { color: var(--bone); overflow: hidden; }
+/* Preloader "POWER-ON" (cảm hứng uplink-loader.html): màu chủ đạo PRIMARY — quầng, bộ đếm phát sáng, thanh 16 ô,
+   dấu góc, log terminal, nhãn sóng ký tự; tên hội tụ 3 kênh PRIMARY / SIGNAL / PRIMARY_2; iris có viền sáng. */
+.preloader { color: var(--bone); overflow: hidden; --rim: 0; }
 .preloader .pre-pool {
   position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse 60% 46% at 50% 48%, color-mix(in oklab, var(--accent) 16%, transparent) 0%,
-    color-mix(in oklab, var(--accent) 6%, transparent) 42%, transparent 72%);
+  background:
+    radial-gradient(ellipse 60% 46% at 50% 48%, color-mix(in oklab, var(--primary) 18%, transparent) 0%,
+      color-mix(in oklab, var(--primary) 6%, transparent) 42%, transparent 72%),
+    radial-gradient(ellipse 30% 22% at 50% 62%, color-mix(in oklab, var(--signal) 6%, transparent), transparent 70%);
+}
+/* viền sáng của iris: vành ngay ngoài lỗ mask (bán kính --r) */
+.preloader::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: var(--rim);
+  background: radial-gradient(circle at 50% 50%, transparent var(--r), var(--primary-2) calc(var(--r) + 1.5px),
+    color-mix(in oklab, var(--primary) 70%, transparent) calc(var(--r) + 5px),
+    color-mix(in oklab, var(--primary) 18%, transparent) calc(var(--r) + 22px), transparent calc(var(--r) + 60px));
 }
 
 /* dấu góc */
-.preloader .pre-mk { position: absolute; width: 14px; height: 14px; border: 0 solid color-mix(in oklab, var(--accent) 75%, #fff); opacity: .7; }
+.preloader .pre-mk { position: absolute; width: 14px; height: 14px; border: 0 solid color-mix(in oklab, var(--primary) 75%, var(--bone)); opacity: .75; }
 .preloader .pre-tl { top: 24px; left: 24px; border-top-width: 1px; border-left-width: 1px; }
 .preloader .pre-tr { top: 24px; right: 24px; border-top-width: 1px; border-right-width: 1px; }
 .preloader .pre-bl { bottom: 24px; left: 24px; border-bottom-width: 1px; border-left-width: 1px; }
@@ -18,61 +28,70 @@
   display: grid; justify-items: center; gap: 14px; width: min(88vw, 620px);
 }
 
-/* mark: package chip, die nhấp nháy, chân sáng lần lượt, quỹ đạo chấm quay */
+/* mark: package chip, die nhấp nháy, chân sáng lần lượt (đồng), quỹ đạo chấm quay */
 .preloader .pre-mark { width: 88px; height: 88px; color: var(--bone); overflow: visible;
-  filter: drop-shadow(0 0 14px color-mix(in oklab, var(--accent) 55%, transparent)); }
-.preloader .pre-die { color: var(--accent); animation: pre-die 1.6s ease-in-out infinite; }
-.preloader .pre-pins { color: var(--accent); stroke-dasharray: 10 10; animation: pre-pins 1.2s linear infinite; }
-.preloader .pre-orbit { transform-origin: 60px 60px; animation: pre-orbit 9s linear infinite; color: var(--accent); }
+  filter: drop-shadow(0 0 14px color-mix(in oklab, var(--primary) 55%, transparent)); }
+.preloader .pre-die { color: var(--primary); animation: pre-die 1.6s ease-in-out infinite; }
+.preloader .pre-pins { color: var(--copper); stroke-dasharray: 10 10; animation: pre-pins 1.2s linear infinite; }
+.preloader .pre-orbit { transform-origin: 60px 60px; animation: pre-orbit 9s linear infinite; color: var(--signal); }
 @keyframes pre-die { 0%,100% { opacity: .45 } 50% { opacity: 1 } }
 @keyframes pre-pins { to { stroke-dashoffset: -20; } }
 @keyframes pre-orbit { to { transform: rotate(360deg); } }
 
-/* bộ đếm 000 → 100 */
+/* bộ đếm 000 → 100: chữ BONE, glow PRIMARY, nhấp nháy neon */
 .preloader .pre-count { display: flex; align-items: flex-start; line-height: .86; margin-top: 6px; }
 .preloader .pre-num {
   font: 400 clamp(5rem, 15vw, 11.5rem)/.86 var(--f-mono); letter-spacing: -.05em; font-variant-numeric: tabular-nums;
-  color: #f2fbff;
-  text-shadow: 0 0 4px color-mix(in oklab, var(--accent) 70%, transparent), 0 0 18px color-mix(in oklab, var(--accent) 45%, transparent),
-    0 0 48px color-mix(in oklab, var(--accent) 30%, transparent);
+  color: var(--bone);
+  text-shadow: 0 0 4px color-mix(in oklab, var(--primary) 80%, transparent), 0 0 18px color-mix(in oklab, var(--primary) 55%, transparent),
+    0 0 48px color-mix(in oklab, var(--primary) 38%, transparent), 0 0 90px color-mix(in oklab, var(--primary) 18%, transparent);
   animation: pre-neon 4.3s steps(1, end) infinite;
 }
-.preloader .pre-pct { font: 400 clamp(1rem, 2vw, 1.5rem)/1 var(--f-mono); color: var(--mute); margin: .6em 0 0 .4em; }
-@keyframes pre-neon { 0%,40% { opacity: 1 } 41% { opacity: .6 } 42% { opacity: 1 } 68% { opacity: .75 } 69.5% { opacity: 1 } 70.5% { opacity: .5 } 71.5% { opacity: 1 } }
+.preloader .pre-pct { font: 400 clamp(1rem, 2vw, 1.5rem)/1 var(--f-mono); color: var(--primary-2); margin: .6em 0 0 .4em; }
+@keyframes pre-neon { 0%,40% { opacity: 1 } 41% { opacity: .55 } 42% { opacity: 1 } 68% { opacity: .75 } 69.5% { opacity: 1 } 70.5% { opacity: .45 } 71.5% { opacity: 1 } }
 
-/* thanh 16 ô */
+/* nhãn + thanh 16 ô */
 .preloader .pre-barlabel { justify-self: stretch; display: flex; justify-content: space-between;
-  font: 500 .72rem/1 var(--f-mono); letter-spacing: .3em; color: #e6f8ff;
-  text-shadow: 0 0 10px color-mix(in oklab, var(--accent) 40%, transparent); margin-top: 10px; }
-.preloader .pre-dots { min-width: 3ch; text-align: right; letter-spacing: .1em; }
+  font: 500 .72rem/1 var(--f-mono); letter-spacing: .3em; color: var(--bone);
+  text-shadow: 0 0 10px color-mix(in oklab, var(--primary) 45%, transparent); margin-top: 10px; }
+.preloader .pre-word { display: inline-flex; perspective: 300px; }
+/* sóng ký tự (characterWave.waveLabel): --f = độ "đỉnh sóng" của từng ký tự */
+.preloader .cw-ch { --f: 0; display: inline-block; will-change: transform;
+  color: color-mix(in oklab, var(--primary-2) calc(var(--f) * 100%), var(--bone));
+  text-shadow: 0 0 calc(var(--f) * 14px) color-mix(in oklab, var(--primary) 80%, transparent); }
+.preloader .pre-dots { min-width: 3ch; text-align: right; letter-spacing: .1em; color: var(--signal); }
 .preloader .pre-bar { justify-self: stretch; display: grid; grid-template-columns: repeat(16, 1fr); gap: 6px; height: 26px; }
-.preloader .pre-bar i { display: block; background: color-mix(in oklab, var(--accent) 16%, transparent); transform: skewX(12deg); border-radius: 1px; }
+.preloader .pre-bar i { display: block; background: color-mix(in oklab, var(--primary) 14%, transparent); transform: skewX(12deg); border-radius: 1px; }
 .preloader .pre-bar i.on {
-  background: var(--accent);
-  box-shadow: 0 0 4px color-mix(in oklab, var(--accent) 70%, #fff), 0 0 12px color-mix(in oklab, var(--accent) 45%, transparent);
+  background: var(--primary);
+  box-shadow: 0 0 4px color-mix(in oklab, var(--primary) 70%, var(--bone)), 0 0 12px color-mix(in oklab, var(--primary) 50%, transparent);
 }
 .preloader .pre-bar i.flash { animation: pre-ignite .32s ease-out; }
-@keyframes pre-ignite { 0% { background: #f2fbff; box-shadow: 0 0 12px #fff, 0 0 30px var(--accent); } 100% { background: var(--accent); } }
+@keyframes pre-ignite { 0% { background: var(--primary-2); box-shadow: 0 0 12px var(--primary-2), 0 0 30px var(--primary); } 100% { background: var(--primary); } }
 .preloader .pre-status { font: 500 .7rem/1 var(--f-mono); letter-spacing: .26em; text-transform: uppercase;
-  color: color-mix(in oklab, var(--accent) 45%, var(--mute)); margin-top: 4px; }
+  color: color-mix(in oklab, var(--primary-2) 70%, var(--mute)); margin-top: 4px; }
 
-/* log terminal */
+/* log terminal: dòng cuối sáng nhất + con trỏ khối nhấp nháy */
 .preloader .pre-log {
   position: absolute; left: 40px; bottom: 40px; display: grid; gap: 4px;
-  font: 400 .7rem/1.35 var(--f-mono); color: color-mix(in oklab, var(--accent) 45%, var(--mute)); white-space: pre;
+  font: 400 .7rem/1.35 var(--f-mono); color: color-mix(in oklab, var(--primary) 40%, var(--mute)); white-space: pre;
 }
-.preloader .pre-log li:last-child { color: #e6f8ff; }
+.preloader .pre-log li:last-child { color: var(--bone); text-shadow: 0 0 8px color-mix(in oklab, var(--primary) 50%, transparent); }
+.preloader .pre-log li:last-child::after { content: "\258D"; margin-left: .3em; color: var(--signal); animation: pre-caret .9s steps(1) infinite; }
+@keyframes pre-caret { 50% { opacity: 0 } }
 .preloader .pre-sig { position: absolute; right: 40px; bottom: 40px; font: 400 .64rem/1 var(--f-mono); letter-spacing: .22em; color: var(--mute); }
 
-/* tên chromatic: 3 lớp R/G/B cộng sáng về trắng khi hội tụ */
+/* tên hội tụ: 3 lớp PRIMARY / SIGNAL / PRIMARY_2 cộng sáng (screen) → lớp .f chữ BONE glow PRIMARY */
 .preloader .pre-rgb { position: absolute; inset: 0; display: grid; place-items: center; visibility: hidden; opacity: 0; isolation: isolate; padding-inline: 6vw; }
 .preloader .pre-rgb span {
   grid-area: 1 / 1; font: 500 clamp(2rem, 7vw, 6.4rem)/1.25 var(--f-display); letter-spacing: -.03em; text-align: center;
   mix-blend-mode: screen; will-change: transform;
 }
-.preloader .pre-rgb .r { color: #ff2b3a; }
-.preloader .pre-rgb .g { color: #24ff7a; }
-.preloader .pre-rgb .b { color: #2f6bff; }
+.preloader .pre-rgb .r { color: var(--primary); }
+.preloader .pre-rgb .g { color: var(--signal); }
+.preloader .pre-rgb .b { color: var(--primary-2); }
+.preloader .pre-rgb .f { color: var(--bone); mix-blend-mode: normal; opacity: 0;
+  text-shadow: 0 0 6px color-mix(in oklab, var(--primary) 70%, transparent), 0 0 28px color-mix(in oklab, var(--primary) 45%, transparent); }
 
 @media (max-width: 767px) {
   .preloader .pre-log { left: 20px; bottom: 22px; font-size: .6rem; max-width: calc(100vw - 40px); overflow: hidden; }
@@ -80,6 +99,8 @@
   .preloader .pre-bar { gap: 4px; height: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .preloader .pre-die, .preloader .pre-pins, .preloader .pre-orbit, .preloader .pre-num, .preloader .pre-bar i.flash { animation: none; }
+  .preloader .pre-die, .preloader .pre-pins, .preloader .pre-orbit, .preloader .pre-num, .preloader .pre-bar i.flash,
+  .preloader .pre-log li:last-child::after { animation: none; }
 }
-html.reduced .preloader .pre-die, html.reduced .preloader .pre-pins, html.reduced .preloader .pre-orbit, html.reduced .preloader .pre-num { animation: none; }
+html.reduced .preloader .pre-die, html.reduced .preloader .pre-pins, html.reduced .preloader .pre-orbit, html.reduced .preloader .pre-num,
+html.reduced .preloader .pre-log li:last-child::after { animation: none; }

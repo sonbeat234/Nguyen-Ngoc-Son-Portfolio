@@ -3,6 +3,23 @@
 Quy tắc làm việc: `../threeui-main/PROMPT_AUTONOMOUS_RUN.md` (tự chủ, ghi DECISIONS, kiểm chứng tsc + build + verify headless + tự xem ảnh, commit cục bộ).
 Nội dung: `src/content/profile.ts`. Hướng dẫn: `README.md`.
 
+## Vòng V4 (`../threeui-main/PROMPT_V4_THEME_PROJECTS.md`, nhánh `v4-theme-projects`)
+- [x] Ảnh before (verify-v4-before — chụp từ bản build đóng băng của `main`, desktop + mobile, 3 điểm mỗi section, 0 lỗi)
+- [ ] Token màu mới, bỏ hex rải rác, shader theo palette, giữ đổi màu theo section
+- [ ] Con trỏ chuẩn (mũi tên / bàn tay) đổi màu theo section, bỏ ring + nhãn
+- [ ] Loading screen màu mới + motion mới, thời gian ≤ 2.2 s
+- [ ] Profile: dim shader vùng chữ, panel, scrub mới, contrast đạt
+- [ ] Contrast đạt ở mọi section (contrast.json)
+- [ ] Mở rộng type Project + ví dụ trong README
+- [ ] Card bấm được, Flip mở/đóng, URL / Back / Esc / focus
+- [ ] Chế độ sách: lật cong giấy, kéo / phím / chuột / bấm, chỉ số trang
+- [ ] Chế độ cuộn: Lenis riêng, reveal, gallery ngang, nhớ lựa chọn
+- [ ] ≥ 10 hiệu ứng chữ/chuyển động mới, có bảng trong DECISIONS
+- [ ] Reduced-motion + mobile đầy đủ
+- [ ] verify (4 viewport + reduced + --projects) 0 lỗi, WebGL ≤ 4
+- [ ] Tự xem contact sheet, so sánh before/after
+- [ ] Cập nhật README / DECISIONS / PROGRESS, commit nhánh v4
+
 ## Chuyển đổi SIGNAL → portfolio
 - [x] Dừng 4 subagent SIGNAL, commit checkpoint `af41c3e` (toàn bộ việc dở được giữ trong git)
 - [x] Giữ engine: core (loop/scroll/quality/lazy/gl/hud), ShaderStage + composite dissolve, text FX, cursor/magnetic/tilt, dock/rail/menu/progress/grain, preloader

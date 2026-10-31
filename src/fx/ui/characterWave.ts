@@ -47,3 +47,36 @@ export function initCharacterWave(host: HTMLElement, text: string, getProgress: 
     }
   });
 }
+
+/**
+ * Biến thể nhãn (V4, preloader "POWER-ON"): cùng hàm focus exp(-d²·k) + sóng sin + rotateY theo delta của
+ * Character Wave, nhưng ký tự GIỮ thứ tự và vị trí (chỉ nhô lên / sáng lên khi "đỉnh sóng" đi qua) để nhãn
+ * vẫn đọc được. Chữ gốc đọc qua aria-label của host, các span tách ký tự aria-hidden. Trả về hàm dừng.
+ */
+export function waveLabel(host: HTMLElement, speed = 7) {
+  const text = host.textContent ?? "";
+  host.setAttribute("aria-label", text);
+  host.textContent = "";
+  const chars = [...text].map((ch) => {
+    const el = document.createElement("span");
+    el.className = "cw-ch";
+    el.setAttribute("aria-hidden", "true");
+    el.textContent = ch;
+    host.appendChild(el);
+    return el;
+  });
+  const n = chars.length;
+  if (state.reduced) return () => {};
+  const span = n + 4;                          // quãng nghỉ giữa hai lượt sóng
+  const off = onTick(() => {
+    const phase = (state.time * speed) % span - 2;
+    for (let i = 0; i < n; i++) {
+      const delta = i - phase;
+      const focus = Math.exp(-delta * delta * 1.05);
+      const s = chars[i].style;
+      s.transform = `translate3d(0,${(-focus * 0.42).toFixed(3)}em,0) rotateY(${(-delta * 9 * focus).toFixed(1)}deg) scale(${(1 + focus * 0.22).toFixed(3)})`;
+      s.setProperty("--f", focus.toFixed(3));
+    }
+  });
+  return () => { off(); chars.forEach((c) => (c.style.transform = "")); };
+}
