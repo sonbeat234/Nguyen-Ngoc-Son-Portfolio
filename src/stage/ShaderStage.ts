@@ -17,6 +17,8 @@ export type SceneDef = {
   /** map tiến độ scroll của section → uniform riêng của shader */
   onProgress?: (p: number, set: (name: string, v: UVal) => void) => void;
   edge?: [number, number, number];
+  /** recolor trong composite cho shader không có uniform màu (vendor): lo/hi theo accent, amount 0..1 */
+  tint?: { lo: [number, number, number]; hi: [number, number, number]; amount: number };
 };
 
 type Program = { prog: WebGLProgram; locs: Map<string, WebGLUniformLocation | null> };
@@ -160,7 +162,11 @@ export class ShaderStage {
     this.setU(c, "u_vel", state.reduced ? 0 : state.scroll.smooth);
     this.setU(c, "u_glitch", state.reduced ? 0 : this.glitch);
     this.setU(c, "u_bg", this.bg);
+    // viền dissolve = accent2 của scene đích (scene sau theo thứ tự trang)
     this.setU(c, "u_edge", (B ?? A)?.def.edge ?? [0.55, 0.75, 1.0]);
+    const tA = A?.def.tint, tB = B?.def.tint;
+    this.setU(c, "u_tintLoA", tA?.lo ?? [0, 0, 0]); this.setU(c, "u_tintHiA", tA?.hi ?? [1, 1, 1]); this.setU(c, "u_tintAmtA", tA?.amount ?? 0);
+    this.setU(c, "u_tintLoB", tB?.lo ?? [0, 0, 0]); this.setU(c, "u_tintHiB", tB?.hi ?? [1, 1, 1]); this.setU(c, "u_tintAmtB", tB?.amount ?? 0);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     draws++;
     // gỡ texture để frame sau render vào FBO không dính feedback loop

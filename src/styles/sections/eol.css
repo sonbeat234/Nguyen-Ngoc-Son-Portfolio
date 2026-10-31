@@ -6,7 +6,7 @@
 
 #eol .eol-contact { display: flex; flex-wrap: wrap; gap: 12px; }
 #eol .eol-link { display: inline-flex; align-items: center; gap: .8em; padding: .9em 1.3em; border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent); background: rgba(8,10,16,.6); font-weight: 500;
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent); background: color-mix(in oklab, var(--panel) 60%, transparent); font-weight: 500;
   transition: background .3s, color .3s; }
 #eol .eol-link span { font: 400 .62rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
 #eol .eol-link:hover { background: var(--accent); color: var(--ink); }

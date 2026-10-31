@@ -3,6 +3,9 @@
 // - portal: 45 sao phát sáng có shadowBlur, nảy trong khung vòm (chương 11)
 // Không tự RAF: gọi render() từ onTick.
 import { state } from "../core/state";
+import { palette, css } from "../stage/palette";
+
+const STAR = css(palette.bone);
 
 const PORTAL_COLORS = [
   "rgba(230, 194, 158, ", // bronze/gold
@@ -31,7 +34,7 @@ export function createAmbientStarfield(canvas: HTMLCanvasElement, count = 70) {
       // tốc độ gốc 0.01–0.03 px/frame (60fps) + kéo theo vận tốc cuộn
       const push = 60 * dt * (1 + Math.abs(state.scroll.smooth) * 60) * (state.reduced ? 0.25 : 1);
       const dir = state.scroll.direction;
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = STAR;
       for (const s of stars) {
         s.y -= s.drift * push * dir;
         if (s.y < 0) s.y += H; else if (s.y > H) s.y -= H;

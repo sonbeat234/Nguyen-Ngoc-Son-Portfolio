@@ -7,6 +7,9 @@ uniform float u_time;
 uniform float u_dpr;
 uniform vec2 u_mouse;
 uniform float u_progress;
+uniform vec3 u_tint;    // đường đồng mức theo accent của CV
+uniform vec3 u_tint2;   // đường chính (major) theo accent2
+uniform vec3 u_bg;
 
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
 float snoise(vec2 v){
@@ -45,11 +48,11 @@ void main() {
   float topo = smoothstep(0.03, 0.0, tri) * 0.45;
   float major = smoothstep(0.05, 0.0, abs(fract(n * bands / 5.0) - 0.5) * 2.0) * 0.35;
 
-  vec3 col = vec3(0.012);
-  col += vec3(1.0) * grid;
-  col += vec3(1.0) * topo;
-  col += vec3(0.95, 0.93, 0.88) * major;
-  col += vec3(1.0) * exp(-md * 10.0) * 0.08;                         // quầng sáng con trỏ
+  vec3 col = u_bg;
+  col += mix(vec3(1.0), u_tint, 0.5) * grid;
+  col += mix(vec3(1.0), u_tint, 0.6) * topo;
+  col += mix(vec3(1.0), u_tint2, 0.45) * major;
+  col += u_tint * exp(-md * 10.0) * 0.08;                            // quầng sáng con trỏ
   col *= smoothstep(1.25, 0.2, length((gl_FragCoord.xy / u_resolution.xy) - 0.5));
   gl_FragColor = vec4(col, 1.0);
 }`;

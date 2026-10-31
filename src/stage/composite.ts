@@ -13,6 +13,13 @@ uniform float u_vel;
 uniform float u_glitch;
 uniform vec3  u_bg;
 uniform vec3  u_edge;
+// tint theo palette cho scene không nhận màu (vendor): lo/hi = accent/accent2, amt 0 = giữ màu gốc
+uniform vec3  u_tintLoA;
+uniform vec3  u_tintHiA;
+uniform float u_tintAmtA;
+uniform vec3  u_tintLoB;
+uniform vec3  u_tintHiB;
+uniform float u_tintAmtB;
 
 float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
 float vnoise(vec2 p){
@@ -20,6 +27,13 @@ float vnoise(vec2 p){
   return mix(mix(hash(i), hash(i+vec2(1,0)), u.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), u.x), u.y);
 }
 float fbm(vec2 p){ float v = 0.0, a = 0.5; for(int i=0;i<4;i++){ v += a*vnoise(p); p = p*2.03 + 7.1; a *= 0.5; } return v; }
+
+// recolor giữ độ sáng: kênh sáng nhất làm luminance, ramp lo → hi theo độ sáng
+vec3 grade(vec3 c, vec3 lo, vec3 hi, float amt){
+  float l = max(max(c.r, c.g), c.b);
+  vec3 t = mix(lo, hi, smoothstep(0.2, 0.95, l)) * l * 1.08;
+  return mix(c, t, amt);
+}
 
 vec3 rgbSplit(sampler2D t, vec2 uv, float s, vec2 off){
   vec2 lim = vec2(1.0) - 1.0/u_res;
@@ -42,11 +56,11 @@ void main(){
   uv.x = clamp(uv.x + band * g * (hash(vec2(floor(uv.y * 38.0), u_time)) - 0.5) * 0.05, 0.0, 1.0);
   vec2 off = c * (0.0012 + abs(v) * 0.014 * (1.0 + g * 1.5)) + vec2(0.0, v * 0.003);
 
-  vec3 a = rgbSplit(u_a, uv, u_scaleA, off);
+  vec3 a = grade(rgbSplit(u_a, uv, u_scaleA, off), u_tintLoA, u_tintHiA, u_tintAmtA);
   vec3 col = a;
 
   if (u_hasB > 0.5) {
-    vec3 b = rgbSplit(u_b, uv, u_scaleB, off);
+    vec3 b = grade(rgbSplit(u_b, uv, u_scaleB, off), u_tintLoB, u_tintHiB, u_tintAmtB);
     float n = fbm(uv * vec2(u_res.x / u_res.y, 1.0) * 2.4 + vec2(0.0, u_time * 0.05));
     n = mix(n, 1.0 - uv.y, 0.35);                 // dissolve quét từ dưới lên theo hướng cuộn
     float w = 0.16;

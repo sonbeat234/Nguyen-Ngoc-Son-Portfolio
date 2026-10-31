@@ -8,7 +8,7 @@
   position: relative; overflow: hidden; border-radius: 22px; padding: clamp(24px, 4vw, 60px);
   background:
     linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px) 0 0 / 100% 32px,
-    linear-gradient(170deg, rgba(14,17,24,.96), rgba(8,10,15,.94));
+    linear-gradient(170deg, color-mix(in oklab, var(--panel) 96%, transparent), color-mix(in oklab, var(--panel) 94%, transparent));
   border: 1px solid color-mix(in oklab, var(--accent) 28%, var(--line));
   box-shadow: 0 50px 120px -40px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.06);
 }
@@ -65,7 +65,7 @@
 #cv .cv-lang-name { font-weight: 500; }
 #cv .cv-meter { display: grid; grid-template-columns: 4.6em minmax(0, 1fr) auto; align-items: center; gap: 14px; }
 #cv .cv-meter-label { font: 500 .68rem/1 var(--f-mono); letter-spacing: .18em; color: var(--mute); }
-#cv .cv-meter-bar { position: relative; height: 6px; border-radius: 99px; background: rgba(233,237,242,.08); overflow: hidden; }
+#cv .cv-meter-bar { position: relative; height: 6px; border-radius: 99px; background: color-mix(in oklab, var(--bone) 8%, transparent); overflow: hidden; }
 #cv .cv-meter-bar i { position: absolute; inset: 0; border-radius: inherit; transform-origin: 0 50%; transform: scaleX(0);
   background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 60%, transparent), var(--accent)); box-shadow: 0 0 10px var(--accent);
   transition: transform 1.6s var(--ease-out) .2s; }

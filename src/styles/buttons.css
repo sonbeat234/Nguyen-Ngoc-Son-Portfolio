@@ -1,13 +1,19 @@
 /* Bộ nút lấy từ ThreeUI (CSS thuần, không Tailwind) — spec 8.4.
    Nguồn: neuform-isolated/sources/{spinning-border-button? → dot-border-button, gradient-beam-cta,
    glassmorphism-cta, sliding-text-cta, floating-dots-cta, gradient-pill-button}.html, thinking-button.html */
+/* bề mặt nút suy ra từ bảng màu (panel pha bone) */
+:root {
+  --btn-face: color-mix(in oklab, var(--panel), var(--bone) 9%);
+  --btn-edge: color-mix(in oklab, var(--panel), var(--bone) 16%);
+  --btn-edge-hi: color-mix(in oklab, var(--panel), var(--bone) 30%);
+}
 @keyframes spin-ang { to { --ang: 360deg; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes dots-move { to { background-position: 24px 24px; } }
 
 .btn { position: relative; display: inline-flex; align-items: center; gap: .6em; isolation: isolate;
   border-radius: 999px; font: 500 .78rem/1 var(--f-body); letter-spacing: .18em; text-transform: uppercase;
-  color: #fff; padding: 1.1em 2.2em; overflow: hidden; border: 0; background: none;
+  color: var(--bone); padding: 1.1em 2.2em; overflow: hidden; border: 0; background: none;
   transition: scale .5s var(--ease-spring), translate .5s var(--ease-spring), box-shadow .5s; }
 /* Hover dùng thuộc tính độc lập scale/translate, KHÔNG transition `transform`: transform thuộc về GSAP
    (magnetic, intro). Transition CSS trên transform làm GSAP đọc nhầm giá trị đang chuyển dở → nút kẹt lệch
@@ -17,15 +23,15 @@
 .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
 /* 1. Spinning Border: tia sáng conic chạy quanh viền khi hover */
-.btn-spin { padding: 1px; background: #27272a; }
+.btn-spin { padding: 1px; background: var(--btn-edge); }
 .btn-spin::before { content: ""; position: absolute; inset: -100%; z-index: -1;
-  background: conic-gradient(from 90deg, transparent 0 75%, #fff 100%);
+  background: conic-gradient(from 90deg, transparent 0 75%, var(--primary-2) 100%);
   animation: spin 3s linear infinite; opacity: 0; transition: opacity .3s; }
 .btn-spin:hover::before { opacity: 1; }
 .btn-spin > span { display: inline-flex; gap: .6em; align-items: center; border-radius: inherit; padding: .95em 1.9em;
-  background: linear-gradient(#27272a, #09090b); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); color: #a1a1aa; transition: color .3s; }
-.btn-spin:hover > span { color: #fff; }
-.btn-spin:hover { translate: 0 -2px; box-shadow: 0 0 25px rgba(255,255,255,.12); }
+  background: linear-gradient(var(--btn-face), var(--ink)); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); color: var(--mute); transition: color .3s; }
+.btn-spin:hover > span { color: var(--bone); }
+.btn-spin:hover { translate: 0 -2px; box-shadow: 0 0 25px color-mix(in oklab, var(--primary) 32%, transparent); }
 
 /* 2. Gradient Beam: 1 beam màu accent quay + nền chấm chạy + glow đáy */
 .btn-beam { padding: 1.35em 3em; }
@@ -35,7 +41,7 @@
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
 .btn-beam::after { content: ""; position: absolute; inset: 2px; z-index: -1; border-radius: inherit;
   background: radial-gradient(rgba(255,255,255,.55) 1px, transparent 1px) 0 0 / 12px 12px,
-              linear-gradient(rgba(39,39,42,.6), transparent), #09090b;
+              linear-gradient(color-mix(in oklab, var(--btn-face) 60%, transparent), transparent), var(--ink);
   background-blend-mode: overlay, normal, normal; animation: dots-move 8s linear infinite; }
 .btn-beam .glow { position: absolute; bottom: 0; left: 50%; width: 66%; height: 50%; translate: -50% 0; z-index: -1;
   background: color-mix(in oklab, var(--accent) 15%, transparent); filter: blur(24px); border-radius: 50%; transition: background .5s; }
@@ -48,47 +54,47 @@
   background: conic-gradient(from 225deg, transparent 0, rgba(255,255,255,.6) 90deg, transparent 90deg);
   animation: spin 4s linear infinite; }
 .btn-glass > span { position: relative; display: inline-flex; gap: .75em; align-items: center; padding: .75em 1em .75em .75em;
-  border-radius: inherit; background: rgba(10,11,20,.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-radius: inherit; background: color-mix(in oklab, var(--panel) 80%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   text-transform: none; letter-spacing: 0; font-size: 1rem; }
 .btn-glass img, .btn-glass .avatar { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,.1); flex: none; }
 .btn-glass:hover { scale: 1.05; box-shadow: 0 0 40px 8px color-mix(in oklab, var(--accent) 35%, transparent); }
 
 /* 4. Sliding Text: chữ trượt xuống + mờ, bản sao trượt vào từ trên */
-.btn-slide { background: #262626; border: 1px solid #525252; color: #a3a3a3; padding: .9em 1.6em; text-transform: none; letter-spacing: -.01em; font-weight: 600;
+.btn-slide { background: var(--btn-face); border: 1px solid var(--btn-edge-hi); color: var(--mute); padding: .9em 1.6em; text-transform: none; letter-spacing: -.01em; font-weight: 600;
   box-shadow: 0 2.8px 2.2px rgba(0,0,0,.3), 0 6.7px 5.3px rgba(0,0,0,.35), 0 12.5px 10px rgba(0,0,0,.4); transition: translate 1s var(--ease-spring), color .5s; }
 .btn-slide .a, .btn-slide .b { transition: transform .5s var(--ease-out), opacity .5s, filter .5s; }
 .btn-slide .b { position: absolute; inset: 0; display: grid; place-items: center; transform: translateY(-2rem); opacity: 0; filter: blur(8px); }
-.btn-slide:hover { translate: 0 -3px; color: #fff; }
+.btn-slide:hover { translate: 0 -3px; color: var(--bone); }
 .btn-slide:hover .a { transform: translateY(2rem); opacity: 0; filter: blur(8px); }
 .btn-slide:hover .b { transform: none; opacity: 1; filter: none; }
 .btn-slide::after { content: ""; position: absolute; left: 15%; right: 15%; bottom: 0; height: 1px; filter: blur(2px);
-  background: linear-gradient(90deg, transparent, #e5e5e5, transparent); opacity: .3; transition: opacity 1s; }
+  background: linear-gradient(90deg, transparent, var(--primary-2), transparent); opacity: .3; transition: opacity 1s; }
 .btn-slide:hover::after { opacity: .8; }
 
 /* 5. Comet border (Thinking Button bản CSS): đầu sáng + đuôi dài chạy quanh viền + chữ shimmer */
-.btn-comet { padding: 1.2em 2.6em; background: #161616; letter-spacing: .02em; text-transform: none; font-weight: 300; font-size: 1.05rem; }
+.btn-comet { padding: 1.2em 2.6em; background: var(--panel); letter-spacing: .02em; text-transform: none; font-weight: 300; font-size: 1.05rem; }
 .btn-comet::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; z-index: -1;
-  background: conic-gradient(from var(--ang), transparent 0 220deg, color-mix(in oklab, var(--accent) 30%, transparent) 300deg, #fff 358deg, transparent 360deg);
+  background: conic-gradient(from var(--ang), transparent 0 220deg, color-mix(in oklab, var(--accent) 30%, transparent) 300deg, var(--primary-2) 358deg, transparent 360deg);
   animation: spin-ang 2.7s linear infinite;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
   filter: drop-shadow(0 0 6px var(--accent)); }
-.btn-comet .label { background: linear-gradient(100deg, #777 30%, #fff 50%, #777 70%) 0 0 / 250% 100%;
+.btn-comet .label { background: linear-gradient(100deg, var(--mute) 30%, var(--bone) 50%, var(--mute) 70%) 0 0 / 250% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 2.7s linear infinite; }
 @keyframes shimmer { from { background-position: 150% 0 } to { background-position: -100% 0 } }
 
 /* 6. Floating dots CTA */
-.btn-dots { background: #0d0d10; border: 1px solid var(--line); }
+.btn-dots { background: var(--panel); border: 1px solid var(--line); }
 .btn-dots i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--accent); opacity: .7;
   animation: float-dot 3.2s ease-in-out infinite; animation-delay: calc(var(--i) * -0.4s); left: calc(var(--i) * 12%); top: 50%; z-index: -1; }
 @keyframes float-dot { 0%,100% { transform: translateY(-14px); opacity: .2 } 50% { transform: translateY(14px); opacity: .9 } }
 
 /* 7. Gradient pill */
 .btn-pill { background: linear-gradient(120deg, var(--accent), var(--accent-2), var(--accent)); background-size: 200% 100%;
-  color: #050506; font-weight: 600; transition: background-position .8s var(--ease-out), translate .5s var(--ease-spring); }
+  color: var(--on-primary); font-weight: 600; transition: background-position .8s var(--ease-out), translate .5s var(--ease-spring); }
 .btn-pill:hover { background-position: 100% 0; translate: 0 -2px; }
 
 /* 8. Dot border (newsletter): viền nét chấm chạy */
-.btn-dotborder { background: #0b0b0e; }
+.btn-dotborder { background: var(--panel); }
 .btn-dotborder::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
   background: repeating-conic-gradient(from var(--ang), var(--accent) 0 4deg, transparent 4deg 10deg);
   animation: spin-ang 9s linear infinite;

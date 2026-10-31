@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nguyễn Ngọc Sơn · IC Design &amp; Semiconductor Portfolio</title>
     <meta name="description" content="Portfolio and CV of Nguyễn Ngọc Sơn — integrated circuit design and semiconductor. FPT University, Hanoi." />
-    <meta name="theme-color" content="#04060a" />
+    <meta name="theme-color" content="#07060d" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Nguyễn Ngọc Sơn · IC Design &amp; Semiconductor Portfolio" />
@@ -13,7 +13,7 @@
     <meta name="twitter:card" content="summary" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@300;500;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@200..900&display=swap" />
   </head>
   <body>
     <a class="skip-link" href="#about">Skip to content</a>
@@ -63,9 +63,10 @@
       <nav class="dock__nav" aria-label="Primary" data-dock-state="idle" data-dock-max="0.00">
         <a class="dock__item dock__logo" href="#hero" data-dock-item aria-label="Nguyễn Ngọc Sơn — back to the top">
           <svg viewBox="0 0 32 32" aria-hidden="true">
-            <rect x="8" y="8" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <path d="M12 8V4M16 8V4M20 8V4M12 24v4M16 24v4M20 24v4M8 12H4M8 16H4M8 20H4M24 12h4M24 16h4M24 20h4" stroke="var(--mute)" stroke-width="1.4" stroke-linecap="round" />
+            <rect x="8" y="8" width="16" height="16" rx="2" fill="var(--panel)" stroke="currentColor" stroke-width="1.6" />
             <rect x="12.5" y="12.5" width="7" height="7" rx="1" fill="var(--accent)" />
-            <path d="M12 8V4M16 8V4M20 8V4M12 24v4M16 24v4M20 24v4M8 12H4M8 16H4M8 20H4M24 12h4M24 16h4M24 20h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+            <circle cx="10.8" cy="10.8" r="1" fill="var(--signal)" />
           </svg>
         </a>
         <span class="dock__item dock__chapter" aria-live="polite"><b class="dock__num">01</b><span class="dock__label">Power-on</span></span>
@@ -84,7 +85,7 @@
 
     <main id="top">
       <!-- 01 · POWER-ON (hero) — nền: shader wafer -->
-      <section class="chapter hero" id="hero" tabindex="-1" data-scene="wafer" data-accent="#5ce1ff" data-accent2="#a6f0ff" data-title="Power-on">
+      <section class="chapter hero" id="hero" tabindex="-1" data-scene="wafer" data-accent="#8B7BFF" data-accent2="#C9C0FF" data-title="Power-on">
         <div class="pin">
           <div class="hero-frame" aria-hidden="true">
             <div class="hero-frame-inner">
@@ -124,7 +125,7 @@
       </section>
 
       <!-- 02 · PROFILE — nền: shader đi dây metal -->
-      <section class="chapter about" id="about" tabindex="-1" data-scene="circuit" data-accent="#f0a061" data-accent2="#ffd2a6" data-title="Profile">
+      <section class="chapter about" id="about" tabindex="-1" data-scene="circuit" data-accent="#B48CFF" data-accent2="#E3D2FF" data-title="Profile">
         <div class="wrap about-grid">
           <header class="sec-head about-head">
             <p class="eyebrow" data-decode>01 / Profile</p>
@@ -132,7 +133,7 @@
           </header>
 
           <!-- Khung chân dung dạng package chip (QFN nhìn từ trên). Ảnh thật: đặt profile.portrait trong src/content/profile.ts -->
-          <figure class="pkg" data-tilt="0.7" data-cursor="DIE">
+          <figure class="pkg" data-tilt="0.7">
             <div class="pkg-pins" aria-hidden="true"></div>
             <div class="pkg-body">
               <svg class="pkg-wires" aria-hidden="true" focusable="false"></svg>
@@ -161,7 +162,7 @@
       </section>
 
       <!-- 03 · DESIGN FLOW — các headline ngành: 7 giai đoạn từ spec tới tape-out (nội dung phổ thông, không phải kinh nghiệm cá nhân) -->
-      <section class="chapter flow" id="flow" tabindex="-1" data-scene="stream" data-accent="#a08cff" data-accent2="#d3c8ff" data-title="Design flow">
+      <section class="chapter flow" id="flow" tabindex="-1" data-scene="stream" data-accent="#6F8BFF" data-accent2="#BFCBFF" data-title="Design flow">
         <div class="pin">
           <header class="flow-head wrap">
             <p class="eyebrow" data-decode>02 / The IC design flow</p>
@@ -307,7 +308,7 @@
       </section>
 
       <!-- 04 · PROJECTS — dữ liệu ở src/content/profile.ts → projects (TODO: điền dự án thật) -->
-      <section class="chapter projects" id="projects" tabindex="-1" data-scene="dotmatrix" data-accent="#6ef0b4" data-accent2="#b9ffd9" data-title="Projects">
+      <section class="chapter projects" id="projects" tabindex="-1" data-scene="dotmatrix" data-accent="#5EC8FF" data-accent2="#2EE6C5" data-title="Projects">
         <div class="wrap">
           <header class="sec-head">
             <p class="eyebrow" data-decode>03 / Projects</p>
@@ -319,7 +320,7 @@
       </section>
 
       <!-- 05 · CV — dựng từ src/content/profile.ts; in được (styles/print.css) -->
-      <section class="chapter cv" id="cv" tabindex="-1" data-scene="topo" data-accent="#f2c86b" data-accent2="#ffe3a3" data-title="CV">
+      <section class="chapter cv" id="cv" tabindex="-1" data-scene="topo" data-accent="#D08CFF" data-accent2="#F0D2FF" data-title="CV">
         <div class="wrap">
           <header class="sec-head cv-top">
             <div>
@@ -333,7 +334,7 @@
       </section>
 
       <!-- 06 · END OF LINE (footer) -->
-      <section class="chapter eol" id="eol" tabindex="-1" data-scene="ribbon" data-accent="#7cc8ff" data-accent2="#b49cff" data-title="End of line">
+      <section class="chapter eol" id="eol" tabindex="-1" data-scene="ribbon" data-accent="#8B7BFF" data-accent2="#2EE6C5" data-title="End of line">
         <footer class="eol-inner wrap">
           <p class="eyebrow" data-decode>05 / End of line</p>
           <p class="eol-line serif-i" data-reveal="words">Thanks for following the signal all the way down.</p>

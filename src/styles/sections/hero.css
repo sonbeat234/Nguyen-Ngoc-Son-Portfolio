@@ -25,7 +25,7 @@
 
 /* scrim: giữ chữ dễ đọc trên nền wafer */
 #hero .hero-scrim { position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, rgba(4,6,10,.88) 0%, rgba(4,6,10,.62) 34%, rgba(4,6,10,0) 64%); }
+  background: linear-gradient(90deg, color-mix(in oklab, var(--ink) 88%, transparent) 0%, color-mix(in oklab, var(--ink) 62%, transparent) 34%, transparent 64%); }
 
 /* copy: cột trái, canh giữa theo chiều dọc (translate độc lập với yPercent của GSAP) */
 #hero .hero-copy {
@@ -57,7 +57,7 @@
 #hero .hero-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 4px; }
 #hero .hero-chip {
   position: relative; display: block; width: 30px; height: 30px; border-radius: 6px; flex: none;
-  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 70%, #fff), var(--accent) 50%, color-mix(in oklab, var(--accent) 50%, #000));
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 70%, var(--bone)), var(--accent) 50%, color-mix(in oklab, var(--accent) 50%, var(--ink)));
   box-shadow: 0 0 0 2px rgba(255,255,255,.08), 0 0 18px color-mix(in oklab, var(--accent) 45%, transparent);
 }
 #hero .hero-chip::before { /* chân chip bằng gradient lặp */
@@ -70,7 +70,7 @@
 /* readout: thông tin xác nhận, decode khi intro */
 #hero .hero-readout { position: absolute; right: calc(var(--gutter) + 52px); bottom: clamp(70px, 12vh, 130px); margin: 0;
   display: grid; gap: 12px; text-align: right; padding: 14px 16px; border-radius: 12px;
-  background: rgba(4,6,10,.62); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); }
+  background: color-mix(in oklab, var(--ink) 62%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); }
 #hero .hero-readout > div { display: grid; gap: 4px; padding-right: 14px; border-right: 1px solid color-mix(in oklab, var(--accent) 55%, transparent); }
 #hero .hero-readout dt { font: 400 .62rem/1 var(--f-mono); letter-spacing: .24em; text-transform: uppercase; color: var(--mute); }
 #hero .hero-readout dd { margin: 0; font: 500 .95rem/1.2 var(--f-mono); color: var(--bone); }
@@ -78,7 +78,7 @@
 /* gợi ý cuộn: vạch dọc có chấm chạy xuống */
 #hero .hero-hint { position: absolute; left: 50%; bottom: 44px; translate: -50% 0;
   display: flex; flex-direction: column; align-items: center; gap: 12px; pointer-events: none; }
-#hero .hero-hint-line { position: relative; display: block; width: 1px; height: 56px; overflow: hidden; background: rgba(233,237,242,.18); }
+#hero .hero-hint-line { position: relative; display: block; width: 1px; height: 56px; overflow: hidden; background: color-mix(in oklab, var(--bone) 18%, transparent); }
 #hero .hero-hint-line i { position: absolute; left: -1px; top: -10px; width: 3px; height: 10px; border-radius: 2px;
   background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: hero-drop 1.8s var(--ease-in-out) infinite; }
 #hero .hero-hint-label { font: 400 .6rem/1 var(--f-mono); letter-spacing: .32em; text-transform: uppercase; color: var(--mute); }
@@ -90,7 +90,7 @@
 }
 /* portrait / mobile: chữ phía trên, wafer ở nửa dưới (shader tự đổi bố cục theo tỉ lệ khung) */
 @media (max-aspect-ratio: 1/1), (max-width: 767px) {
-  #hero .hero-scrim { background: linear-gradient(180deg, rgba(4,6,10,.92) 0%, rgba(4,6,10,.7) 48%, rgba(4,6,10,0) 72%); }
+  #hero .hero-scrim { background: linear-gradient(180deg, color-mix(in oklab, var(--ink) 92%, transparent) 0%, color-mix(in oklab, var(--ink) 70%, transparent) 48%, transparent 72%); }
   #hero .hero-copy { left: var(--gutter); right: var(--gutter); top: clamp(88px, 13vh, 140px); translate: none; width: auto; gap: 16px; }
   #hero .hero-readout { left: var(--gutter); right: auto; bottom: 30px; text-align: left; grid-auto-flow: column; gap: 18px; }
   #hero .hero-readout > div { padding: 0 0 0 10px; border-right: 0; border-left: 1px solid color-mix(in oklab, var(--accent) 55%, transparent); }
