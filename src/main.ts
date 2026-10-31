@@ -21,7 +21,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { state } from "./core/state";
 import { onTick } from "./core/loop";
 import { lenis, scrollTo } from "./core/scroll";
-import "./core/quality";
+import { calibrateRefresh, startQuality } from "./core/quality";
 import { initHud } from "./core/hud";
 import { stage } from "./stage/instance";
 import { initGlobalLayers, initInteractions } from "./fx/ui";
@@ -43,13 +43,14 @@ const SECTIONS: [string, () => unknown][] = [
 document.documentElement.classList.add("js");
 document.documentElement.classList.toggle("reduced", state.reduced);
 document.documentElement.classList.toggle("touch", state.touch);
+document.documentElement.classList.toggle("legacyfx", state.legacyfx);   // ?legacyfx: hiệu ứng V4 trước tối ưu (so sánh)
 history.scrollRestoration = "manual";
 
 onTick(() => stage.measure(), "early");
 onTick(() => stage.render(), "late");
-if (state.debug) {
+if (state.debug || state.perf) {
   (window as unknown as { __lenis: unknown }).__lenis = lenis;
-  initHud(stage);
+  initHud(stage, state.debug);   // ?perf: chỉ expose số liệu, không vẽ HUD (HUD tự tốn thời gian mỗi frame)
 }
 
 // link trong trang (#id): cuộn mượt qua Lenis (đi qua mọi dissolve) rồi chuyển focus tới đích cho bàn phím
@@ -82,11 +83,17 @@ async function boot() {
   await timed("interactions", () => initInteractions());
   await timed("refresh", () => ScrollTrigger.refresh());
   if (state.debug) (window as unknown as { __bootTimes: unknown }).__bootTimes = times;
-  document.fonts.ready.then(() => ScrollTrigger.refresh());
+  // V5-perf (k): font tải xong muộn (sau preloader) → refresh khi người dùng KHÔNG cuộn (refresh = đo lại mọi pin,
+  // layout toàn trang; giữa lúc cuộn là một frame rớt rõ)
+  const refreshWhenIdle = () => (lenis.isScrolling ? setTimeout(refreshWhenIdle, 250) : ScrollTrigger.refresh());
+  document.fonts.ready.then(refreshWhenIdle);
   performance.mark("boot:sections-ready");
   // chờ một nhịp ticker: sau một tác vụ dài, timeline tạo ngay sẽ "nhảy cóc" (lagSmoothing 0) và bỏ qua intro
   await new Promise<void>((r) => gsap.delayedCall(0.001, r));
+  // đo nhịp vsync khi trang rảnh, preloader vẫn che (stage tạm dừng ~24 frame; lần mở lại trong phiên bỏ qua)
+  await calibrateRefresh((on) => (stage.paused = on));
   await pre.reveal();
+  startQuality();
 }
 
 boot();

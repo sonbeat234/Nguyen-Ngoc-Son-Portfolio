@@ -56,7 +56,7 @@
   text-shadow: 0 0 10px color-mix(in oklab, var(--primary) 45%, transparent); margin-top: 10px; }
 .preloader .pre-word { display: inline-flex; perspective: 300px; }
 /* sóng ký tự (characterWave.waveLabel): --f = độ "đỉnh sóng" của từng ký tự */
-.preloader .cw-ch { --f: 0; display: inline-block; will-change: transform;
+.preloader .cw-ch { --f: 0; display: inline-block;   /* will-change chỉ đặt khi sóng chạy (characterWave.ts) */
   color: color-mix(in oklab, var(--primary-2) calc(var(--f) * 100%), var(--bone));
   text-shadow: 0 0 calc(var(--f) * 14px) color-mix(in oklab, var(--primary) 80%, transparent); }
 .preloader .pre-dots { min-width: 3ch; text-align: right; letter-spacing: .1em; color: var(--signal); }

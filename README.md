@@ -59,10 +59,11 @@ Mọi thông tin cá nhân nằm ở đây; hero, Profile, Projects, CV và foot
 | `cvFile` | trống → chỉ có nút **Print / Save as PDF** | nếu có PDF thật: chép vào `public/cv/…pdf`, đặt đường dẫn → nút **Download PDF** tự hiện |
 | `summary` | bản nháp trung tính, chỉ dùng thông tin đã có | viết lại bằng giọng của bạn |
 | `educationEntries[0].program / period / notes` | trống | ngành học, năm học, GPA / môn tiêu biểu (nếu muốn) |
+| `highSchool`, `educationEntries[1]` (Le Quy Don High School for the Gifted, Lai Chau) | đã điền tên trường; `level` hiện nhãn "High school" trên timeline CV | `period` (năm học), `program` (lớp chuyên) nếu muốn |
 | `projects[]` | 3 ô trống (`emptyProject()`) | card: `title, objective, tools[], role, outcome, period, link`; trang chi tiết: `slug, cover, summary, problem, approach[], metrics[], gallery[], lessons[], links[]` — xem mục dưới |
 | `skills[]` | trống | nhóm kỹ năng thật, vd `{ group: "HDL", items: ["Verilog"] }` |
 | `languages[]` | English: IELTS 6.0, TOEIC 750 | thêm ngôn ngữ khác nếu muốn |
-| `contact[]` | trống → không có nút liên hệ nào | email / LinkedIn / GitHub thật |
+| `contact[]` | đã điền: Email, LinkedIn, GitHub — hiện ở footer (End of line, email có nút Copy), đầu CV và mục "Contact" trong menu | thêm số điện thoại (`tel:+84…`) nếu muốn; icon tự chọn theo href |
 
 ### Dự án — trang chi tiết (sách / cuộn)
 
@@ -118,7 +119,7 @@ Ví dụ điền đầy đủ (**chỉ để minh hoạ định dạng — khôn
 },
 ```
 
-Thông tin xác nhận cũng được viết cố định trong `index.html` ở hero (tên, FPT University Hanoi, IELTS, TOEIC), preloader và footer — nếu đổi tên hiển thị, sửa cả ở đó.
+Thông tin xác nhận cũng được viết cố định trong `index.html` ở hero (tên, FPT University Hanoi), preloader và footer — nếu đổi tên hiển thị, sửa cả ở đó. Readout hero (góc dưới) = Education + LinkedIn / GitHub lấy từ `contact[]`; điểm IELTS / TOEIC chỉ hiện ở Profile và CV.
 
 ## Cấu trúc trang
 

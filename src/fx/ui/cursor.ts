@@ -4,7 +4,7 @@
 // Đổi section: accent tween ~1.2s → SVG cập nhật theo nấc ~100 ms (onAccent), không mỗi frame.
 // Máy cảm ứng: không đổi gì (con trỏ mặc định). Fallback luôn là auto / pointer / text.
 import { state } from "../../core/state";
-import { onAccent } from "./accent";
+import { onAccent, chapters } from "./accent";
 import { token } from "../../stage/palette";
 
 const EDGE = "rgb(0 0 0 / .85)";
@@ -23,8 +23,9 @@ function svgUrl(body: string, hx: number, hy: number) {
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${hx} ${hy}`;
 }
 
-function setCursorColor(color: string) {
-  const root = document.documentElement.style;
+/** V5-perf: ghi --cur-* lên MỘT phần tử (section / overlay / html) — không đổi trên :root khi đổi chương */
+function setCursorColor(color: string, target: HTMLElement = document.documentElement) {
+  const root = target.style;
   const fill = `fill='${color}' stroke='${EDGE}' stroke-width='1.5' stroke-linejoin='round'`;
   root.setProperty("--cur-arrow", svgUrl(`<path d='${ARROW}' ${fill}/>`, 5, 2));
   root.setProperty("--cur-hand", svgUrl(
@@ -37,7 +38,12 @@ function setCursorColor(color: string) {
 
 export function initCursor() {
   if (state.touch) return;
-  setCursorColor(getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || token("--primary"));
+  setCursorColor(token("--primary"));
   document.documentElement.classList.add("has-cursor");
-  onAccent(setCursorColor);
+  if (state.legacyfx) { onAccent((c) => setCursorColor(c)); return; }
+  // V5-perf: con trỏ mỗi section mang màu accent TĨNH của section đó (base.css: section.chapter khai báo lại cursor
+  // để var(--cur-*) được giải theo section) → đổi chương không ghi gì lên :root (ghi :root = restyle cả trang)
+  for (const c of chapters) setCursorColor(c.accent, c.el);
+  const pj = chapters.find((c) => c.id === "projects"), pv = document.getElementById("project-view");
+  if (pj && pv) setCursorColor(pj.accent, pv);
 }

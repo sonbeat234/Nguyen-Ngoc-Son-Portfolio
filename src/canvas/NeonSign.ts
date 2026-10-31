@@ -4,6 +4,7 @@
 // Mở rộng cho SIGNAL: thêm glyph I T M E H D , và khoảng trắng; nhiều dòng căn giữa; bảng màu theo dòng;
 // mỗi chữ nhấp nháy độc lập (bản gốc chỉ một chữ), "bật đèn" lần lượt (ignite), giật tắt khi bị nhiễu (kick).
 // Không tự RAF: gọi render(dt) từ onTick.
+import { graphemes } from "../core/text";
 
 type Cmd = [string, ...number[]];
 type Sub = { c: Cmd[]; closed?: 1 };
@@ -127,7 +128,7 @@ export function createNeonSign(board: HTMLElement, canvas: HTMLCanvasElement, cf
     const aspect = W / Math.max(1, H);
     const lines = (cfg.layouts.find((l) => aspect >= l.minAspect) ?? cfg.layouts[cfg.layouts.length - 1]).lines;
     const ls = lines.map((s) => {
-      const gl = [...s].map((ch) => GLYPHS[ch] ?? GLYPHS[" "]);
+      const gl = graphemes(s).map((ch) => GLYPHS[ch] ?? GLYPHS[" "]);   // V5-vi (F): theo grapheme
       return { gl, sum: gl.reduce((a, g) => a + g.w, 0) + (gl.length - 1) * GAP };
     });
     const blockW = Math.max(...ls.map((l) => l.sum));

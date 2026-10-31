@@ -73,6 +73,19 @@
 #project-view .pv-spine { position: absolute; left: 50%; top: -.6%; bottom: -.6%; width: 2.6%; translate: -50% 0; z-index: 7; pointer-events: none; border-radius: 3px;
   background: linear-gradient(90deg, transparent, rgb(0 0 0 / .55) 38%, color-mix(in oklab, var(--primary) 30%, rgb(0 0 0 / .7)) 50%, rgb(0 0 0 / .55) 62%, transparent); }
 
+/* V5-perf: biến lật trang KHÔNG kế thừa. Trước đây --tt/--td/--shade (trên .pv-curl) và --lit/--a1/--a2 (trên từng
+   dải) là custom property kế thừa → mỗi frame lật, mọi phần tử của 2×N bản sao trang bên trong đều restyle (trace:
+   ~2.5 s UpdateLayoutTree / 7 s). Giờ chỉ chuỗi dải → mặt giấy → lớp bóng/sáng kế thừa TƯỜNG MINH (inherit); bản sao
+   trang không phụ thuộc nên không bị tính lại. */
+@property --tt { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@property --td { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@property --shade { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --lit { syntax: "<number>"; inherits: false; initial-value: 1; }
+@property --a1 { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --a2 { syntax: "<number>"; inherits: false; initial-value: 0; }
+#project-view .pv-strip { --td: inherit; --shade: inherit; }
+#project-view .pv-face, #project-view .pv-sh, #project-view .pv-gl, #project-view .pv-rim { --lit: inherit; --a1: inherit; --a2: inherit; --shade: inherit; }
+
 /* lá đang lật: N dải lồng nhau (kỹ thuật .curl/.strip của ThreeUI Sketchbook) */
 #project-view .pv-curl { position: absolute; top: 0; height: 100%; width: 50%; transform-style: preserve-3d; z-index: 6; pointer-events: none; }
 #project-view .pv-curl.is-next { left: 50%; transform-origin: left center; transform: rotateY(calc(-1 * var(--tt, 0deg))); }
@@ -168,8 +181,12 @@
 #project-view .pg-tba { display: grid; gap: .7em; }
 #project-view .pg-tba-lines { display: grid; gap: .55em; }
 #project-view .pg-tba-lines i { display: block; height: .72em; border-radius: 4px; border: 1px dashed color-mix(in oklab, var(--bone) 14%, transparent);
-  background: linear-gradient(100deg, color-mix(in oklab, var(--bone) 5%, transparent) 30%, color-mix(in oklab, var(--bone) 13%, transparent) 50%, color-mix(in oklab, var(--bone) 5%, transparent) 70%) 0 0 / 300% 100%;
-  animation: slot-shimmer 2.4s linear infinite; }
+  position: relative; overflow: hidden; background: color-mix(in oklab, var(--bone) 5%, transparent); }
+/* V5-perf: ánh quét bằng transform (compositor), không animate background-position (repaint mỗi frame, kể cả trong
+   các dải bản sao lúc lật trang) */
+#project-view .pg-tba-lines i::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, color-mix(in oklab, var(--bone) 8%, transparent) 50%, transparent 70%);
+  transform: translateX(-100%); animation: slot-sweep 2.4s linear infinite; }
 #project-view .pg-tba-lines i:last-child { width: 62%; }
 #project-view .pg-tba-label { font: 500 max(9px, .74em)/1.3 var(--f-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--mute); }
 
@@ -242,12 +259,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #project-view .pg-tba-lines i { animation: none; }
+  #project-view .pg-tba-lines i, #project-view .pg-tba-lines i::after { animation: none; }
   #project-view .pg-bar b, #project-view .pv-progress b { transition: none; }
   #project-view .pvs-gallery .pg-gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); width: auto; }
   #project-view .pvs-gallery .pg-gal li { width: auto; }
 }
-html.reduced #project-view .pg-tba-lines i { animation: none; }
+html.reduced #project-view .pg-tba-lines i, html.reduced #project-view .pg-tba-lines i::after { animation: none; }
 html.reduced #project-view .pg-bar b, html.reduced #project-view .pv-progress b { transition: none; }
 html.reduced #project-view .pvs-gallery .pg-gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); width: auto; }
 html.reduced #project-view .pvs-gallery .pg-gal li { width: auto; }

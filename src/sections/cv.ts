@@ -18,12 +18,17 @@ function head(n: string, title: string) {
 
 function renderCv() {
   const p = profile;
-  const contact = p.contact.map((c) => `<div><dt>${esc(c.label)}</dt><dd><a href="${esc(c.href)}">${esc(c.value)}</a></dd></div>`).join("");
+  // link ngoài mở tab mới (giống footer); in ra vẫn là chữ thường đọc được (print.css)
+  const contact = p.contact.map((c) => {
+    const external = /^https?:/.test(c.href);
+    const ext = external ? ` target="_blank" rel="noopener noreferrer"` : "";
+    return `<div><dt>${esc(c.label)}</dt><dd><a href="${esc(c.href)}"${ext}>${esc(c.value)}${external ? `<span class="sr-only"> (opens in a new tab)</span>` : ""}</a></dd></div>`;
+  }).join("");
 
   const education = p.educationEntries.map((e) => `
-    <li class="cv-tl-item">
+    <li class="cv-tl-item" data-rise>
       <i class="cv-tl-node" aria-hidden="true"></i>
-      <p class="cv-tl-period">${isFilled(e.period) ? esc(e.period) : slot("Period", "slot-sm")}</p>
+      <p class="cv-tl-period">${e.level ? `<span class="cv-tl-level">${esc(e.level)}</span>` : ""}${isFilled(e.period) ? esc(e.period) : slot("Period", "slot-sm")}</p>
       <h5 class="cv-tl-title">${esc(e.school)}</h5>
       <p class="cv-tl-sub">${isFilled(e.program) ? esc(e.program) : slot("Programme")}</p>
       ${e.notes.length ? `<ul class="cv-list">${e.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}

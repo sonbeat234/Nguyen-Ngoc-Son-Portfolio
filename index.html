@@ -116,8 +116,7 @@
 
           <dl class="hero-readout">
             <div><dt>Education</dt><dd data-decode="manual">FPT University, Hanoi</dd></div>
-            <div><dt>IELTS</dt><dd data-decode="manual">6.0</dd></div>
-            <div><dt>TOEIC</dt><dd data-decode="manual">750</dd></div>
+            <!-- các dòng LinkedIn / GitHub do sections/hero.ts thêm từ profile.contact; IELTS / TOEIC chỉ còn ở Profile + CV -->
           </dl>
 
           <div class="hero-hint" aria-hidden="true"><span class="hero-hint-line"><i></i></span><span class="hero-hint-label">Scroll</span></div>
@@ -167,7 +166,7 @@
           <header class="flow-head wrap" data-shield>
             <p class="eyebrow" data-decode>02 / The IC design flow</p>
             <h2 class="sec-title" data-reveal="lines">From specification <em class="serif-i">to silicon.</em></h2>
-            <p class="flow-sub">Seven stages every digital chip passes through on its way to the fab.</p>
+            <p class="flow-sub" data-rise>Seven stages every digital chip passes through on its way to the fab.</p>
           </header>
 
           <div class="flow-meter" aria-hidden="true" data-shield>
@@ -314,11 +313,11 @@
           <header class="sec-head proj-head" data-shield>
             <p class="eyebrow" data-decode>03 / Projects</p>
             <div class="proj-head-row">
-              <p class="proj-head-note mono" aria-hidden="true"><span data-proj-count>(03) dies</span><span>IC design</span><span>Semiconductor</span></p>
+              <p class="proj-head-note mono" aria-hidden="true" data-rise><span data-proj-count>(03) dies</span><span>IC design</span><span>Semiconductor</span></p>
               <h2 class="sec-title">Work, <em class="serif-i">die by die.</em></h2>
-              <p class="proj-head-note proj-head-note-r mono" aria-hidden="true"><span>Wafer map</span><span>Open a die</span><span>Book · Scroll</span></p>
+              <p class="proj-head-note proj-head-note-r mono" aria-hidden="true" data-rise><span>Wafer map</span><span>Open a die</span><span>Book · Scroll</span></p>
             </div>
-            <p class="sec-sub" data-projects-sub></p>
+            <p class="sec-sub" data-projects-sub data-rise></p>
           </header>
           <div class="proj-grid" data-projects></div>
         </div>
@@ -332,7 +331,7 @@
               <p class="eyebrow" data-decode>04 / Curriculum vitae</p>
               <h2 class="sec-title" data-reveal="lines">Curriculum <em class="serif-i">vitae.</em></h2>
             </div>
-            <div class="cv-actions" data-cv-actions></div>
+            <div class="cv-actions" data-cv-actions data-rise></div>
           </header>
           <article class="cv-doc" data-cv aria-label="Curriculum vitae"></article>
         </div>
@@ -346,14 +345,14 @@
           <div class="eol-neon" aria-hidden="true"><canvas></canvas></div>
           <p class="eol-line serif-i" data-reveal="words">Thanks for following the signal all the way down.</p>
           <!-- TODO: liên hệ thật (email, LinkedIn, GitHub…) → profile.contact trong src/content/profile.ts. Trống = không hiện gì. -->
-          <ul class="eol-contact" data-contact></ul>
-          <p class="eol-name" aria-hidden="true"><span class="eol-name-in"><span class="eol-base">Nguyễn Ngọc Sơn</span><span class="eol-fill">Nguyễn Ngọc Sơn</span></span></p>
-          <div class="eol-bar">
+          <ul class="eol-contact" id="contact" aria-label="Contact" data-contact data-rise></ul>
+          <p class="eol-name" aria-hidden="true"><span class="eol-name-in"><span class="eol-base">Nguyễn Ngọc Sơn</span><span class="eol-fill">Nguyễn Ngọc Sơn</span><span class="eol-sweep"><span class="eol-sweep-in">Nguyễn Ngọc Sơn</span></span></span></p>
+          <div class="eol-bar" data-rise>
             <p class="mono">© 2026 Nguyễn Ngọc Sơn</p>
             <p class="mono eol-uptime" aria-hidden="true">Session uptime <span data-uptime>00:00:00</span></p>
             <button class="btn btn-beam" type="button" data-top data-magnetic="0.3"><span class="glow" aria-hidden="true"></span>Back to power-on ↑</button>
           </div>
-          <p class="eol-credit label">Shader &amp; motion effects adapted from ThreeUI (MIT) · Built with GSAP, Lenis &amp; WebGL</p>
+          <p class="eol-credit label" data-rise>Shader &amp; motion effects adapted from ThreeUI (MIT) · Built with GSAP, Lenis &amp; WebGL</p>
         </footer>
       </section>
     </main>

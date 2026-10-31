@@ -45,6 +45,7 @@ function renderDatasheet(tbody: HTMLElement) {
     ["Full name", profile.fullName],
     ["Date of birth", profile.dateOfBirth],
     ["Education", profile.education],
+    ["High school", profile.highSchool],
     ["IELTS", profile.ielts],
     ["TOEIC", profile.toeic],
   ];

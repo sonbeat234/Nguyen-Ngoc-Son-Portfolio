@@ -29,6 +29,9 @@ type DockItemState = {
   value: number;
   velocity: number;
   target: number;
+  /** V5-perf: vị trí lò xo (tích phân bước cố định 60 Hz) và vị trí bước trước — value = nội suy giữa hai bước */
+  x: number;
+  prev: number;
 };
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
@@ -46,6 +49,8 @@ export function createTopDockController(
     value: 0,
     velocity: 0,
     target: 0,
+    x: 0,
+    prev: 0,
   }));
 
   let enabled = false;
@@ -71,6 +76,8 @@ export function createTopDockController(
       state.baseWidth = rect.width;
       state.baseHeight = rect.height;
       state.value = 0;
+      state.x = 0;
+      state.prev = 0;
       state.velocity = 0;
       state.target = 0;
     }
@@ -160,21 +167,37 @@ export function createTopDockController(
     }
   };
 
-  const draw = () => {
+  /* V5-perf: lò xo gốc tinh chỉnh theo từng frame 60 Hz (spring/damping mỗi lần gọi) → trên 144 Hz nhanh gấp 2.4
+     lần. Tích phân ở bước cố định 1/60 s theo thời gian thật, vẽ giá trị nội suy giữa hai bước → giống hệt cảm giác
+     60 Hz gốc nhưng mượt ở mọi tần số màn hình. */
+  const STEP = 1 / 60;
+  let last = 0, acc = 0;
+  const draw = (now: number) => {
+    const dt = last ? Math.min(0.1, (now - last) / 1000) : STEP;
+    last = now;
     if (enabled && dirty) {
       const options = getOptions();
       let moving = false;
       let maxValue = 0;
+      acc += dt;
+      while (acc >= STEP) {
+        for (const state of items) {
+          state.prev = state.x;
+          state.velocity += (state.target - state.x) * options.spring;
+          state.velocity *= options.damping;
+          state.x += state.velocity;
+        }
+        acc -= STEP;
+      }
+      const a = acc / STEP;
       for (const state of items) {
-        state.velocity += (state.target - state.value) * options.spring;
-        state.velocity *= options.damping;
-        state.value += state.velocity;
-        if (Math.abs(state.target - state.value) < 0.001 && Math.abs(state.velocity) < 0.001) {
-          state.value = state.target;
+        if (Math.abs(state.target - state.x) < 0.001 && Math.abs(state.velocity) < 0.001) {
+          state.x = state.prev = state.target;
           state.velocity = 0;
         } else {
           moving = true;
         }
+        state.value = state.prev + (state.x - state.prev) * a;
         maxValue = Math.max(maxValue, clamp(state.value, 0, 1.08));
       }
       applyLayout();

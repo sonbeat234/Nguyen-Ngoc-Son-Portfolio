@@ -14,9 +14,12 @@ export function initShield(root: ParentNode = document) {
     if (e.isIntersecting) visible.add(e.target as HTMLElement); else visible.delete(e.target as HTMLElement);
   }));
   els.forEach((el) => io.observe(el));
-  const s = stage.shields;
+  const s = stage.shields, html = document.documentElement;
   onTick(() => {
     let n = 0;
+    // V5-perf: menu / overlay project phủ trang → main ẩn, khỏi đo (đọc rect ở đây ép style recalc của overlay đang
+    // lật trang: trace "book-turns" ~2.5 s getBoundingClientRect)
+    if (html.classList.contains("menu-open") || html.classList.contains("pv-open")) { stage.shieldN = 0; return; }
     for (const el of visible) {
       if (n >= MAX) break;
       const r = el.getBoundingClientRect();

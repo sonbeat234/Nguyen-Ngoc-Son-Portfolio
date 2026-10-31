@@ -3,6 +3,8 @@
 //   node scripts/verify.mjs [--port 4173] [--out verify] [--chapters hero,about] [--steps 1]
 //                           [--viewports desktop,laptop,tablet,mobile] [--reduced] [--boundaries] [--path "/?debug"]
 //                           [--base https://site.pages.dev] [--projects] [--gpu]
+//   node scripts/verify.mjs --perf [--segments a,b] [--passes vsync,uncapped] [--trace 3] [--size 1536x864] [--dpr 1.25]
+//                           (GPU thật, Chromium headless mới — xem scripts/perf.mjs)
 //
 // Server phải chạy sẵn: `npx vite --port 5174 --strictPort` (dev) hoặc `npm run build && npx vite preview --port 4173`.
 // --chapters c00 chụp thêm preloader trong lúc tải. --steps N chụp N điểm đều trong quãng pin của mỗi chương.
@@ -24,6 +26,20 @@ const boundaries = flag("boundaries");
 // --base https://….pages.dev để kiểm tra bản đã deploy thay cho server cục bộ
 const origin = opt("base", `http://localhost:${port}`).replace(/\/$/, "");
 const url = `${origin}${opt("path", "/?debug")}`;
+
+// --perf: đo frame time / long task / GPU theo từng đoạn chuyển cảnh trên GPU thật (scripts/perf.mjs)
+if (flag("perf")) {
+  const { runPerf } = await import("./perf.mjs");
+  const [w, h] = opt("size", "1536x864").split("x").map(Number);
+  const code = await runPerf({
+    origin, out: opt("out", "verify-perf"),
+    only: opt("segments", "").split(",").filter(Boolean),
+    passes: opt("passes", "vsync,uncapped").split(","),
+    traceN: Number(opt("trace", "3")),
+    viewport: { width: w, height: h }, dpr: Number(opt("dpr", "1.25")),
+  });
+  process.exit(code);
+}
 
 fs.mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({

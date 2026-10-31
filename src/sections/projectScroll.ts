@@ -87,7 +87,9 @@ export function createScrollView(host: HTMLElement, defs: PageDef[], onProgress:
     });
   }, el);
 
-  requestAnimationFrame(() => ScrollTrigger.refresh());
+  // V5-perf (k): chỉ refresh trigger của chính overlay (scroller = el). ScrollTrigger.refresh() toàn cục đo lại cả pin
+  // của trang chính (layout toàn trang) đúng lúc overlay đang mở → long task.
+  requestAnimationFrame(() => ScrollTrigger.getAll().filter((t) => t.scroller === el).forEach((t) => t.refresh()));
 
   return {
     el,

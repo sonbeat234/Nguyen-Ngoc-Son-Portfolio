@@ -13,6 +13,12 @@ export function onTick(fn: Tick, phase: "early" | "normal" | "late" = "normal") 
   return () => { set.delete(fn); };
 }
 
+/**
+ * ?perf / ?debug: thời gian JS của mỗi frame — từ listener ưu tiên đầu tiên của gsap.ticker (core/hud.ts đặt t0,
+ * trước Lenis + tween) tới khi mọi onTick xong. verify.mjs --perf đọc __signal.tickLog. Tắt (on = false) thì không tốn gì.
+ */
+export const perfHook = { on: false, t0: 0, log: [] as [number, number][] };
+
 let lastX = state.mouse.x, lastY = state.mouse.y;
 
 gsap.ticker.add((time, deltaMs) => {
@@ -37,5 +43,10 @@ gsap.ticker.add((time, deltaMs) => {
   early.forEach((f) => f(time, dt));
   normal.forEach((f) => f(time, dt));
   late.forEach((f) => f(time, dt));
+  if (perfHook.on) {
+    const L = perfHook.log;
+    L.push([perfHook.t0, performance.now() - perfHook.t0]);
+    if (L.length > 30000) L.splice(0, 15000);
+  }
 });
 gsap.ticker.lagSmoothing(0);

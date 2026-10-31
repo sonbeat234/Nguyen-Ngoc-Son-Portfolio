@@ -34,7 +34,9 @@ export function splitReveal(el: HTMLElement, mode: RevealMode = "words", trigger
         yPercent: 115,
         rotate: mode === "chars" ? 8 : 0,
         opacity: 0,
-        filter: "blur(6px)",
+        // V5-perf (d): không blur động trên từng từ/ký tự (mỗi phần tử một render pass mỗi frame) — chỉ
+        // transform + opacity; ?legacyfx giữ blur cũ để so sánh
+        ...(state.legacyfx ? { filter: "blur(6px)" } : {}),
         duration: 1.15,
         ease: "power4.out",
         stagger: mode === "chars" ? 0.018 : 0.045,

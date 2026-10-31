@@ -69,3 +69,13 @@ Nội dung: `src/content/profile.ts`. Hướng dẫn: `README.md`.
 
 Phase 0–2 hoàn tất (engine, stage, lớp toàn cục, text FX). Chương 00, 01, 04, 05, 10 đã xong; 02, 03, 06–09, 11, 12 còn dở khi chuyển hướng. Toàn bộ nằm trong commit `af41c3e`.
 </details>
+
+## Vòng V5 — thêm motion + học vấn THPT
+- [x] `[data-rise]` scroll-reveal một lần cho khối chưa có chuyển động vào: phụ đề Design flow, ghi chú + phụ đề Projects, nút CV, mục timeline học vấn, liên hệ / thanh cuối / credit footer
+- [x] Hover: mục timeline CV (chữ trượt 4px, node phóng 1.25, nhãn cấp học + tên trường đổi màu), chip kỹ năng / dự án CV (khi có dữ liệu), vòng điểm Profile (nhấc 4px + quầng sáng), dòng datasheet (giá trị trượt 4px, số pin đổi màu), link liên hệ footer (nhấc 2px)
+- [x] Reduced: hover `.btn` / `.pcard` không còn nhấc / phóng
+- [x] Le Quy Don High School for the Gifted, Lai Chau: timeline CV (nhãn "High school") + datasheet Profile
+- [x] Liên hệ thật (Email, LinkedIn, GitHub): pill có icon ở footer + nút Copy email, đầu CV (link ngoài mở tab mới), mục "Contact" trong menu
+- [x] Trang đầu bỏ IELTS / TOEIC (chỉ còn Profile + CV); readout hero: Education · LinkedIn · GitHub — `verify-v5d` (4 khung) + reduced 0 lỗi, không tràn ngang
+- Kiểm chứng liên hệ: tsc + build sạch; `verify-v5c` + `verify-v5c-reduced` 0 lỗi; Playwright: Copy ghi đúng email vào clipboard, báo aria-live, tự trả về sau 1.5 s; menu → Contact dừng khối ở giữa màn và focus link email; 375px không tràn ngang, mỗi địa chỉ một dòng; in CV 1 trang. Chưa chạy `scripts/contrast.mjs` vòng này.
+- Kiểm chứng: tsc + build sạch; `verify-v5b` (desktop + mobile, 2 điểm/section) và `verify-v5-reduced`: 0 lỗi, không tràn ngang, đỉnh 3 / 2 WebGL context như trước; Playwright: mục `data-rise` ẩn trước khi tới (opacity 0, y 24) → hiện và gỡ inline style sau khi cuộn, reduced hiện sẵn + hover không dịch chuyển; in CV vẫn 1 trang A4, đủ hai trường.

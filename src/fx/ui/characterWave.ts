@@ -5,9 +5,10 @@
 import { onTick } from "../../core/loop";
 import { state } from "../../core/state";
 import { damp } from "../../core/math";
+import { graphemes } from "../../core/text";
 
 export function initCharacterWave(host: HTMLElement, text: string, getProgress: () => number) {
-  const glyphs = [...text];
+  const glyphs = graphemes(text);                       // V5-vi (F): theo grapheme
   const n = glyphs.length;
   const cards = glyphs.map((ch) => {
     const el = document.createElement("span");
@@ -57,7 +58,7 @@ export function waveLabel(host: HTMLElement, speed = 7) {
   const text = host.textContent ?? "";
   host.setAttribute("aria-label", text);
   host.textContent = "";
-  const chars = [...text].map((ch) => {
+  const chars = graphemes(text).map((ch) => {           // V5-vi (F): theo grapheme, không theo code point
     const el = document.createElement("span");
     el.className = "cw-ch";
     el.setAttribute("aria-hidden", "true");
@@ -67,6 +68,8 @@ export function waveLabel(host: HTMLElement, speed = 7) {
   });
   const n = chars.length;
   if (state.reduced) return () => {};
+  // V5-perf (k): will-change chỉ trong lúc sóng chạy (không thường trực trong CSS) — gỡ khi dừng để chữ nét
+  chars.forEach((c) => (c.style.willChange = "transform"));
   const span = n + 4;                          // quãng nghỉ giữa hai lượt sóng
   const off = onTick(() => {
     const phase = (state.time * speed) % span - 2;
@@ -78,5 +81,5 @@ export function waveLabel(host: HTMLElement, speed = 7) {
       s.setProperty("--f", focus.toFixed(3));
     }
   });
-  return () => { off(); chars.forEach((c) => (c.style.transform = "")); };
+  return () => { off(); chars.forEach((c) => { c.style.transform = ""; c.style.willChange = ""; }); };
 }

@@ -54,7 +54,7 @@
   background: conic-gradient(from 225deg, transparent 0, rgba(255,255,255,.6) 90deg, transparent 90deg);
   animation: spin 4s linear infinite; }
 .btn-glass > span { position: relative; display: inline-flex; gap: .75em; align-items: center; padding: .75em 1em .75em .75em;
-  border-radius: inherit; background: color-mix(in oklab, var(--panel) 80%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-radius: inherit; background: color-mix(in oklab, var(--panel) 86%, transparent);   /* kính mờ: shader stage; nền đặc hơn chút vì conic sau lưng không còn bị blur */
   text-transform: none; letter-spacing: 0; font-size: 1rem; }
 .btn-glass img, .btn-glass .avatar { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,.1); flex: none; }
 .btn-glass:hover { scale: 1.05; box-shadow: 0 0 40px 8px color-mix(in oklab, var(--accent) 35%, transparent); }
@@ -102,3 +102,8 @@
 
 @media (prefers-reduced-motion: reduce) { .btn::before, .btn::after, .btn * { animation: none !important; } }
 html.reduced .btn::before, html.reduced .btn::after, html.reduced .btn * { animation: none !important; }
+/* reduced: hover nút chỉ đổi màu / sáng viền, không nhấc lên hay phóng to (đặt cuối file để thắng các .btn-*:hover cùng độ ưu tiên) */
+@media (prefers-reduced-motion: reduce) { .btn:hover { translate: none; scale: none; } }
+html.reduced .btn:hover { translate: none; scale: none; }
+/* ?legacyfx: CSS backdrop blur cũ của nút kính (so sánh trước/sau) */
+html.legacyfx .btn-glass > span { background: color-mix(in oklab, var(--panel) 80%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }

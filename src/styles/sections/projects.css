@@ -84,3 +84,6 @@
 }
 @media (prefers-reduced-motion: reduce) { #projects .pcard:is(:hover, :focus-within) .pc-beam { animation: none; } }
 html.reduced #projects .pcard:is(:hover, :focus-within) .pc-beam { animation: none; }
+/* reduced: card không nhấc lên, vẫn sáng viền + bóng */
+@media (prefers-reduced-motion: reduce) { #projects .pcard:is(:hover, :focus-within) { translate: none; } }
+html.reduced #projects .pcard:is(:hover, :focus-within) { translate: none; }

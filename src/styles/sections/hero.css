@@ -38,24 +38,30 @@
 }
 #hero .hero-line { display: block; white-space: nowrap; --wb: 300; }
 #hero .hero-line + .hero-line { font-weight: 700; letter-spacing: -.05em; --wb: 700; }
-#hero .hero-ch {
-  --k: 0;
+/* tên = dòng chữ THẬT (kerning, lang="vi") + lớp phủ grapheme aria-hidden đặt đúng vị trí đo bằng Range
+   (sections/heroName.ts) cho intro và sóng độ đậm. Không khoá bề rộng, không will-change thường trực (chữ nét). */
+#hero .hero-name.has-fx .hero-line { color: transparent; }
+#hero .hero-name-fx { position: absolute; inset: 0; pointer-events: none; }
+#hero .hero-name-fx .hf {
+  --k: 0; position: absolute; white-space: pre; line-height: normal; letter-spacing: 0;
   color: color-mix(in oklab, var(--accent) calc(var(--k) * 100%), var(--bone));
-  text-shadow: 0 0 calc(var(--k) * 28px) color-mix(in oklab, var(--accent) calc(var(--k) * 70%), transparent);
-  /* sóng độ đậm theo con trỏ (Unbounded variable wght 200–900; ô ký tự đã khoá bề rộng trong hero.ts) */
-  font-variation-settings: "wght" calc(var(--wb) + var(--k) * 380);
-  text-align: center;
-  will-change: transform;
+  transform-origin: 50% 70%;
+}
+/* quầng sáng: text-shadow CỐ ĐỊNH, chỉ opacity theo mức k (không còn text-shadow calc() mỗi frame) */
+#hero .hero-name-fx .hf::before {
+  content: attr(data-g); position: absolute; inset: 0; color: transparent; pointer-events: none;
+  text-shadow: 0 0 22px color-mix(in oklab, var(--accent) 70%, transparent); opacity: var(--k);
 }
 /* hạt hội tụ thành tên (WebGL, chỉ sống ~2 s lúc intro) */
 #hero .hero-particles { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 #hero .hero-particles canvas { display: block; width: 100%; height: 100%; }
 /* vệt quét sáng chạy qua tên một lần sau intro */
 #hero .hero-name::after {
-  content: ""; position: absolute; inset: -4% -2%; pointer-events: none; opacity: 0; mix-blend-mode: screen;
+  content: ""; position: absolute; inset: -4% -2%; pointer-events: none; opacity: 0;
   background: linear-gradient(100deg, transparent 0 40%, color-mix(in oklab, var(--accent) 55%, transparent) 50%, transparent 60% 100%) -60% 0 / 60% 100% no-repeat;
 }
-#hero .hero-name.is-scanned::after { animation: hero-scan 1.8s var(--ease-in-out) .4s 1 both; }
+/* blend chỉ trong lúc vệt quét chạy (hero.ts gỡ class khi xong) — mix-blend thường trực tạo nhóm blend vô ích */
+#hero .hero-name.is-scanned::after { mix-blend-mode: screen; animation: hero-scan 1.8s var(--ease-in-out) .4s 1 both; }
 @keyframes hero-scan { 0% { opacity: 0; background-position: -60% 0 } 15% { opacity: 1 } 85% { opacity: 1 } 100% { opacity: 0; background-position: 160% 0 } }
 
 #hero .hero-tag { font-size: clamp(1.35rem, 2.5vw, 2.3rem); line-height: 1.1; color: color-mix(in oklab, var(--accent) 55%, var(--bone)); }
@@ -76,10 +82,16 @@
 /* readout: thông tin xác nhận, decode khi intro */
 #hero .hero-readout { position: absolute; right: calc(var(--gutter) + 52px); bottom: clamp(70px, 12vh, 130px); margin: 0;
   display: grid; gap: 12px; text-align: right; padding: 14px 16px; border-radius: 12px;
-  background: color-mix(in oklab, var(--ink) 62%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); }
+  background: color-mix(in oklab, var(--ink) 62%, transparent); border:1px solid var(--line); }
 #hero .hero-readout > div { display: grid; gap: 4px; padding-right: 14px; border-right: 1px solid color-mix(in oklab, var(--accent) 55%, transparent); }
 #hero .hero-readout dt { font: 400 .62rem/1 var(--f-mono); letter-spacing: .24em; text-transform: uppercase; color: var(--mute); }
 #hero .hero-readout dd { margin: 0; font: 500 .95rem/1.2 var(--f-mono); color: var(--bone); }
+/* link hồ sơ (LinkedIn / GitHub): gạch chân accent mảnh, ↗ trang trí (trình đọc màn hình bỏ qua) */
+#hero .hero-readout a { color: inherit; text-decoration: underline 1px color-mix(in oklab, var(--accent) 55%, transparent); text-underline-offset: 4px;
+  transition: color .3s, text-decoration-color .3s; }
+#hero .hero-readout a::after { content: "↗"; content: "↗" / ""; display: inline-block; margin-left: .3em; font-size: .85em; color: var(--accent); transition: translate .3s var(--ease-out); }
+@media (hover: hover) { #hero .hero-readout a:hover { color: var(--accent-2); text-decoration-color: currentColor; } }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) { html:not(.reduced) #hero .hero-readout a:hover::after { translate: 2px -2px; } }
 
 /* gợi ý cuộn: vạch dọc có chấm chạy xuống */
 #hero .hero-hint { position: absolute; left: 50%; bottom: 44px; translate: -50% 0;
@@ -111,8 +123,13 @@
   #hero .hero-ctas { gap: 10px; }
   #hero .hero-ctas .btn-spin > span { padding: .9em 1.4em; }
   #hero .hero-readout dd { font-size: .78rem; }
-  #hero .hero-readout > div:first-child dd { max-width: 13ch; white-space: normal; }
+  /* 2 hàng: Education trọn hàng trên, các link hồ sơ chia đôi hàng dưới — nằm gọn trong lề 375px */
+  #hero .hero-readout { right: var(--gutter); grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; }
+  #hero .hero-readout > div:first-child { grid-column: 1 / -1; }
+  #hero .hero-readout a { white-space: nowrap; }
 }
 @media (prefers-reduced-motion: reduce) { #hero .hero-hint-line i { animation: none; top: 22px; } #hero .hero-name::after { display: none; } }
 html.reduced #hero .hero-hint-line i { animation: none; top: 22px; }
 html.reduced #hero .hero-name::after { display: none; }
+/* ?legacyfx: CSS backdrop blur cũ trên canvas sống (so sánh trước/sau) */
+html.legacyfx #hero .hero-readout { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }

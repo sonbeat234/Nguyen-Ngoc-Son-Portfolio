@@ -55,6 +55,8 @@ export type SkillGroup = {
 };
 
 export type Education = {
+  /** cấp học, hiện dạng nhãn nhỏ trên timeline CV, vd "University", "High school" */
+  level?: string;
   school: string;
   /** TODO: ngành / chương trình, vd "B.Eng. in Integrated Circuit Design" */
   program: string;
@@ -80,6 +82,7 @@ export const profile = {
   fullName: "Nguyễn Ngọc Sơn",
   dateOfBirth: "2nd August 2006",
   education: "FPT University, Hanoi",
+  highSchool: "Le Quy Don High School for the Gifted, Lai Chau",
   ielts: "6.0",
   toeic: "750",
 
@@ -108,10 +111,18 @@ export const profile = {
 
   educationEntries: [
     {
+      level: "University",
       school: "FPT University, Hanoi",
       program: "", // TODO: ngành học chính xác
       period: "", // TODO: năm bắt đầu – kết thúc / "present"
       notes: [], // TODO: GPA, môn chuyên ngành tiêu biểu, đồ án…
+    },
+    {
+      level: "High school",
+      school: "Le Quy Don High School for the Gifted, Lai Chau",
+      program: "", // TODO (tuỳ chọn): lớp chuyên, vd "Specialised class: Mathematics"
+      period: "", // TODO: năm học, vd "2021 – 2024"
+      notes: [],
     },
   ] as Education[],
 
@@ -132,8 +143,16 @@ export const profile = {
     },
   ],
 
-  /** TODO: chỉ thêm liên hệ THẬT (email, LinkedIn, GitHub…). Mảng rỗng → không hiện nút liên hệ nào. */
-  contact: [] as ContactLink[],
+  /**
+   * Liên hệ THẬT (đã xác nhận). Hiện ở footer (End of line — email có nút Copy), đầu CV, mục "Contact" trong menu,
+   * và readout trang đầu (2 link https đầu tiên, chỉ hiện handle — thay chỗ IELTS/TOEIC cũ).
+   * Icon tự chọn theo href: mailto → thư, tel → điện thoại, linkedin.com, github.com. Mảng rỗng → không hiện gì.
+   */
+  contact: [
+    { label: "Email", value: "ngocson02082006@gmail.com", href: "mailto:ngocson02082006@gmail.com" },
+    { label: "LinkedIn", value: "linkedin.com/in/ngocson2006", href: "https://www.linkedin.com/in/ngocson2006/" },
+    { label: "GitHub", value: "github.com/sonbeat234", href: "https://github.com/sonbeat234" },
+  ] as ContactLink[],
 };
 
 export const isFilled = (v: string | string[]) => (Array.isArray(v) ? v.length > 0 : v.trim().length > 0);

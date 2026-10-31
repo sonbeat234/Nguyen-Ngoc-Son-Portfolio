@@ -119,7 +119,8 @@ export function initProjectView(projects: Project[], cards: HTMLElement[]) {
       tl.add(Flip.from(flipState, { targets: frame, duration: 0.85, ease: "expo.inOut", scale: true, absolute: false }), 0)
         .to(content, { opacity: 1, duration: 0.45, ease: "power2.out", stagger: 0.06 }, 0.55)
         .to(card, { opacity: 0, duration: 0.2 }, 0)
-        .to(others, { scale: 0.86, opacity: 0.25, filter: "blur(3px)", duration: 0.8, ease: "expo.out", stagger: 0.05 }, 0)
+        // V5-perf (d): card khác lùi lại bằng scale + opacity (blur động chỉ còn ở ?legacyfx)
+        .to(others, { scale: 0.86, opacity: 0.25, ...(state.legacyfx ? { filter: "blur(3px)" } : {}), duration: 0.8, ease: "expo.out", stagger: 0.05 }, 0)
         .add(() => glitchPulse(), 0.05);
     } else {
       tl.fromTo(frame, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: state.reduced ? 0.3 : 0.6, ease: "expo.out" }, 0);
@@ -148,7 +149,7 @@ export function initProjectView(projects: Project[], cards: HTMLElement[]) {
       outside.forEach((el) => el && (el.inert = false));
       lockScroll(false, "project");
       gsap.set(card, { opacity: 1 });
-      gsap.to(others, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out", clearProps: "scale,opacity,filter" });
+      gsap.to(others, { scale: 1, opacity: 1, ...(state.legacyfx ? { filter: "blur(0px)" } : {}), duration: 0.6, ease: "expo.out", clearProps: "scale,opacity,filter" });
       current = -1;
       busy = false;
       returnFocus?.focus({ preventScroll: true });
