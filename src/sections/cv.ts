@@ -4,24 +4,31 @@
 // In: nút "Print / Save as PDF" (window.print) + styles/print.css chỉ in tài liệu, nền trắng chữ đen,
 // ẩn mọi ô trống. Nút Download chỉ hiện khi profile.cvFile trỏ tới file thật trong public/.
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { $, $$ } from "../core/dom";
 import { state } from "../core/state";
 import { profile, isFilled, esc } from "../content/profile";
+import { decodeGroup } from "../fx/text/decode";
 
 const slot = (what: string, size = "") => `<span class="slot ${size}" aria-hidden="true"></span><span class="sr-only">${what} not added yet</span>`;
 
 function head(n: string, title: string) {
-  return `<h4 class="cv-h"><span class="cv-h-n" aria-hidden="true">${n}</span><span data-decode>${title}</span></h4>`;
+  return `<h4 class="cv-h"><span class="cv-h-n" aria-hidden="true">${n}</span><span data-article-heading>${title}</span></h4>`;
 }
 
 function renderCv() {
   const p = profile;
-  const contact = p.contact.map((c) => `<div><dt>${esc(c.label)}</dt><dd><a href="${esc(c.href)}">${esc(c.value)}</a></dd></div>`).join("");
+  // link ngoài mở tab mới (giống footer); in ra vẫn là chữ thường đọc được (print.css)
+  const contact = p.contact.map((c) => {
+    const external = /^https?:/.test(c.href);
+    const ext = external ? ` target="_blank" rel="noopener noreferrer"` : "";
+    return `<div><dt>${esc(c.label)}</dt><dd><a href="${esc(c.href)}"${ext}>${esc(c.value)}${external ? `<span class="sr-only"> (opens in a new tab)</span>` : ""}</a></dd></div>`;
+  }).join("");
 
   const education = p.educationEntries.map((e) => `
-    <li class="cv-tl-item">
+    <li class="cv-tl-item" data-rise>
       <i class="cv-tl-node" aria-hidden="true"></i>
-      <p class="cv-tl-period">${isFilled(e.period) ? esc(e.period) : slot("Period", "slot-sm")}</p>
+      <p class="cv-tl-period">${e.level ? `<span class="cv-tl-level">${esc(e.level)}</span>` : ""}${isFilled(e.period) ? esc(e.period) : slot("Period", "slot-sm")}</p>
       <h5 class="cv-tl-title">${esc(e.school)}</h5>
       <p class="cv-tl-sub">${isFilled(e.program) ? esc(e.program) : slot("Programme")}</p>
       ${e.notes.length ? `<ul class="cv-list">${e.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
@@ -96,6 +103,9 @@ export function initCv() {
   $("[data-print]", actions).addEventListener("click", () => window.print());
 
   const blocks = $$(".cv-block", doc);
+  // V4: tiêu đề mục decode kiểu Article Headings — cả nhóm lần lượt (stagger 140 ms, preserve .3, tail .18)
+  const headings = $$("[data-article-heading]", doc);
+  if (!state.reduced) ScrollTrigger.create({ trigger: $(".cv-body", doc), start: "top 78%", once: true, onEnter: () => decodeGroup(headings) });
   if (state.reduced) { doc.classList.add("is-on"); return; }
 
   gsap.timeline({ scrollTrigger: { trigger: doc, start: "top 84%", once: true } })

@@ -25,8 +25,9 @@ lenis.on("scroll", (l: Lenis) => {
 // chạy trước tick chính (prioritize) để state.scroll luôn mới trong cùng frame
 gsap.ticker.add((t) => lenis.raf(t * 1000), false, true);
 
-export const scrollTo = (target: string | HTMLElement | number, duration = 1.6) =>
-  lenis.scrollTo(target as never, { duration, easing: (t: number) => 1 - Math.pow(1 - t, 4) });
+/** offset (px, âm = dừng sớm hơn) để đích không nằm sát mép trên, dưới dock */
+export const scrollTo = (target: string | HTMLElement | number, duration = 1.6, offset = 0) =>
+  lenis.scrollTo(target as never, { duration, offset, easing: (t: number) => 1 - Math.pow(1 - t, 4) });
 
 /** Khoá scroll trong preloader và menu. Nhiều lý do khoá chồng nhau được (preloader, menu, tab ẩn). */
 const locks = new Set<string>();

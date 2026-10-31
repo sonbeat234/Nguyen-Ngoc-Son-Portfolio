@@ -11,6 +11,10 @@ uniform vec2  u_mouse;
 uniform float u_progress;
 uniform float u_velocity;
 uniform vec3  u_accent;
+uniform vec3  u_accent2;
+uniform vec3  u_signal;
+uniform vec3  u_base;
+uniform vec3  u_bg;
 
 float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
 float vnoise(vec2 p){
@@ -19,6 +23,12 @@ float vnoise(vec2 p){
 }
 mat2 rot(float a){ float c = cos(a), s = sin(a); return mat2(c, -s, s, c); }
 vec3 film(float t){ return 0.5 + 0.5*cos(6.28318*(t + vec3(0.0, 0.33, 0.67))); }
+// óng ánh màng mỏng kéo về palette: ramp accent → signal → accent2 thay cho cầu vồng đầy đủ
+vec3 filmPal(float t){
+  vec3 p = mix(u_accent, u_signal, 0.5 + 0.5*cos(6.28318*t));
+  p = mix(p, u_accent2, 0.5 + 0.5*cos(6.28318*(t + 0.33)));
+  return mix(film(t), p, 0.62);
+}
 
 // màn hình → toạ độ wafer (bán kính 1)
 vec2 toWafer(vec2 uv, vec2 c, float R, float z, float a, vec2 o){ return rot(a) * ((uv - c) / (R * z)) + o; }
@@ -61,10 +71,10 @@ void main(){
   float h = hash(id);
 
   // ---- nền silicon + óng ánh màng mỏng ----
-  vec3 base = vec3(0.045, 0.058, 0.082);
+  vec3 base = u_base;
   float t = dot(w, vec2(0.6, 0.8)) * 0.32 + r * 0.55 + m.x * 0.35 + m.y * 0.22
           + u_time * 0.018 + u_velocity * 0.25 + vnoise(w * 2.6) * 0.18;
-  vec3 irid = film(t);
+  vec3 irid = filmPal(t);
   float band = exp(-pow((dot(w, vec2(0.72, 0.69)) - (mw.x + mw.y) * 0.7) * 2.4, 2.0));
   vec3 col = base + irid * (0.07 + 0.2 * band) * mix(0.55, 1.0, full);
 
@@ -102,7 +112,7 @@ void main(){
   // viền vát + quầng ngoài
   float rim = smoothstep(0.03, 0.0, abs(r - 0.986));
   col += (irid * 0.4 + 0.25) * rim * 0.35;
-  vec3 bg = vec3(0.016, 0.02, 0.028);
+  vec3 bg = u_bg;
   vec2 sg = abs(fract(uv * 9.0) - 0.5);
   bg += 0.012 * step(0.485, max(sg.x, sg.y));                              // lưới reticle mờ
   bg += u_accent * 0.07 * exp(-max(r - 1.0, 0.0) * 5.0);

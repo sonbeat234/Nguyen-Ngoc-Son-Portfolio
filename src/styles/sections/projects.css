@@ -2,12 +2,42 @@
 #projects { padding-block: clamp(140px, 20vh, 220px) clamp(120px, 16vh, 180px); }
 #projects .proj-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2vw, 28px); perspective: 1200px; }
 
+/* tiêu đề kiểu Gallery Heading: ghi chú mono hai bên tiêu đề lớn */
+#projects .proj-head-row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: clamp(16px, 3vw, 48px); }
+#projects .proj-head-row .sec-title { max-width: none; text-align: center; }
+#projects .proj-head-note { display: grid; gap: .5em; font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--mute); }
+#projects .proj-head-note span:first-child { color: var(--accent); }
+#projects .proj-head-note-r { justify-items: end; text-align: right; }
+#projects .proj-head .sec-sub { justify-self: center; text-align: center; }
+/* từ trượt (slideHeading): khung cắt dọc mỗi từ, bản sao nằm trên */
+#projects .sl-w { display: inline-block; overflow: clip; overflow-clip-margin: .2em; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+#projects .sl-in { position: relative; display: inline-block; }
+#projects .sl-b { position: absolute; left: 0; bottom: 100%; }
+
 #projects .pcard {
-  display: grid; align-content: start; gap: 22px; min-height: 420px; padding: clamp(22px, 2.4vw, 32px);
-  background: linear-gradient(170deg, rgba(16,22,30,.86), rgba(8,11,16,.8));
-  border-color: color-mix(in oklab, var(--accent) 18%, var(--line));
+  display: flex; flex-direction: column; gap: 22px; min-height: 440px; padding: clamp(22px, 2.4vw, 32px);
+  background: color-mix(in oklab, var(--panel) 94%, transparent);
+  border-color: color-mix(in oklab, var(--accent) 34%, var(--line));
+  transition: translate .6s var(--ease-spring), box-shadow .6s var(--ease-out), border-color .4s;
 }
+#projects .pcard:is(:hover, :focus-within) { translate: 0 -6px; border-color: color-mix(in oklab, var(--accent) 60%, transparent);
+  box-shadow: 0 34px 70px -34px color-mix(in oklab, var(--accent) 55%, transparent), 0 20px 40px -24px rgb(0 0 0 / .8); }
+/* link phủ cả card (Enter / Space mở overlay); link ngoài nổi trên nó */
+#projects .pc-hit { position: absolute; inset: 0; z-index: 4; border-radius: inherit; }
+#projects .pc-hit:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+#projects .pc-link { position: relative; z-index: 5; }
+/* viền beam chạy quanh card (kỹ thuật .btn-beam: conic theo --ang + mask chỉ giữ viền) */
+#projects .pc-beam { position: absolute; inset: 0; z-index: 3; border-radius: inherit; padding: 1.5px; pointer-events: none; opacity: 0; transition: opacity .4s;
+  background: conic-gradient(from var(--ang), transparent 0 270deg, var(--accent-2) 330deg, var(--accent) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+#projects .pcard:is(:hover, :focus-within) .pc-beam { opacity: 1; animation: spin-ang 2.6s linear infinite; }
+/* vệt sáng quét chéo khi hover */
+#projects .pc-sheen { position: absolute; inset: 0; z-index: 3; border-radius: inherit; overflow: hidden; pointer-events: none; }
+#projects .pc-sheen::before { content: ""; position: absolute; inset: -30% -70%; translate: -70% 0;
+  background: linear-gradient(115deg, transparent 42%, color-mix(in oklab, var(--accent-2) 20%, transparent) 50%, transparent 58%); }
+#projects .pcard:is(:hover, :focus-within) .pc-sheen::before { translate: 70% 0; transition: translate 1.1s var(--ease-out); }
 #projects .pcard > * { transform: translateZ(26px); }
+#projects .pcard > :is(.pc-hit, .pc-beam, .pc-sheen) { transform: none; }
 /* chữ thập probe: hai vạch mảnh bám --mx/--my (tilt.ts) */
 #projects .pc-probe { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .35s; transform: none;
   background:
@@ -19,14 +49,22 @@
 #projects .pc-br { bottom: 10px; right: 10px; border-bottom-width: 1px; border-right-width: 1px; }
 
 #projects .pc-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-#projects .pc-die { font: 500 .7rem/1 var(--f-mono); letter-spacing: .26em; color: var(--accent); }
-#projects .pc-status { font: 500 .6rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--mute);
-  padding: .55em .9em; border-radius: 999px; border: 1px solid var(--line); }
+#projects .pc-die { font: 500 .72rem/1 var(--f-mono); letter-spacing: .26em; color: var(--accent); }
+#projects .pc-status { font: 500 .62rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--signal);
+  padding: .55em .9em; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--signal) 45%, transparent);
+  background: color-mix(in oklab, var(--signal) 8%, transparent); }
 #projects .pcard.is-empty .pc-status { border-style: dashed; }
-#projects .pc-title { font: 300 clamp(1.3rem, 1.8vw, 1.7rem)/1.15 var(--f-display); letter-spacing: -.03em; min-height: 2.3em; }
+#projects .pc-title { display: grid; gap: .45em; align-content: start; font: 300 clamp(1.3rem, 1.8vw, 1.7rem)/1.15 var(--f-display); letter-spacing: -.03em; min-height: 2.3em; }
+#projects .pc-title-tba { font: 500 .6rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
+/* "Open die →" luôn hiện (máy cảm ứng không có hover) */
+#projects .pc-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
+#projects .pc-open { display: inline-flex; align-items: center; gap: .55em; font: 500 .72rem/1 var(--f-mono); letter-spacing: .18em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--accent) 65%, var(--bone)); }
+#projects .pc-open svg { width: 1em; height: 1em; transition: transform .35s var(--ease-out); }
+#projects .pcard:is(:hover, :focus-within) .pc-open svg { transform: translateX(5px); }
 #projects .pc-fields { display: grid; gap: 14px; margin: 0; }
 #projects .pc-field { display: grid; gap: 6px; padding-top: 12px; border-top: 1px solid var(--line); }
-#projects .pc-field dt { font: 400 .6rem/1 var(--f-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--mute); }
+#projects .pc-field dt { font: 400 .62rem/1 var(--f-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--mute); }
 #projects .pc-field dd { margin: 0; color: color-mix(in oklab, var(--bone) 82%, transparent); font-weight: 300; }
 #projects .pc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 #projects .pc-tags li { font: 400 .68rem/1 var(--f-mono); padding: .45em .7em; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent); }
@@ -37,3 +75,15 @@
 
 @media (max-width: 1023px) { #projects .proj-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 680px) { #projects .proj-grid { grid-template-columns: 1fr; } #projects .pcard { min-height: 0; } }
+@media (max-width: 899px) {
+  #projects .proj-head-row { grid-template-columns: 1fr; justify-items: start; }
+  #projects .proj-head-row .sec-title { text-align: left; }
+  #projects .proj-head-note { grid-auto-flow: column; gap: 1.2em; }
+  #projects .proj-head-note-r { display: none; }
+  #projects .proj-head .sec-sub { justify-self: start; text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { #projects .pcard:is(:hover, :focus-within) .pc-beam { animation: none; } }
+html.reduced #projects .pcard:is(:hover, :focus-within) .pc-beam { animation: none; }
+/* reduced: card không nhấc lên, vẫn sáng viền + bóng */
+@media (prefers-reduced-motion: reduce) { #projects .pcard:is(:hover, :focus-within) { translate: none; } }
+html.reduced #projects .pcard:is(:hover, :focus-within) { translate: none; }

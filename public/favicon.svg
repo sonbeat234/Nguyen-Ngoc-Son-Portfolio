@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#04060a"/>
-  <path d="M12 8V5M16 8V5M20 8V5M12 27v-3M16 27v-3M20 27v-3M8 12H5M8 16H5M8 20H5M27 12h-3M27 16h-3M27 20h-3" stroke="#9aa7bb" stroke-width="1.6" stroke-linecap="round"/>
-  <rect x="8" y="8" width="16" height="16" rx="2.5" fill="#0a0e15" stroke="#e9edf2" stroke-width="1.4"/>
-  <rect x="12" y="12" width="8" height="8" rx="1.2" fill="#5ce1ff"/>
-  <circle cx="10.6" cy="10.6" r="1" fill="#e9edf2"/>
+  <!-- palette A · Indigo Wafer: INK #07060D, PANEL #100E1C, BONE #F1F0F8, MUTE #A9A6BF, PRIMARY #8B7BFF, SIGNAL #2EE6C5 -->
+  <rect width="32" height="32" rx="7" fill="#07060D"/>
+  <path d="M12 8V5M16 8V5M20 8V5M12 27v-3M16 27v-3M20 27v-3M8 12H5M8 16H5M8 20H5M27 12h-3M27 16h-3M27 20h-3" stroke="#A9A6BF" stroke-width="1.6" stroke-linecap="round"/>
+  <rect x="8" y="8" width="16" height="16" rx="2.5" fill="#100E1C" stroke="#F1F0F8" stroke-width="1.4"/>
+  <rect x="12" y="12" width="8" height="8" rx="1.2" fill="#8B7BFF"/>
+  <circle cx="10.6" cy="10.6" r="1" fill="#2EE6C5"/>
 </svg>

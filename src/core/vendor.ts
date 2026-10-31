@@ -1,6 +1,6 @@
 import { lazyMount } from "./lazy";
 import { onTick } from "./loop";
-import { releaseCanvas } from "./gl";
+import { releaseCanvas, liveContexts } from "./gl";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type R = { render: (...a: any[]) => void; resize?: (w: number, h: number) => void; dispose?: () => void };
@@ -12,6 +12,8 @@ export type VendorHandle<T> = {
   canvas: HTMLCanvasElement;
   /** false = tạm ngưng render (vd lớp warp đang opacity 0) */
   active: boolean;
+  /** gỡ hẳn renderer + trả WebGL context, không mount lại nữa */
+  stop: () => void;
 };
 
 /**
@@ -24,10 +26,12 @@ export function mountVendor<T extends R>(
   create: (canvas: HTMLCanvasElement) => T,
   frame: (r: T) => void = (r) => r.render(),
 ): VendorHandle<T> {
-  const h: VendorHandle<T> = { r: null, canvas, active: true };
+  const h: VendorHandle<T> = { r: null, canvas, active: true, stop: () => {} };
   let off: (() => void) | null = null, ro: ResizeObserver | null = null, io: IntersectionObserver | null = null;
   const vis = { on: false };
-  lazyMount(section, {
+  // WebGL: giữ context sau khi mount nếu tổng context còn trong ngân sách (≤ 6, CONVENTIONS 3); không prewarm sớm
+  // (hạt hero tự dựng trong pha tải). Canvas 2D dùng lazyMount trực tiếp (giữ luôn).
+  const lazy = lazyMount(section, {
     mount() {
       const r = create(h.canvas);
       h.r = r;
@@ -49,6 +53,7 @@ export function mountVendor<T extends R>(
         h.canvas = fresh;
       }
     },
-  });
+  }, { keepAlive: () => liveContexts() <= 4, prewarm: false });
+  h.stop = () => lazy.stop();
   return h;
 }

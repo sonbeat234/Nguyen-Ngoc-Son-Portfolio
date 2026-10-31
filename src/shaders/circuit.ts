@@ -2,6 +2,8 @@
 // - Lớp trước (đồng, dây ngang + nấc dọc) và lớp sau (xanh nhạt, dây dọc) trượt parallax theo u_progress.
 // - Mỗi hàng dây có xung tín hiệu chạy dọc (đầu sáng, đuôi tắt dần); cuộn nhanh thì xung chạy nhanh hơn.
 // - Via ở đầu đoạn dây và chỗ đổi hướng; dây quanh con trỏ sáng lên.
+// - V4 (đọc chữ): u_dim hạ độ sáng toàn scene; u_textRect (uv, y lên: x0 y0 x1 y1) là cột chữ Profile —
+//   trong vùng đó + viền mềm 8% nền chỉ còn ≤ 30% độ sáng. Màu dây/xung theo palette (u_copper, u_cool, u_accent).
 export const CIRCUIT_FRAG = `
 precision highp float;
 uniform vec2  u_resolution;
@@ -10,6 +12,11 @@ uniform vec2  u_mouse;
 uniform float u_progress;
 uniform float u_velocity;
 uniform vec3  u_accent;
+uniform vec3  u_copper;
+uniform vec3  u_cool;
+uniform vec3  u_bg;
+uniform float u_dim;
+uniform vec4  u_textRect;
 
 float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
 float seg(vec2 p, vec2 a, vec2 b){ vec2 pa = p - a, ba = b - a; return length(pa - ba * clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0)); }
@@ -62,19 +69,26 @@ void main(){
   float line2 = 1.0 - smoothstep(0.045, 0.045 + aa2, r2.x);
   float via2 = 1.0 - smoothstep(0.12, 0.12 + aa2, r2.y);
 
-  vec3 copper = vec3(0.86, 0.52, 0.3);
-  vec3 cool = vec3(0.3, 0.5, 0.66);
+  vec3 copper = u_copper;
+  vec3 cool = u_cool;
   float md = smoothstep(0.42, 0.0, length(uv - m));
 
-  vec3 col = vec3(0.016, 0.018, 0.026);
+  vec3 col = u_bg;
   vec2 dg = abs(fract(p1) - 0.5);
   col += 0.018 * step(0.46, min(dg.x, dg.y));                         // chấm lưới routing
   col += cool * (line2 * 0.07 + via2 * 0.08);
   col += copper * line1 * (0.13 + md * 0.35);
-  col += copper * (via1 - hole1 * 0.7) * (0.2 + md * 0.3);
+  col += copper * (via1 - hole1 * 0.7) * (0.12 + md * 0.18);              // via: glow −40%
   vec3 hot = mix(u_accent, vec3(1.0), 0.35);
-  col += hot * line1 * pulse * 0.95;
-  col += u_accent * exp(-r1.x * 9.0) * pulse * 0.22 * step(r1.x, 1.0); // quầng quanh xung
+  col += hot * line1 * pulse * 0.57;                                      // xung: −40%
+  col += u_accent * exp(-r1.x * 9.0) * pulse * 0.13 * step(r1.x, 1.0);   // quầng quanh xung
+
+  // vùng cột chữ: tối hẳn (≤ 30%), viền mềm 8% ra ngoài; ngoài vùng: u_dim
+  vec2 suv = gl_FragCoord.xy / res;
+  vec2 out2 = max(u_textRect.xy - suv, suv - u_textRect.zw);
+  float inText = (1.0 - smoothstep(0.0, 0.08, max(out2.x, out2.y))) * step(u_textRect.x, u_textRect.z);
+  vec3 lit = col - u_bg;
+  col = u_bg + lit * mix(u_dim, 0.26, inText);
 
   gl_FragColor = vec4(col, 1.0);
 }`;

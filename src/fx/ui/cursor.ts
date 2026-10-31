@@ -1,75 +1,49 @@
-// Con trỏ: dùng con trỏ HỆ THỐNG (phần cứng, OS vẽ → không bao giờ trễ dù shader nặng) với hình SVG "probe"
-// (chữ thập + chấm tâm, viền tối để nổi trên mọi nền) đổi màu theo accent của section.
-// Vòng ring chỉ là lớp trang trí: bám rất nhanh (damp 32, độc lập fps), giãn theo tốc độ chuột,
-// phóng to + hiện nhãn data-cursor khi trỏ vào link/nút, co lại khi nhấn.
-// Không dùng mix-blend-mode: blend trên canvas WebGL toàn màn buộc compositing lại mỗi frame.
-import { onTick } from "../../core/loop";
+// Con trỏ: con trỏ HỆ THỐNG (OS vẽ → không trễ dù shader làm tụt fps) với hình chuẩn quen thuộc:
+// mũi tên (hotspot ở đầu mũi), bàn tay trên link/nút/card bấm được (hotspot ở đầu ngón trỏ),
+// I-beam trên ô nhập liệu. Ruột tô màu accent của section, viền tối 1.5px để rõ trên mọi nền.
+// Đổi section: accent tween ~1.2s → SVG cập nhật theo nấc ~100 ms (onAccent), không mỗi frame.
+// Máy cảm ứng: không đổi gì (con trỏ mặc định). Fallback luôn là auto / pointer / text.
 import { state } from "../../core/state";
-import { damp } from "../../core/math";
-import { onChapter } from "./accent";
+import { onAccent, chapters } from "./accent";
+import { token } from "../../stage/palette";
 
-const INK = "#04060a";
+const EDGE = "rgb(0 0 0 / .85)";
+const SIZE = 24;
 
-function cursorUrl(color: string, hot: boolean) {
-  const svg = hot
-    ? `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>` +
-      `<circle cx='16' cy='16' r='4.2' fill='${INK}'/><circle cx='16' cy='16' r='3' fill='${color}'/></svg>`
-    : `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>` +
-      `<path d='M16 5v6.5M16 20.5V27M5 16h6.5M20.5 16H27' stroke='${INK}' stroke-width='3.4' stroke-linecap='round'/>` +
-      `<path d='M16 5v6.5M16 20.5V27M5 16h6.5M20.5 16H27' stroke='${color}' stroke-width='1.5' stroke-linecap='round'/>` +
-      `<circle cx='16' cy='16' r='2.6' fill='${INK}'/><circle cx='16' cy='16' r='1.6' fill='${color}'/></svg>`;
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}") 16 16`;
+// hình vẽ trong hộp 24 × 24 (đơn vị = px CSS), nét gọn kiểu macOS / Windows
+const ARROW = "M5.5 2.5 L5.5 19.6 L9.6 15.9 L12.4 21.9 L15.2 20.6 L12.5 14.7 L18.2 14.7 Z";
+const HAND =
+  "M8.2 3.5 A1.7 1.7 0 0 1 11.6 3.5 V9.6 A1.5 1.5 0 0 1 14.6 10.2 V10.6 A1.4 1.4 0 0 1 17.4 11.1 V1" +
+  "1.6 A1.3 1.3 0 0 1 20 12.3 V16.8 C20 19.9 17.7 22.3 14.6 22.3 H13 C11.2 22.3 9.8 21.5 8.8 20.2 L4.9 15.2 A1.5 1.5 0 0 1 7.1 13.2 L8.2 14.5 Z";
+const HAND_GAPS = "M11.6 9.8v3.6M14.6 10.6v3.2M17.4 11.4v2.6";
+const IBEAM = "M8.5 3.5C10.5 3.5 12 4.2 12 5.5V18.5C12 19.8 10.5 20.5 8.5 20.5M15.5 3.5C13.5 3.5 12 4.2 12 5.5M15.5 20.5C13.5 20.5 12 19.8 12 18.5";
+
+function svgUrl(body: string, hx: number, hy: number) {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${SIZE}' height='${SIZE}' viewBox='0 0 24 24'>${body}</svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${hx} ${hy}`;
 }
 
-function setCursorColor(color: string) {
-  const root = document.documentElement.style;
-  root.setProperty("--cur", cursorUrl(color, false));
-  root.setProperty("--cur-hot", cursorUrl(color, true));
+/** V5-perf: ghi --cur-* lên MỘT phần tử (section / overlay / html) — không đổi trên :root khi đổi chương */
+function setCursorColor(color: string, target: HTMLElement = document.documentElement) {
+  const root = target.style;
+  const fill = `fill='${color}' stroke='${EDGE}' stroke-width='1.5' stroke-linejoin='round'`;
+  root.setProperty("--cur-arrow", svgUrl(`<path d='${ARROW}' ${fill}/>`, 5, 2));
+  root.setProperty("--cur-hand", svgUrl(
+    `<path d='${HAND}' ${fill}/><path d='${HAND_GAPS}' fill='none' stroke='${EDGE}' stroke-width='.9' stroke-linecap='round'/>`, 10, 2));
+  // I-beam: hai lớp nét (viền tối dày, lõi màu mảnh) vì không có diện tích tô
+  root.setProperty("--cur-text", svgUrl(
+    `<path d='${IBEAM}' fill='none' stroke='${EDGE}' stroke-width='3.2' stroke-linecap='round'/>` +
+    `<path d='${IBEAM}' fill='none' stroke='${color}' stroke-width='1.4' stroke-linecap='round'/>`, 12, 12));
 }
 
 export function initCursor() {
   if (state.touch) return;
-  setCursorColor(getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#5ce1ff");
+  setCursorColor(token("--primary"));
   document.documentElement.classList.add("has-cursor");
-  onChapter((c) => setCursorColor(c.accent));
-
-  const ring = document.createElement("div");
-  ring.className = "cur-ring";
-  ring.setAttribute("aria-hidden", "true");
-  const label = document.createElement("span");
-  label.className = "cur-label";
-  ring.appendChild(label);
-  document.body.appendChild(ring);
-
-  let rx = 0, ry = 0, scale = 1, targetScale = 1, seen = false;
-  let lastX = -1, lastY = -1, lastS = -1;
-  addEventListener("pointermove", (e) => {
-    if (e.pointerType !== "mouse" || seen) return;
-    seen = true;                                   // xuất hiện ngay tại con trỏ, không trượt từ góc màn
-    rx = e.clientX; ry = e.clientY;
-    ring.classList.add("is-on");
-  }, { passive: true });
-  document.addEventListener("pointerover", (e) => {
-    const t = (e.target as HTMLElement).closest<HTMLElement>("a,button,[data-cursor]");
-    targetScale = t ? Number(t.dataset.cursorScale ?? 1.9) : 1;
-    label.textContent = t?.dataset.cursor ?? "";
-    ring.classList.toggle("is-hot", !!t);
-    ring.classList.toggle("has-label", !!t?.dataset.cursor);
-  });
-  document.documentElement.addEventListener("pointerleave", () => ring.classList.remove("is-on"));
-  document.documentElement.addEventListener("pointerenter", () => { if (seen) ring.classList.add("is-on"); });
-
-  onTick((_, dt) => {
-    if (!seen) return;
-    const m = state.mouse;
-    if (state.reduced) { rx = m.x; ry = m.y; }
-    else { rx = damp(rx, m.x, 32, dt); ry = damp(ry, m.y, 32, dt); }
-    scale = damp(scale, targetScale * (m.down ? 0.78 : 1), 18, dt);
-    const stretch = state.reduced ? 0 : Math.min(m.speed / 5000, 0.35);
-    const s = scale + stretch;
-    // bỏ qua ghi DOM khi vòng đã đứng yên đúng chỗ
-    if (Math.abs(rx - lastX) < 0.05 && Math.abs(ry - lastY) < 0.05 && Math.abs(s - lastS) < 0.002) return;
-    lastX = rx; lastY = ry; lastS = s;
-    ring.style.transform = `translate3d(${rx.toFixed(1)}px,${ry.toFixed(1)}px,0) translate(-50%,-50%) scale(${s.toFixed(3)},${(scale - stretch * 0.5).toFixed(3)})`;
-  });
+  if (state.legacyfx) { onAccent((c) => setCursorColor(c)); return; }
+  // V5-perf: con trỏ mỗi section mang màu accent TĨNH của section đó (base.css: section.chapter khai báo lại cursor
+  // để var(--cur-*) được giải theo section) → đổi chương không ghi gì lên :root (ghi :root = restyle cả trang)
+  for (const c of chapters) setCursorColor(c.accent, c.el);
+  const pj = chapters.find((c) => c.id === "projects"), pv = document.getElementById("project-view");
+  if (pj && pv) setCursorColor(pj.accent, pv);
 }

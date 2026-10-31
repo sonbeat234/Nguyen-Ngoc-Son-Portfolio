@@ -4,6 +4,7 @@
 // Mở rộng cho SIGNAL: thêm glyph I T M E H D , và khoảng trắng; nhiều dòng căn giữa; bảng màu theo dòng;
 // mỗi chữ nhấp nháy độc lập (bản gốc chỉ một chữ), "bật đèn" lần lượt (ignite), giật tắt khi bị nhiễu (kick).
 // Không tự RAF: gọi render(dt) từ onTick.
+import { graphemes } from "../core/text";
 
 type Cmd = [string, ...number[]];
 type Sub = { c: Cmd[]; closed?: 1 };
@@ -25,6 +26,8 @@ const GLYPHS: Record<string, Glyph> = {
   E: { w: 0.66, sub: [{ c: [["M", 0.6, 0.0], ["R", 0.09, 0.0, 0.09, 1.0, 0.13], ["R", 0.09, 1.0, 0.6, 1.0, 0.13], ["L", 0.6, 1.0]] }, { c: [["M", 0.19, 0.5], ["L", 0.5, 0.5]] }] },
   H: { w: 0.82, sub: [{ c: [["M", 0.09, 0.0], ["L", 0.09, 1.0]] }, { c: [["M", 0.73, 0.0], ["L", 0.73, 1.0]] }, { c: [["M", 0.19, 0.5], ["L", 0.63, 0.5]] }] },
   D: { w: 0.84, sub: [{ closed: 1, c: [["M", 0.09, 0.0], ["L", 0.09, 1.0], ["L", 0.36, 1.0], ["E", 0.36, 0.5, 0.42, 0.5, 0.5 * P, -0.5 * P, 1], ["L", 0.09, 0.0]] }] },
+  // V4 (portfolio, biển "THANKS"): K = thân dọc + hai nét chéo gặp nhau gần giữa thân
+  K: { w: 0.74, sub: [{ c: [["M", 0.09, 0.0], ["L", 0.09, 1.0]] }, { c: [["M", 0.66, 0.0], ["L", 0.17, 0.58]] }, { c: [["M", 0.34, 0.4], ["L", 0.7, 1.0]] }] },
   ",": { w: 0.26, sub: [{ c: [["M", 0.14, 0.8], ["Q", 0.17, 1.02, 0.05, 1.16]] }] },
   " ": { w: 0.4, sub: [] },
 };
@@ -125,7 +128,7 @@ export function createNeonSign(board: HTMLElement, canvas: HTMLCanvasElement, cf
     const aspect = W / Math.max(1, H);
     const lines = (cfg.layouts.find((l) => aspect >= l.minAspect) ?? cfg.layouts[cfg.layouts.length - 1]).lines;
     const ls = lines.map((s) => {
-      const gl = [...s].map((ch) => GLYPHS[ch] ?? GLYPHS[" "]);
+      const gl = graphemes(s).map((ch) => GLYPHS[ch] ?? GLYPHS[" "]);   // V5-vi (F): theo grapheme
       return { gl, sum: gl.reduce((a, g) => a + g.w, 0) + (gl.length - 1) * GAP };
     });
     const blockW = Math.max(...ls.map((l) => l.sum));

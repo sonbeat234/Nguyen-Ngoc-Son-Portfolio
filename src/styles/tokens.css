@@ -4,26 +4,34 @@
 @font-face { font-family: "Fragment Mono"; src: url("/fonts/fragment-mono.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
 
 @property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-@property --r { syntax: "<length>"; inherits: false; initial-value: 0px; }
-@property --accent { syntax: "<color>"; inherits: true; initial-value: #5ce1ff; }
-@property --accent-2 { syntax: "<color>"; inherits: true; initial-value: #a6f0ff; }
+@property --r { syntax: "<length>"; inherits: true; initial-value: 0px; }   /* bán kính iris preloader (::after đọc để vẽ viền sáng) */
+@property --accent { syntax: "<color>"; inherits: true; initial-value: #8b7bff; }
+@property --accent-2 { syntax: "<color>"; inherits: true; initial-value: #c9c0ff; }
 
 :root {
-  /* nền và chữ: đen ánh xanh silicon, trắng lạnh */
-  --ink: #04060a;
-  --ink-2: #0a0e15;
-  --bone: #e9edf2;
-  --mute: #8b93a1;
-  --line: rgba(255,255,255,0.09);
+  /* ===== BẢNG MÀU — palette "A · Indigo Wafer" (PROMPT_V4 mục 1). Đổi màu toàn site: sửa khối này,
+     accent từng section (data-accent / data-accent2 trong index.html) và initial-value của @property ở trên.
+     Shader nền, con trỏ, favicon động đọc lại các giá trị này lúc chạy (stage/palette.ts) — không có hex thứ hai. ===== */
+  --primary: #8b7bff;      /* màu chủ đạo: nút chính, thanh tiến độ, chữ nhấn, loading screen */
+  --primary-2: #c9c0ff;    /* bản sáng: glow, hover, viền dissolve */
+  --signal: #2ee6c5;       /* màu phụ (≤ 15% diện tích): trạng thái live/pass, số liệu */
+  --ink: #07060d;          /* nền trang */
+  --panel: #100e1c;        /* nền panel/card, luôn đặt sau đoạn chữ dài */
+  --bone: #f1f0f8;         /* chữ chính */
+  --mute: #a9a6bf;         /* chữ phụ (≥ 4.5:1 trên --panel) */
+  --copper: #f0a061;       /* chỉ cho chi tiết vật liệu (dây bond, chân chip), không dùng làm accent */
+  --on-primary: #07060d;   /* chữ trên nền primary: #8b7bff/đen = 6.4:1, trắng chỉ 3.3:1 → đen */
 
-  /* vật liệu bán dẫn (dùng cho chi tiết package, dây bond, lớp layout) */
-  --copper: #e2955a;
-  --gold: #e8c26a;
-  --silicon: #9aa7bb;
+  /* suy ra từ bảng màu (không cần sửa khi đổi palette) */
+  --ink-2: color-mix(in oklab, var(--ink) 55%, var(--panel));
+  --line: color-mix(in oklab, var(--bone) 10%, transparent);
+  --gold: color-mix(in oklab, var(--copper) 55%, var(--bone));      /* bond wire, highlight vật liệu sáng */
+  --scrim: color-mix(in oklab, var(--ink) 88%, transparent);
+  --glass: color-mix(in oklab, var(--panel) 62%, transparent);
 
-  /* accent đổi theo section, được tween bằng GSAP */
-  --accent: #5ce1ff;
-  --accent-2: #a6f0ff;
+  /* accent đổi theo section, được tween bằng GSAP (fx/ui/accent.ts) */
+  --accent: var(--primary);
+  --accent-2: var(--primary-2);
 
   /* typography — Unbounded / Geist / JetBrains Mono đều có subset tiếng Việt (tên có dấu hiển thị một font) */
   --f-display: "Unbounded", "Geist", system-ui, sans-serif;          /* tiêu đề lớn, tên */

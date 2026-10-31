@@ -13,7 +13,7 @@
 #flow .flow-meter { display: flex; align-items: center; gap: 18px; margin: clamp(14px, 2.4vh, 26px) var(--gutter) clamp(12px, 2vh, 22px) calc(var(--gutter) + 40px);
   font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
 #flow .flow-count b { font-weight: 500; color: var(--accent); }
-#flow .flow-bar { position: relative; flex: 1; height: 1px; background: rgba(233,237,242,.14); overflow: hidden; }
+#flow .flow-bar { position: relative; flex: 1; height: 1px; background: color-mix(in oklab, var(--bone) 14%, transparent); overflow: hidden; }
 #flow .flow-bar i { position: absolute; inset: 0; background: var(--accent); box-shadow: 0 0 10px var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
 #flow .flow-stage-name { min-width: 20ch; text-align: right; color: color-mix(in oklab, var(--accent) 60%, var(--bone)); }
 
@@ -26,9 +26,9 @@
   position: relative; flex: 0 0 min(74vw, 1020px); height: min(100%, 540px); align-self: center;
   display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(24px, 3vw, 48px);
   padding: clamp(24px, 3vw, 44px); border-radius: var(--radius);
-  background: linear-gradient(160deg, rgba(14,18,28,.82), rgba(8,10,16,.72));
-  border: 1px solid var(--line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  opacity: .42; transform: scale(.97); transition: opacity .7s var(--ease-out), transform .9s var(--ease-out), border-color .6s;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--panel) 92%, transparent), color-mix(in oklab, var(--panel) 86%, transparent));
+  border: 1px solid var(--line);   /* kính mờ: shader stage (fx/ui/frost.ts); backdrop-filter chỉ ở ?legacyfx */
+  opacity: .55; transform: scale(.97); transition: opacity .7s var(--ease-out), transform .9s var(--ease-out), border-color .6s;
 }
 #flow .stage.is-active { opacity: 1; transform: none; border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
 #flow .stage::before { /* via nối thẻ với bus */
@@ -37,15 +37,15 @@
 }
 #flow .stage.is-seen::before { transform: none; }
 #flow .stage-copy { display: grid; gap: 14px; align-content: center; }
-#flow .stage-num { font-size: .68rem; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); }
+#flow .stage-num { font-size: .68rem; letter-spacing: .26em; text-transform: uppercase; color: color-mix(in oklab, var(--accent) 70%, var(--bone)); }
 #flow .stage-title { font: 300 clamp(1.6rem, 2.9vw, 2.8rem)/1.05 var(--f-display); letter-spacing: -.035em; }
 #flow .stage-text { color: color-mix(in oklab, var(--bone) 74%, transparent); font-weight: 300; max-width: 40ch; }
-#flow .stage-tags { font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
+#flow .stage-tags { font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in oklab, var(--mute) 80%, var(--bone)); }
 
 #flow .stage-viz {
   position: relative; height: 100%; min-height: 240px; border-radius: 12px; overflow: hidden;
   display: grid; place-items: center; padding: 18px;
-  background: radial-gradient(120% 120% at 70% 0%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 60%), rgba(4,6,10,.7);
+  background: radial-gradient(120% 120% at 70% 0%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 60%), color-mix(in oklab, var(--ink) 70%, transparent);
   border: 1px solid rgba(255,255,255,.07);
 }
 #flow .stage-viz::after { /* lưới mờ */
@@ -59,14 +59,14 @@
 #flow .spec-grid polygon { fill: none; stroke: rgba(255,255,255,.1); }
 #flow .spec-axes line { stroke: rgba(255,255,255,.16); }
 #flow .spec-shape { fill: color-mix(in oklab, var(--accent) 20%, transparent); stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; }
-#flow .spec-pts circle { fill: #fff; filter: drop-shadow(0 0 4px var(--accent)); }
+#flow .spec-pts circle { fill: var(--bone); filter: drop-shadow(0 0 4px var(--accent)); }
 #flow .viz-spec text { fill: var(--mute); }
 
 /* 02 block diagram */
 #flow .arch-bus path { fill: none; stroke: rgba(255,255,255,.22); stroke-width: 1.5; }
 #flow .arch-bus .arch-flow { stroke: var(--accent); stroke-dasharray: 3 11; opacity: 0; }
 #flow .stage.is-active .arch-flow { opacity: 1; animation: flow-dash 1.4s linear infinite; }
-#flow .arch-blocks rect { fill: rgba(14,18,28,.9); stroke: color-mix(in oklab, var(--accent) 60%, transparent); stroke-width: 1.2; }
+#flow .arch-blocks rect { fill: color-mix(in oklab, var(--panel) 90%, transparent); stroke: color-mix(in oklab, var(--accent) 60%, transparent); stroke-width: 1.2; }
 #flow .arch-blocks .arch-core { fill: color-mix(in oklab, var(--accent) 22%, transparent); }
 #flow .arch-blocks > * { opacity: 0; transform: translateY(8px); transition: opacity .6s var(--ease-out), transform .8s var(--ease-out); }
 #flow .stage.is-seen .arch-blocks > * { opacity: 1; transform: none; }
@@ -80,24 +80,25 @@
 #flow .viz-rtl { place-items: center start; padding: 22px 24px; }
 #flow .viz-rtl pre { position: relative; z-index: 1; max-width: 100%; margin: 0; font: 400 clamp(.56rem, .92vw, .86rem)/1.75 var(--f-mono); color: var(--bone); counter-reset: ln; white-space: pre; overflow-x: auto; }
 #flow .viz-rtl .ln { display: block; counter-increment: ln; clip-path: inset(0 100% 0 0); }
-#flow .viz-rtl .ln::before { content: counter(ln); display: inline-block; width: 2.2em; color: rgba(233,237,242,.25); }
+#flow .viz-rtl .ln::before { content: counter(ln); display: inline-block; width: 2.2em; color: color-mix(in oklab, var(--bone) 25%, transparent); }
 #flow .stage.is-seen .viz-rtl .ln { clip-path: inset(0 0 0 0); transition: clip-path .6s steps(26) calc(var(--i) * .2s); }
 #flow .viz-rtl i { font-style: normal; }
 #flow .viz-rtl .k { color: var(--accent); }
-#flow .viz-rtl .t { color: var(--gold); }
+#flow .viz-rtl .t { color: var(--signal); }
 #flow .viz-rtl .n { color: var(--copper); }
 
 /* 04 waveform / 06 place & route: canvas phủ khung */
 #flow .viz-wave, #flow .viz-pnr { padding: 0; }
 #flow .viz-wave canvas, #flow .viz-pnr canvas { position: relative; z-index: 1; width: 100%; height: 100%; display: block; }
-#flow .viz-wave { --wave-ink: #e9edf2; --wave-mute: rgba(233,237,242,.45); --wave-a: #a08cff; --wave-b: #6ef0b4; --wave-c: #f2c86b; }
-#flow .viz-pnr { --pr-m1: #5ce1ff; --pr-m2: #a08cff; --pr-clk: #f2c86b; }
+/* canvas đọc các biến này một lần lúc tạo: chỉ dùng token hex thuần (canvas không hiểu color-mix ở mọi trình duyệt) */
+#flow .viz-wave { --wave-ink: var(--bone); --wave-mute: var(--mute); --wave-a: var(--primary); --wave-b: var(--signal); --wave-c: var(--primary-2); }
+#flow .viz-pnr { --pr-m1: var(--primary); --pr-m2: var(--primary-2); --pr-clk: var(--signal); }
 
 /* 05 netlist */
 #flow .syn-wires path { fill: none; stroke: rgba(255,255,255,.22); stroke-width: 1.2; stroke-linejoin: round; }
 #flow .syn-wires .syn-flow { stroke: var(--accent); stroke-dasharray: 2 12; opacity: 0; }
 #flow .stage.is-active .syn-flow { opacity: 1; animation: flow-dash 1.1s linear infinite; }
-#flow .syn-gates path, #flow .syn-gates rect { fill: rgba(14,18,28,.92); stroke: var(--bone); stroke-width: 1.2; stroke-opacity: .8; }
+#flow .syn-gates path, #flow .syn-gates rect { fill: color-mix(in oklab, var(--panel) 92%, transparent); stroke: var(--bone); stroke-width: 1.2; stroke-opacity: .8; }
 #flow .syn-gates text { font-size: 7px; fill: color-mix(in oklab, var(--accent) 70%, var(--bone)); }
 #flow .syn-gates { opacity: 0; transition: opacity .8s var(--ease-out) .1s; }
 #flow .stage.is-seen .syn-gates { opacity: 1; }
@@ -113,12 +114,12 @@
   transform: rotateX(58deg) rotateZ(-36deg) translateZ(calc(var(--l) * 5px));
   transition: transform 1.1s var(--ease-out); transition-delay: calc(var(--l) * 60ms);
 }
-#flow .layers i:nth-child(1) { --lc: rgba(110,120,140,.35); }
-#flow .layers i:nth-child(2) { --lc: rgba(110,240,180,.22); }
-#flow .layers i:nth-child(3) { --lc: rgba(255,110,110,.24); }
-#flow .layers i:nth-child(4) { --lc: rgba(92,225,255,.24); }
-#flow .layers i:nth-child(5) { --lc: rgba(160,140,255,.26); }
-#flow .layers i:nth-child(6) { --lc: rgba(242,200,107,.28); }
+#flow .layers i:nth-child(1) { --lc: color-mix(in oklab, var(--mute) 35%, transparent); }
+#flow .layers i:nth-child(2) { --lc: color-mix(in oklab, var(--signal) 22%, transparent); }
+#flow .layers i:nth-child(3) { --lc: color-mix(in oklab, var(--copper) 26%, transparent); }
+#flow .layers i:nth-child(4) { --lc: color-mix(in oklab, var(--primary) 26%, transparent); }
+#flow .layers i:nth-child(5) { --lc: color-mix(in oklab, var(--primary-2) 24%, transparent); }
+#flow .layers i:nth-child(6) { --lc: color-mix(in oklab, var(--gold) 28%, transparent); }
 #flow .stage.is-active .layers i { transform: rotateX(58deg) rotateZ(-36deg) translateZ(calc(var(--l) * 24px)); }
 #flow .checks { position: relative; z-index: 1; display: grid; gap: 12px; font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; }
 #flow .checks li { display: flex; align-items: center; gap: 10px; color: var(--mute); transition: color .4s; }
@@ -164,3 +165,5 @@
 }
 html.reduced #flow .stage.is-active .arch-flow, html.reduced #flow .stage.is-active .syn-flow { animation: none; }
 html.reduced #flow .viz-rtl .ln { clip-path: none; }
+/* ?legacyfx: CSS backdrop blur cũ trên canvas sống (so sánh trước/sau) */
+html.legacyfx #flow .stage { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }

@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nguyễn Ngọc Sơn · IC Design &amp; Semiconductor Portfolio</title>
     <meta name="description" content="Portfolio and CV of Nguyễn Ngọc Sơn — integrated circuit design and semiconductor. FPT University, Hanoi." />
-    <meta name="theme-color" content="#04060a" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#07060d" />
+    <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Nguyễn Ngọc Sơn · IC Design &amp; Semiconductor Portfolio" />
     <meta property="og:description" content="Portfolio and CV of Nguyễn Ngọc Sơn — integrated circuit design and semiconductor. FPT University, Hanoi." />
     <meta name="twitter:card" content="summary" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@300;500;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@200..900&display=swap" />
   </head>
   <body>
     <a class="skip-link" href="#about">Skip to content</a>
@@ -47,13 +47,13 @@
           <circle class="pre-orbit" cx="60" cy="60" r="56" fill="none" stroke="currentColor" stroke-width=".7" stroke-dasharray="1.5 5.5" />
         </svg>
         <div class="pre-count"><span class="pre-num">000</span><span class="pre-pct">%</span></div>
-        <div class="pre-barlabel"><span>POWER-ON</span><span class="pre-dots">...</span></div>
+        <div class="pre-barlabel"><span class="pre-word">POWER-ON</span><span class="pre-dots">...</span></div>
         <div class="pre-bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <p class="pre-status">Booting portfolio</p>
       </div>
       <ol class="pre-log" aria-hidden="true"></ol>
       <p class="pre-sig" aria-hidden="true">NNS · PORTFOLIO · REV 2026</p>
-      <div class="pre-rgb" aria-hidden="true"><span class="r">Nguyễn Ngọc Sơn</span><span class="g">Nguyễn Ngọc Sơn</span><span class="b">Nguyễn Ngọc Sơn</span></div>
+      <div class="pre-rgb" aria-hidden="true"><span class="r">Nguyễn Ngọc Sơn</span><span class="g">Nguyễn Ngọc Sơn</span><span class="b">Nguyễn Ngọc Sơn</span><span class="f">Nguyễn Ngọc Sơn</span></div>
     </div>
 
     <div class="progress" aria-hidden="true"></div>
@@ -63,9 +63,10 @@
       <nav class="dock__nav" aria-label="Primary" data-dock-state="idle" data-dock-max="0.00">
         <a class="dock__item dock__logo" href="#hero" data-dock-item aria-label="Nguyễn Ngọc Sơn — back to the top">
           <svg viewBox="0 0 32 32" aria-hidden="true">
-            <rect x="8" y="8" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <path d="M12 8V4M16 8V4M20 8V4M12 24v4M16 24v4M20 24v4M8 12H4M8 16H4M8 20H4M24 12h4M24 16h4M24 20h4" stroke="var(--mute)" stroke-width="1.4" stroke-linecap="round" />
+            <rect x="8" y="8" width="16" height="16" rx="2" fill="var(--panel)" stroke="currentColor" stroke-width="1.6" />
             <rect x="12.5" y="12.5" width="7" height="7" rx="1" fill="var(--accent)" />
-            <path d="M12 8V4M16 8V4M20 8V4M12 24v4M16 24v4M20 24v4M8 12H4M8 16H4M8 20H4M24 12h4M24 16h4M24 20h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+            <circle cx="10.8" cy="10.8" r="1" fill="var(--signal)" />
           </svg>
         </a>
         <span class="dock__item dock__chapter" aria-live="polite"><b class="dock__num">01</b><span class="dock__label">Power-on</span></span>
@@ -84,7 +85,7 @@
 
     <main id="top">
       <!-- 01 · POWER-ON (hero) — nền: shader wafer -->
-      <section class="chapter hero" id="hero" tabindex="-1" data-scene="wafer" data-accent="#5ce1ff" data-accent2="#a6f0ff" data-title="Power-on">
+      <section class="chapter hero" id="hero" tabindex="-1" data-scene="wafer" data-accent="#8B7BFF" data-accent2="#C9C0FF" data-title="Power-on">
         <div class="pin">
           <div class="hero-frame" aria-hidden="true">
             <div class="hero-frame-inner">
@@ -115,8 +116,7 @@
 
           <dl class="hero-readout">
             <div><dt>Education</dt><dd data-decode="manual">FPT University, Hanoi</dd></div>
-            <div><dt>IELTS</dt><dd data-decode="manual">6.0</dd></div>
-            <div><dt>TOEIC</dt><dd data-decode="manual">750</dd></div>
+            <!-- các dòng LinkedIn / GitHub do sections/hero.ts thêm từ profile.contact; IELTS / TOEIC chỉ còn ở Profile + CV -->
           </dl>
 
           <div class="hero-hint" aria-hidden="true"><span class="hero-hint-line"><i></i></span><span class="hero-hint-label">Scroll</span></div>
@@ -124,15 +124,15 @@
       </section>
 
       <!-- 02 · PROFILE — nền: shader đi dây metal -->
-      <section class="chapter about" id="about" tabindex="-1" data-scene="circuit" data-accent="#f0a061" data-accent2="#ffd2a6" data-title="Profile">
+      <section class="chapter about" id="about" tabindex="-1" data-scene="circuit" data-accent="#B48CFF" data-accent2="#E3D2FF" data-title="Profile">
         <div class="wrap about-grid">
-          <header class="sec-head about-head">
+          <header class="sec-head about-head" data-shield>
             <p class="eyebrow" data-decode>01 / Profile</p>
-            <h2 class="sec-title" data-reveal="lines">Where logic <em class="serif-i">becomes</em> physics.</h2>
+            <h2 class="sec-title" data-reveal="flip">Where logic <em class="serif-i">becomes</em> physics.</h2>
           </header>
 
           <!-- Khung chân dung dạng package chip (QFN nhìn từ trên). Ảnh thật: đặt profile.portrait trong src/content/profile.ts -->
-          <figure class="pkg" data-tilt="0.7" data-cursor="DIE">
+          <figure class="pkg" data-tilt="0.7">
             <div class="pkg-pins" aria-hidden="true"></div>
             <div class="pkg-body">
               <svg class="pkg-wires" aria-hidden="true" focusable="false"></svg>
@@ -161,15 +161,15 @@
       </section>
 
       <!-- 03 · DESIGN FLOW — các headline ngành: 7 giai đoạn từ spec tới tape-out (nội dung phổ thông, không phải kinh nghiệm cá nhân) -->
-      <section class="chapter flow" id="flow" tabindex="-1" data-scene="stream" data-accent="#a08cff" data-accent2="#d3c8ff" data-title="Design flow">
+      <section class="chapter flow" id="flow" tabindex="-1" data-scene="stream" data-accent="#6F8BFF" data-accent2="#BFCBFF" data-title="Design flow">
         <div class="pin">
-          <header class="flow-head wrap">
+          <header class="flow-head wrap" data-shield>
             <p class="eyebrow" data-decode>02 / The IC design flow</p>
             <h2 class="sec-title" data-reveal="lines">From specification <em class="serif-i">to silicon.</em></h2>
-            <p class="flow-sub">Seven stages every digital chip passes through on its way to the fab.</p>
+            <p class="flow-sub" data-rise>Seven stages every digital chip passes through on its way to the fab.</p>
           </header>
 
-          <div class="flow-meter" aria-hidden="true">
+          <div class="flow-meter" aria-hidden="true" data-shield>
             <span class="flow-count mono"><b data-flow-index>01</b> / 07</span>
             <span class="flow-bar"><i></i></span>
             <span class="flow-stage-name mono" data-flow-name>Specification</span>
@@ -307,48 +307,77 @@
       </section>
 
       <!-- 04 · PROJECTS — dữ liệu ở src/content/profile.ts → projects (TODO: điền dự án thật) -->
-      <section class="chapter projects" id="projects" tabindex="-1" data-scene="dotmatrix" data-accent="#6ef0b4" data-accent2="#b9ffd9" data-title="Projects">
+      <section class="chapter projects" id="projects" tabindex="-1" data-scene="dotmatrix" data-accent="#5EC8FF" data-accent2="#2EE6C5" data-title="Projects">
         <div class="wrap">
-          <header class="sec-head">
+          <!-- bố cục kiểu Gallery Heading (ghi chú nhỏ hai bên tiêu đề); tiêu đề trượt từng từ: fx/text/slideHeading.ts -->
+          <header class="sec-head proj-head" data-shield>
             <p class="eyebrow" data-decode>03 / Projects</p>
-            <h2 class="sec-title" data-reveal="lines">Work, <em class="serif-i">die by die.</em></h2>
-            <p class="sec-sub" data-projects-sub></p>
+            <div class="proj-head-row">
+              <p class="proj-head-note mono" aria-hidden="true" data-rise><span data-proj-count>(03) dies</span><span>IC design</span><span>Semiconductor</span></p>
+              <h2 class="sec-title">Work, <em class="serif-i">die by die.</em></h2>
+              <p class="proj-head-note proj-head-note-r mono" aria-hidden="true" data-rise><span>Wafer map</span><span>Open a die</span><span>Book · Scroll</span></p>
+            </div>
+            <p class="sec-sub" data-projects-sub data-rise></p>
           </header>
           <div class="proj-grid" data-projects></div>
         </div>
       </section>
 
       <!-- 05 · CV — dựng từ src/content/profile.ts; in được (styles/print.css) -->
-      <section class="chapter cv" id="cv" tabindex="-1" data-scene="topo" data-accent="#f2c86b" data-accent2="#ffe3a3" data-title="CV">
+      <section class="chapter cv" id="cv" tabindex="-1" data-scene="topo" data-accent="#D08CFF" data-accent2="#F0D2FF" data-title="CV">
         <div class="wrap">
           <header class="sec-head cv-top">
             <div>
               <p class="eyebrow" data-decode>04 / Curriculum vitae</p>
               <h2 class="sec-title" data-reveal="lines">Curriculum <em class="serif-i">vitae.</em></h2>
             </div>
-            <div class="cv-actions" data-cv-actions></div>
+            <div class="cv-actions" data-cv-actions data-rise></div>
           </header>
           <article class="cv-doc" data-cv aria-label="Curriculum vitae"></article>
         </div>
       </section>
 
       <!-- 06 · END OF LINE (footer) -->
-      <section class="chapter eol" id="eol" tabindex="-1" data-scene="ribbon" data-accent="#7cc8ff" data-accent2="#b49cff" data-title="End of line">
+      <section class="chapter eol" id="eol" tabindex="-1" data-scene="ribbon" data-accent="#8B7BFF" data-accent2="#2EE6C5" data-title="End of line">
         <footer class="eol-inner wrap">
           <p class="eyebrow" data-decode>05 / End of line</p>
+          <!-- biển neon "THANKS" (canvas 2D, trang trí; chữ thật là câu ngay dưới) — sections/eol.ts -->
+          <div class="eol-neon" aria-hidden="true"><canvas></canvas></div>
           <p class="eol-line serif-i" data-reveal="words">Thanks for following the signal all the way down.</p>
           <!-- TODO: liên hệ thật (email, LinkedIn, GitHub…) → profile.contact trong src/content/profile.ts. Trống = không hiện gì. -->
-          <ul class="eol-contact" data-contact></ul>
-          <p class="eol-name" aria-hidden="true"><span class="eol-name-in"><span class="eol-base">Nguyễn Ngọc Sơn</span><span class="eol-fill">Nguyễn Ngọc Sơn</span></span></p>
-          <div class="eol-bar">
+          <ul class="eol-contact" id="contact" aria-label="Contact" data-contact data-rise></ul>
+          <p class="eol-name" aria-hidden="true"><span class="eol-name-in"><span class="eol-base">Nguyễn Ngọc Sơn</span><span class="eol-fill">Nguyễn Ngọc Sơn</span><span class="eol-sweep"><span class="eol-sweep-in">Nguyễn Ngọc Sơn</span></span></span></p>
+          <div class="eol-bar" data-rise>
             <p class="mono">© 2026 Nguyễn Ngọc Sơn</p>
             <p class="mono eol-uptime" aria-hidden="true">Session uptime <span data-uptime>00:00:00</span></p>
             <button class="btn btn-beam" type="button" data-top data-magnetic="0.3"><span class="glow" aria-hidden="true"></span>Back to power-on ↑</button>
           </div>
-          <p class="eol-credit label">Shader &amp; motion effects adapted from ThreeUI (MIT) · Built with GSAP, Lenis &amp; WebGL</p>
+          <p class="eol-credit label" data-rise>Shader &amp; motion effects adapted from ThreeUI (MIT) · Built with GSAP, Lenis &amp; WebGL</p>
         </footer>
       </section>
     </main>
+
+    <!-- Trang chi tiết dự án (sections/projectView.ts): mở bằng Flip từ card, chế độ sách (desktop) / cuộn -->
+    <div class="pv" id="project-view" role="dialog" aria-modal="true" aria-labelledby="pv-title" hidden>
+      <div class="pv-backdrop" aria-hidden="true"></div>
+      <div class="pv-frame">
+        <header class="pv-head">
+          <i class="pv-progress" aria-hidden="true"><b></b></i>
+          <p class="pv-die mono" data-pv-die>DIE 01</p>
+          <h2 class="pv-title" id="pv-title" data-pv-title>Project</h2>
+          <div class="pv-tools">
+            <button class="pv-btn" type="button" data-pv-mode>Scroll view</button>
+            <button class="pv-btn pv-close" type="button" data-pv-close aria-label="Close project">Close <kbd aria-hidden="true">Esc</kbd></button>
+          </div>
+        </header>
+        <div class="pv-body" data-pv-body></div>
+        <nav class="pv-nav" aria-label="Other projects">
+          <button class="pv-btn" type="button" data-pv-prev></button>
+          <span class="pv-nav-dot" aria-hidden="true">·</span>
+          <button class="pv-btn" type="button" data-pv-next></button>
+        </nav>
+      </div>
+    </div>
 
     <div class="grain" aria-hidden="true"></div>
 

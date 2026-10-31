@@ -2,7 +2,7 @@
 @media print {
   @page { size: A4; margin: 14mm 14mm 16mm; }
   html, body { background: #fff !important; color: #111 !important; }
-  #stage, #ambient, .trace, .preloader, .progress, .dock, .rail, .menu, .grain, .cur-ring, .hud, .skip-link,
+  #stage, #ambient, .trace, .preloader, .progress, .dock, .rail, .menu, .grain, .hud, .skip-link,
   main > section:not(#cv), #cv .cv-top, #cv .cv-scan, #cv .slot, #cv .cv-block.is-empty, #cv .cv-chips.is-slot { display: none !important; }
   main { opacity: 1 !important; visibility: visible !important; }
 

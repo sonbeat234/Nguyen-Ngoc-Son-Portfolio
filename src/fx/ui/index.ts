@@ -11,6 +11,9 @@ import { initCursor } from "./cursor";
 import { initMagnetic } from "./magnetic";
 import { initTilt } from "./tilt";
 import { initTrace } from "./trace";
+import { initShield } from "./shield";
+import { initRise } from "./rise";
+import { initFrost } from "./frost";
 
 function initProgress() {
   const bar = $(".progress");
@@ -24,7 +27,11 @@ function initProgress() {
 }
 
 function initAmbient() {
-  const stars = createAmbientStarfield($<HTMLCanvasElement>("#ambient"));
+  // V5-perf (i): sao nền vẽ trong composite của stage, cập nhật mỗi frame (không còn canvas toàn màn 20 fps/60 fps
+  // đổi nhịp, không thêm lớp compositing). Canvas cũ chỉ còn ở ?legacyfx để so sánh.
+  const canvas = $<HTMLCanvasElement>("#ambient");
+  if (!state.legacyfx) { canvas.style.display = "none"; return; }
+  const stars = createAmbientStarfield(canvas);
   // canvas toàn màn: đứng yên thì sao trôi rất chậm → 20fps là đủ (bớt upload texture mỗi frame); đang cuộn thì mỗi frame
   let acc = 0;
   onTick((_, dt) => {
@@ -47,6 +54,9 @@ export function initGlobalLayers() {
 }
 
 export function initInteractions(root: ParentNode = document) {
+  initShield(root);
   initMagnetic(root);
   initTilt(root);
+  initRise(root);
+  initFrost(root);
 }

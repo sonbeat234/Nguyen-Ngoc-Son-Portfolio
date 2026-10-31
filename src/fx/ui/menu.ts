@@ -6,6 +6,7 @@ import { lockScroll, scrollTo } from "../../core/scroll";
 import { state } from "../../core/state";
 import { stage } from "../../stage/instance";
 import { chapters, currentChapter, tweenAccent } from "./accent";
+import { profile } from "../../content/profile";
 
 export function initMenu() {
   const menu = $("#menu");
@@ -29,6 +30,31 @@ export function initMenu() {
     li.appendChild(a);
     list.appendChild(li);
   });
+  // lối tắt tới khối liên hệ ở footer (#contact) — chỉ khi có liên hệ thật. Preview scene/accent của End of line;
+  // cuộn dừng cho khối nằm ~35% chiều cao màn (không bị dock che), rồi focus link liên hệ đầu tiên cho bàn phím.
+  const eol = chapters.find((c) => c.id === "eol");
+  if (profile.contact.length && eol) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.className = "menu__link";
+    a.href = "#contact";
+    a.innerHTML = `<small>@</small>Contact`;
+    const preview = () => { stage.force(eol.scene); tweenAccent(eol.accent, eol.accent2, 0.6); };
+    a.addEventListener("pointerenter", preview);
+    a.addEventListener("focus", preview);
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      close();
+      const target = document.getElementById("contact");
+      if (!target) return;
+      scrollTo(target, state.reduced ? 0.01 : 2, -state.h * 0.35);
+      // main còn visibility:hidden ở frame đóng menu (transition .6s, base.css) → focus sau 2 frame mới ăn
+      const first = target.querySelector<HTMLElement>("a, button");
+      requestAnimationFrame(() => requestAnimationFrame(() => first?.focus({ preventScroll: true })));
+    });
+    li.appendChild(a);
+    list.appendChild(li);
+  }
   list.addEventListener("pointerleave", () => stage.force(null));
 
   const setOrigin = () => {

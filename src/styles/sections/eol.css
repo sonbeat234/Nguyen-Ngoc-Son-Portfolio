@@ -2,15 +2,47 @@
 #eol { min-height: 100vh; min-height: 100svh; display: flex; }
 #eol .eol-inner { display: flex; flex-direction: column; justify-content: flex-end; gap: clamp(26px, 4vh, 44px);
   padding-top: clamp(140px, 22vh, 240px); padding-bottom: 28px; }
+/* biển neon: khung kính tối, canvas phủ kín (NeonSign bake một lần, mỗi frame chỉ ghép lát) */
+#eol .eol-neon { position: relative; width: min(100%, 980px); height: clamp(110px, 20vh, 220px); border-radius: 16px; overflow: hidden;
+  background: radial-gradient(80% 90% at 50% 50%, color-mix(in oklab, var(--primary) 10%, transparent), transparent 70%), color-mix(in oklab, var(--ink) 70%, transparent);
+  border: 1px solid color-mix(in oklab, var(--primary) 22%, var(--line)); }
+#eol .eol-neon canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #eol .eol-line { font-size: clamp(2rem, 5vw, 4.8rem); line-height: 1.04; max-width: 17ch; letter-spacing: -.015em; }
 
 #eol .eol-contact { display: flex; flex-wrap: wrap; gap: 12px; }
-#eol .eol-link { display: inline-flex; align-items: center; gap: .8em; padding: .9em 1.3em; border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent); background: rgba(8,10,16,.6); font-weight: 500;
-  transition: background .3s, color .3s; }
-#eol .eol-link span { font: 400 .62rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
+/* mỗi mục: pill link (+ nút Copy với email) — cùng chiều cao, xuống dòng được ở 375px */
+#eol .eol-contact li { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; max-width: 100%; }
+#eol .eol-link { display: inline-flex; align-items: center; gap: .8em; min-width: 0; max-width: 100%; padding: .9em 1.3em; border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent); background: color-mix(in oklab, var(--panel) 60%, transparent); font-weight: 500;
+  overflow-wrap: anywhere; transition: background .3s, color .3s; }
+#eol .eol-ico { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s; }
+/* ↗ chỉ cho link mở trang ngoài; "/ ''" = trình đọc màn hình bỏ qua ký tự trang trí */
+#eol .eol-link[target="_blank"]::after { content: "↗"; content: "↗" / ""; margin-left: .15em; color: var(--accent); font-size: .9em; transition: color .3s, translate .3s; }
+#eol .eol-link span { flex: none; font: 400 .62rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
 #eol .eol-link:hover { background: var(--accent); color: var(--ink); }
 #eol .eol-link:hover span { color: var(--ink); }
+#eol .eol-link:hover .eol-ico { stroke: var(--ink); }
+#eol .eol-link:hover::after { color: var(--ink); }
+
+/* nút Copy (email): nhãn "Copy" ↔ "Copied" chồng cùng ô lưới, đổi bằng opacity + translate (reduced: chỉ opacity) */
+#eol .eol-copy { display: inline-grid; place-items: center; min-height: 44px; padding: 0 1.1em; border-radius: 999px; cursor: pointer;
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent); background: color-mix(in oklab, var(--panel) 60%, transparent);
+  color: var(--mute); font: 500 .62rem/1 var(--f-mono); letter-spacing: .2em; text-transform: uppercase; overflow: hidden;
+  transition: background .3s, color .3s, border-color .3s; }
+#eol .eol-copy > span:not(.sr-only) { grid-area: 1 / 1; transition: opacity .35s var(--ease-out), translate .35s var(--ease-out); }
+#eol .eol-copy-b { opacity: 0; translate: 0 80%; color: var(--signal); }
+#eol .eol-copy.is-done { border-color: color-mix(in oklab, var(--signal) 60%, transparent); }
+#eol .eol-copy.is-done .eol-copy-a { opacity: 0; translate: 0 -80%; }
+#eol .eol-copy.is-done .eol-copy-b { opacity: 1; translate: 0 0; }
+@media (hover: hover) { #eol .eol-copy:hover { color: var(--bone); border-color: var(--accent); } }
+@media (prefers-reduced-motion: reduce) { #eol .eol-copy > span:not(.sr-only) { translate: none !important; } }
+html.reduced #eol .eol-copy > span:not(.sr-only) { translate: none !important; }
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html:not(.reduced) #eol .eol-link, html:not(.reduced) #eol .eol-copy { transition: background .3s, color .3s, border-color .3s, translate .35s var(--ease-out); }
+  html:not(.reduced) #eol .eol-link:hover, html:not(.reduced) #eol .eol-copy:hover { translate: 0 -2px; }
+  html:not(.reduced) #eol .eol-link:hover::after { translate: 2px -2px; }
+}
 
 /* outline typeflow — 2 lớp:
    .eol-base: viền 2px vẽ TRƯỚC phần ruột (paint-order) với ruột màu nền → che nét chồng bên trong của font variable,
@@ -18,7 +50,7 @@
    .eol-fill: chữ trong suốt phủ đúng chỗ, tô màu theo con trỏ (hover) / vệt sáng tự chạy (idle, touch). */
 #eol .eol-name { margin: 0; overflow: hidden; padding-block: .14em .04em; }
 #eol .eol-name-in { position: relative; display: block; }
-#eol .eol-base, #eol .eol-fill {
+#eol .eol-base, #eol .eol-fill, #eol .eol-sweep-in {
   display: block; white-space: nowrap; font: 700 7.3vw/1.12 var(--f-display); letter-spacing: -.055em;
 }
 #eol .eol-base {
@@ -28,13 +60,28 @@
 #eol .eol-fill {
   position: absolute; inset: 0; color: transparent;
   background-image:
-    radial-gradient(240px circle at var(--mx, -400px) var(--my, -400px), var(--accent), color-mix(in oklab, var(--accent-2) 60%, transparent) 40%, transparent 70%),
-    linear-gradient(100deg, transparent 42%, color-mix(in oklab, var(--accent) 38%, transparent) 50%, transparent 58%);
-  background-size: 100% 100%, 260% 100%; background-repeat: no-repeat;
+    radial-gradient(240px circle at var(--mx, -400px) var(--my, -400px), var(--accent), color-mix(in oklab, var(--accent-2) 60%, transparent) 40%, transparent 70%);
+  background-size: 100% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text;
-  animation: eol-sheen 7s linear infinite;
 }
 #eol .eol-name.is-hot .eol-base { -webkit-text-stroke-color: color-mix(in oklab, var(--accent) 60%, transparent); }
+/* V5-perf: vệt sáng tự chạy = khung 40% (mép mềm bằng mask tĩnh) trượt bằng transform, chữ bên trong dịch ngược để
+   đứng yên đúng chỗ → hai animation transform trên compositor. Bản cũ animate background-position của chữ
+   background-clip:text khổng lồ = vẽ lại cả khối chữ mỗi frame. */
+#eol .eol-sweep { position: absolute; top: 0; bottom: 0; left: 0; width: 40%; overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 50%, transparent); mask-image: linear-gradient(90deg, transparent, #000 50%, transparent);
+  animation: eol-sweep 7s linear infinite; }
+#eol .eol-sweep-in { display: block; width: 250%; color: color-mix(in oklab, var(--accent) 38%, transparent);
+  animation: eol-sweep-in 7s linear infinite; }
+@keyframes eol-sweep { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+@keyframes eol-sweep-in { from { transform: translateX(40%); } to { transform: translateX(-100%); } }
+/* ?legacyfx: vệt sáng cũ (background-position) để so sánh */
+html.legacyfx #eol .eol-sweep { display: none; }
+html.legacyfx #eol .eol-fill {
+  background-image:
+    radial-gradient(240px circle at var(--mx, -400px) var(--my, -400px), var(--accent), color-mix(in oklab, var(--accent-2) 60%, transparent) 40%, transparent 70%),
+    linear-gradient(100deg, transparent 42%, color-mix(in oklab, var(--accent) 38%, transparent) 50%, transparent 58%);
+  background-size: 100% 100%, 260% 100%; animation: eol-sheen 7s linear infinite; }
 @keyframes eol-sheen { from { background-position: 0 0, 130% 0; } to { background-position: 0 0, -130% 0; } }
 
 #eol .eol-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
@@ -44,8 +91,14 @@
 #eol .eol-credit { text-transform: none; letter-spacing: .08em; font-size: .66rem; }
 
 @media (max-width: 767px) {
-  #eol .eol-base, #eol .eol-fill { font-size: 10.6vw; white-space: normal; line-height: 1.16; }
+  #eol .eol-base, #eol .eol-fill, #eol .eol-sweep-in { font-size: 10.6vw; white-space: normal; line-height: 1.16; }
   #eol .eol-bar { flex-direction: column; align-items: flex-start; }
 }
-@media (prefers-reduced-motion: reduce) { #eol .eol-fill { animation: none; } }
+/* màn hẹp: icon đã cho biết loại liên hệ → nhãn chữ chỉ còn cho trình đọc màn hình, để địa chỉ nằm gọn một dòng */
+@media (max-width: 480px) {
+  #eol .eol-link { position: relative; gap: .65em; padding: .85em 1.1em; }
+  #eol .eol-link > span:not(.sr-only) { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media (prefers-reduced-motion: reduce) { #eol .eol-fill { animation: none; } #eol .eol-sweep { display: none; } }
 html.reduced #eol .eol-fill { animation: none; }
+html.reduced #eol .eol-sweep { display: none; }

@@ -17,7 +17,35 @@ export type Project = {
   period: string;
   /** TODO (tuỳ chọn): link repo / báo cáo THẬT. Để "" thì không hiện nút. */
   link: string;
+
+  // ---- trang chi tiết (mở khi bấm card: chế độ sách / cuộn). Mọi trường được để rỗng → khối skeleton "to be added" ----
+  /** đoạn URL, vd "mini-ic-tester" → #project/mini-ic-tester. Rỗng → "die-01", "die-02"… theo thứ tự */
+  slug: string;
+  /** ảnh bìa trong public/, vd "/img/projects/tester-cover.webp" (webp, ngang ~1600px) */
+  cover: string;
+  /** 2–3 câu tóm tắt dự án */
+  summary: string;
+  /** bài toán / bối cảnh cần giải quyết */
+  problem: string;
+  /** cách làm, mỗi bước một trang sách / một khối khi cuộn; image tuỳ chọn */
+  approach: { title: string; text: string; image?: string }[];
+  /** số liệu kết quả, vd { label: "Yield", value: "96.4 %" } — số trong value tự đếm lên */
+  metrics: { label: string; value: string }[];
+  /** hình ảnh (webp) + chú thích */
+  gallery: { src: string; caption: string }[];
+  /** bài học rút ra, mỗi phần tử một ý */
+  lessons: string[];
+  /** link liên quan THẬT (repo, báo cáo, video…) */
+  links: { label: string; href: string }[];
 };
+
+/** dự án chưa có nội dung: mọi trường rỗng (card + trang chi tiết hiện skeleton "to be added") */
+export function emptyProject(): Project {
+  return {
+    title: "", objective: "", tools: [], role: "", outcome: "", period: "", link: "",
+    slug: "", cover: "", summary: "", problem: "", approach: [], metrics: [], gallery: [], lessons: [], links: [],
+  };
+}
 
 export type SkillGroup = {
   /** TODO: nhóm kỹ năng, vd "HDL", "EDA tools", "Scripting", "Analog / layout" */
@@ -27,6 +55,8 @@ export type SkillGroup = {
 };
 
 export type Education = {
+  /** cấp học, hiện dạng nhãn nhỏ trên timeline CV, vd "University", "High school" */
+  level?: string;
   school: string;
   /** TODO: ngành / chương trình, vd "B.Eng. in Integrated Circuit Design" */
   program: string;
@@ -52,6 +82,7 @@ export const profile = {
   fullName: "Nguyễn Ngọc Sơn",
   dateOfBirth: "2nd August 2006",
   education: "FPT University, Hanoi",
+  highSchool: "Le Quy Don High School for the Gifted, Lai Chau",
   ielts: "6.0",
   toeic: "750",
 
@@ -80,19 +111,23 @@ export const profile = {
 
   educationEntries: [
     {
+      level: "University",
       school: "FPT University, Hanoi",
       program: "", // TODO: ngành học chính xác
       period: "", // TODO: năm bắt đầu – kết thúc / "present"
       notes: [], // TODO: GPA, môn chuyên ngành tiêu biểu, đồ án…
     },
+    {
+      level: "High school",
+      school: "Le Quy Don High School for the Gifted, Lai Chau",
+      program: "", // TODO (tuỳ chọn): lớp chuyên, vd "Specialised class: Mathematics"
+      period: "", // TODO: năm học, vd "2021 – 2024"
+      notes: [],
+    },
   ] as Education[],
 
-  /** TODO: thay 3 ô trống bằng dự án thật (xem type Project ở trên). Có thể thêm/bớt phần tử. */
-  projects: [
-    { title: "", objective: "", tools: [], role: "", outcome: "", period: "", link: "" },
-    { title: "", objective: "", tools: [], role: "", outcome: "", period: "", link: "" },
-    { title: "", objective: "", tools: [], role: "", outcome: "", period: "", link: "" },
-  ] as Project[],
+  /** TODO: thay 3 ô trống bằng dự án thật (xem type Project ở trên và ví dụ đầy đủ trong README). Có thể thêm/bớt phần tử. */
+  projects: [emptyProject(), emptyProject(), emptyProject()] as Project[],
 
   /** TODO: điền kỹ năng thật theo nhóm. Mảng rỗng → CV hiện các ô trống. */
   skills: [] as SkillGroup[],
@@ -108,8 +143,16 @@ export const profile = {
     },
   ],
 
-  /** TODO: chỉ thêm liên hệ THẬT (email, LinkedIn, GitHub…). Mảng rỗng → không hiện nút liên hệ nào. */
-  contact: [] as ContactLink[],
+  /**
+   * Liên hệ THẬT (đã xác nhận). Hiện ở footer (End of line — email có nút Copy), đầu CV, mục "Contact" trong menu,
+   * và readout trang đầu (2 link https đầu tiên, chỉ hiện handle — thay chỗ IELTS/TOEIC cũ).
+   * Icon tự chọn theo href: mailto → thư, tel → điện thoại, linkedin.com, github.com. Mảng rỗng → không hiện gì.
+   */
+  contact: [
+    { label: "Email", value: "ngocson02082006@gmail.com", href: "mailto:ngocson02082006@gmail.com" },
+    { label: "LinkedIn", value: "linkedin.com/in/ngocson2006", href: "https://www.linkedin.com/in/ngocson2006/" },
+    { label: "GitHub", value: "github.com/sonbeat234", href: "https://github.com/sonbeat234" },
+  ] as ContactLink[],
 };
 
 export const isFilled = (v: string | string[]) => (Array.isArray(v) ? v.length > 0 : v.trim().length > 0);
@@ -117,3 +160,7 @@ export const isFilled = (v: string | string[]) => (Array.isArray(v) ? v.length >
 /** escape trước khi chèn chuỗi người dùng vào innerHTML */
 export const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+/** slug dùng trong URL (#project/<slug>): profile.projects[i].slug hoặc "die-01"… */
+export const projectSlug = (p: Project, i: number) =>
+  (p.slug.trim() || `die-${String(i + 1).padStart(2, "0")}`).toLowerCase().replace(/[^a-z0-9-]+/g, "-");

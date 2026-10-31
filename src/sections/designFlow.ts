@@ -9,7 +9,7 @@ import { $, $$ } from "../core/dom";
 import { state } from "../core/state";
 import { onTick } from "../core/loop";
 import { lazyMount } from "../core/lazy";
-import { decodeTo } from "../fx/text/decode";
+import { decodeTo, decodeText } from "../fx/text/decode";
 import { createWaveform } from "../canvas/Waveform";
 import { createPlaceRoute } from "../canvas/PlaceRoute";
 
@@ -20,6 +20,7 @@ export function initDesignFlow() {
   const idxEl = $("[data-flow-index]", sec);
   const nameEl = $("[data-flow-name]", sec);
   const bar = $(".flow-bar i", sec);
+  const titles = stages.map((s) => $(".stage-title", s));
 
   $$(".viz-rtl .ln", sec).forEach((l, i) => l.style.setProperty("--i", String(i)));
 
@@ -34,6 +35,8 @@ export function initDesignFlow() {
     });
     idxEl.textContent = String(i + 1).padStart(2, "0");
     decodeTo(nameEl, stages[i].dataset.name ?? "", { duration: 480 });
+    // V4: tiêu đề stage scramble mỗi khi stage thành active (decode chạy trong tick chung)
+    decodeText(titles[i], { duration: 720, scramble: 7, keep: 0.2, tail: 0.25 });
     spec.paused(i !== 0);
   };
 

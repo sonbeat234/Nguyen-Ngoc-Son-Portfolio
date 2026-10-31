@@ -29,6 +29,7 @@ export function initDock() {
   const fit = () => field.resize(dock.clientWidth, dock.clientHeight);
   new ResizeObserver(fit).observe(dock);
   fit();
+  field.render(performance.now());   // vẽ ngay một lần: biên dịch shader rơi vào pha tải của preloader, không vào intro
   let hover = false;
   dock.addEventListener("pointerenter", () => (hover = true));
   dock.addEventListener("pointerleave", () => (hover = false));
@@ -48,8 +49,10 @@ export function initDock() {
     const s = state.scroll;
     if (document.documentElement.classList.contains("menu-open") || s.y < 120) show(true);
     else if (Math.abs(s.velocity) > 0.6) show(s.direction < 0);
-    // đang hover thì đủ 60fps; bình thường 30fps là đủ cho bead trôi chậm
-    if (hidden || (!hover && (frame++ & 1))) return;
+    // V5-perf (i): thứ gì đang chuyển động thì vẽ MỖI frame (30 fps cố định trông giật trên 120/144 Hz và đổi "số"
+    // khi hover). Bậc "lite" của quality tắt hẳn lớp này (không thiết yếu) thay vì hạ fps. ?legacyfx: nhịp 30/60 cũ.
+    if (hidden || state.lite) return;
+    if (state.legacyfx && !hover && (frame++ & 1)) return;
     field.render(performance.now());
   });
 

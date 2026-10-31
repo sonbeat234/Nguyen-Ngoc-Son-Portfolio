@@ -16,7 +16,7 @@ button { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 h1, h2, h3, h4, p, ul, ol, figure, blockquote { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
-::selection { background: var(--accent); color: var(--ink); }
+::selection { background: var(--accent); color: var(--on-primary); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
@@ -56,19 +56,24 @@ canvas.layer { display: block; }
 html.js [data-reveal]:not(.is-split) { visibility: hidden; }
 html.reduced [data-reveal] { visibility: visible; }
 
-/* scrub words: từ nhấn <em> nhận gradient accent chạy ngang khi sáng */
+/* scrub words: từ nhấn <em> — nửa trái gradient PRIMARY → SIGNAL, nửa phải --mute; scrub.ts quét position 100% → 0% */
 [data-scrub] em {
-  font-family: var(--f-serif); font-style: italic;
-  background: linear-gradient(90deg, var(--accent) 0 50%, currentColor 50% 100%);
+  font-family: var(--f-serif); font-style: italic; padding-inline: .04em;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--signal) 50%, var(--mute) 50%, var(--mute) 100%);
   background-size: 200% 100%; background-position-x: 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
+[data-scrub].is-lit em { background-position-x: 0%; }
+
+/* chữ dài nằm thẳng trên shader (không có panel phía sau): bóng mảnh tách chữ khỏi nền sáng */
+.sec-sub, .hero-lede, .hero-tag, .flow-sub, .eol-line, .eol-credit, .eol-bar, .sec-head .eyebrow, .hero-eyebrow,
+.flow-meter, .sec-title { text-shadow: 0 1px 2px rgb(0 0 0 / .6); }
 
 /* neon (bản CSS nhanh, spec 7.7) */
 .neon {
-  font-family: var(--f-display); color: #fff6e8;
+  font-family: var(--f-display); color: var(--bone);
   text-shadow:
-    0 0 2px #fff, 0 0 8px var(--accent), 0 0 18px var(--accent),
+    0 0 2px var(--bone), 0 0 8px var(--accent), 0 0 18px var(--accent),
     0 0 42px var(--accent), 0 0 80px color-mix(in oklab, var(--accent) 60%, transparent);
   animation: neon-flicker 5.5s infinite steps(1);
 }
@@ -90,8 +95,9 @@ html.reduced [data-reveal] { visibility: visible; }
   position: relative; border-radius: var(--radius); padding: 28px;
   background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
   border: 1px solid var(--line); overflow: hidden; transform-style: preserve-3d;
-  backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
 }
+/* V5-perf: kính mờ vẽ trong shader stage (fx/ui/frost.ts). backdrop-filter trên canvas sống chỉ còn ở ?legacyfx */
+html.legacyfx .card { backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); }
 .card::before { /* spotlight */
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(420px circle at var(--mx,50%) var(--my,50%), color-mix(in oklab, var(--accent) 22%, transparent), transparent 60%);
@@ -105,9 +111,16 @@ html.reduced [data-reveal] { visibility: visible; }
 }
 .card:hover::before, .card:hover::after { opacity: 1; }
 .card > * { transform: translateZ(30px); }
-[data-quality="0.50"] .card { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(14,14,18,.85); }
+html.legacyfx[data-quality="0.50"] .card { backdrop-filter: none; -webkit-backdrop-filter: none; background: color-mix(in oklab, var(--panel) 92%, transparent); }
+
+/* decode đang chạy (fx/text/decode.ts khoá width/height): glyph nhiễu không đẩy layout ra ngoài. Không dùng
+   contain: paint — paint containment cắt mất dấu tiếng Việt vượt hộp chữ. */
+.is-decoding { contain: layout style; }
 
 /* ---------- grain overlay toàn trang ---------- */
+/* V5-perf: grain nằm trong composite shader (một dòng hash). Lớp DOM 200% × 200% + mix-blend overlay buộc GPU blend
+   cả màn mỗi frame → chỉ còn ở ?legacyfx để so sánh. */
+html:not(.legacyfx) .grain { display: none; }
 .grain {
   position: fixed; inset: -50%; width: 200%; height: 200%; z-index: 60; pointer-events: none;
   opacity: .06; mix-blend-mode: overlay;
@@ -137,14 +150,26 @@ section.chapter:focus { outline: none; }
 /* ---------- tiêu đề section dùng chung ---------- */
 .sec-head { display: grid; gap: 14px; margin-bottom: clamp(32px, 6vh, 64px); }
 .sec-title { font: 300 var(--fs-h2)/1.02 var(--f-display); letter-spacing: -.035em; max-width: 16ch; text-wrap: balance; }
-.sec-title em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em;
-  color: color-mix(in oklab, var(--accent) 70%, var(--bone)); }
+.sec-title em { --em: color-mix(in oklab, var(--accent) 70%, var(--bone));
+  font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; color: var(--em); }
+/* reveal "flip" xong: vệt gradient PRIMARY_2 → SIGNAL quét qua chữ nghiêng một lần (bóng chữ tắt để không phủ gradient) */
+.sec-title.is-swept em { padding-inline: .05em; text-shadow: none; color: transparent; -webkit-background-clip: text; background-clip: text;
+  background: linear-gradient(100deg, var(--em) 0 38%, var(--primary-2) 46%, var(--signal) 52%, var(--em) 60% 100%) 100% 0 / 260% 100% no-repeat;
+  -webkit-background-clip: text; animation: em-sweep 1.8s var(--ease-in-out) .1s both; }
+@keyframes em-sweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.fx-ch { display: inline-block; }
 .sec-sub { max-width: 52ch; color: color-mix(in oklab, var(--bone) 70%, transparent); font-weight: 300; }
 
 /* ô dữ liệu chưa có (để trống có chủ đích, không chữ giả): skeleton có ánh quét */
 .slot { display: inline-block; vertical-align: middle; width: min(100%, 14em); height: .9em; border-radius: 4px;
-  background: linear-gradient(100deg, rgba(255,255,255,.05) 30%, rgba(255,255,255,.14) 50%, rgba(255,255,255,.05) 70%) 0 0 / 300% 100%;
-  border: 1px dashed rgba(255,255,255,.14); animation: slot-shimmer 2.4s linear infinite; }
+  position: relative; overflow: hidden; background: rgba(255,255,255,.05);
+  border: 1px dashed rgba(255,255,255,.14); }
+/* V5-perf: ánh quét = lớp ::after chạy bằng transform (compositor) — trước đây animate background-position = repaint
+   mọi ô trống mỗi frame trên main thread */
+.slot::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.09) 50%, transparent 70%);
+  transform: translateX(-100%); animation: slot-sweep 2.4s linear infinite; }
+@keyframes slot-sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 .slot.slot-lg { width: min(100%, 11em); height: 1.1em; }
 .slot.slot-sm { width: 7em; height: .8em; }
 .slot.slot-chip { width: 5.5em; height: 1.4em; border-radius: 999px; }
@@ -153,12 +178,12 @@ section.chapter:focus { outline: none; }
 /* ---------- đường mạch toàn trang (fx/ui/trace.ts) ---------- */
 .trace { position: fixed; left: 0; top: 0; width: 52px; height: 100vh; z-index: 3; pointer-events: none; overflow: hidden; }
 .trace path { fill: none; stroke-linejoin: round; stroke-linecap: round; }
-.trace__base { stroke: rgba(233,237,242,.1); stroke-width: 1; }
+.trace__base { stroke: color-mix(in oklab, var(--bone) 10%, transparent); stroke-width: 1; }
 .trace__glow { stroke: color-mix(in oklab, var(--accent) 35%, transparent); stroke-width: 6; }
 .trace__lit { stroke: var(--accent); stroke-width: 1.5; }
-.trace__via { fill: var(--ink); stroke: rgba(233,237,242,.25); stroke-width: 1.2; transition: fill .4s, stroke .4s; }
-.trace__via.is-on { fill: var(--accent); stroke: color-mix(in oklab, var(--accent) 60%, #fff); }
-.trace__head { fill: #fff; filter: drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 10px var(--accent)); }
+.trace__via { fill: var(--ink); stroke: color-mix(in oklab, var(--bone) 25%, transparent); stroke-width: 1.2; transition: fill .4s, stroke .4s; }
+.trace__via.is-on { fill: var(--accent); stroke: color-mix(in oklab, var(--accent) 60%, var(--bone)); }
+.trace__head { fill: var(--bone); filter: drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 10px var(--accent)); }
 @media (max-width: 767px) { .trace { width: 18px; } .trace__glow { stroke-width: 4; } .trace__head { r: 2.4px; } }
 
 /* ---------- progress bar ---------- */
@@ -166,17 +191,22 @@ section.chapter:focus { outline: none; }
   transform-origin: 0 50%; transform: scaleX(0); box-shadow: 0 0 10px var(--accent); pointer-events: none; }
 
 /* ---------- top dock (Animated Top Dock + glass particle field) ---------- */
+/* accent của chương hiện tại CHỈ cho các lớp UI cố định (fx/ui/accent.ts ghi --accent 1 lần, transition @property chạy
+   trên cây DOM nhỏ của chúng). Section tự mang accent tĩnh → đổi chương không restyle cả trang (V5-perf, mục a). */
+.dock, .rail, .progress, .trace, .menu {
+  transition: --accent var(--accent-dur, 1.2s) cubic-bezier(.33, 1, .68, 1), --accent-2 var(--accent-dur, 1.2s) cubic-bezier(.33, 1, .68, 1);
+}
 .dock {
   position: fixed; top: 14px; left: 50%; z-index: 80; translate: -50% 0;
   display: flex; align-items: center; gap: 6px; padding: 6px;
   border-radius: 999px; isolation: isolate; overflow: hidden;
   border: 1px solid rgba(255,255,255,.12);
   box-shadow: 0 10px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12);
-  background: rgba(10,11,15,.55);
+  background: color-mix(in oklab, var(--panel) 55%, transparent);
 }
 .dock__field { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; opacity: .85; }
 .dock::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
-  background: linear-gradient(180deg, rgba(10,11,15,.25), rgba(10,11,15,.6)); }
+  background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 25%, transparent), color-mix(in oklab, var(--panel) 60%, transparent)); }
 .dock__nav { display: flex; align-items: center; gap: 4px; }
 .dock__item {
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -213,7 +243,7 @@ section.chapter:focus { outline: none; }
 /* ---------- menu fullscreen ---------- */
 .menu {
   position: fixed; inset: 0; z-index: 90; display: grid; align-content: center;
-  padding: 90px var(--gutter) 40px; background: rgba(5,5,6,.28);
+  padding: 90px var(--gutter) 40px; background: color-mix(in oklab, var(--ink) 28%, transparent);
   clip-path: circle(0px at var(--mx, 50%) var(--my, 40px)); visibility: hidden;
 }
 .menu.is-open { visibility: visible; }
@@ -230,24 +260,15 @@ section.chapter:focus { outline: none; }
 .menu__foot { margin-top: 3vh; }
 
 /* ---------- cursor ---------- */
-/* con trỏ hệ thống hình "probe" (--cur do cursor.ts đặt theo accent) + vòng ring trang trí bám theo */
+/* con trỏ hệ thống dạng chuẩn (fx/ui/cursor.ts đặt --cur-* theo accent): mũi tên / bàn tay / I-beam */
 @media (pointer: fine) {
-  html.has-cursor, html.has-cursor body { cursor: var(--cur), crosshair; }
-  html.has-cursor :is(a, button, [data-cursor], [data-cursor] *, a *, button *) { cursor: var(--cur-hot), pointer; }
+  html.has-cursor, html.has-cursor body { cursor: var(--cur-arrow), auto; }
+  /* V5-perf: section / overlay mang --cur-* tĩnh theo accent của nó → khai báo lại để var() giải theo section */
+  html.has-cursor :is(section.chapter, #project-view) { cursor: var(--cur-arrow), auto; }
+  html.has-cursor :is(a, button, summary, label[for], [role="button"], [data-clickable]),
+  html.has-cursor :is(a, button, summary, label[for], [role="button"], [data-clickable]) * { cursor: var(--cur-hand), pointer; }
+  html.has-cursor :is(input:not([type="button"], [type="submit"], [type="checkbox"], [type="radio"]), textarea, [contenteditable="true"]) { cursor: var(--cur-text), text; }
 }
-.cur-ring {
-  position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; width: 34px; height: 34px; border-radius: 50%;
-  display: grid; place-items: center; opacity: 0; will-change: transform;
-  border: 1.5px solid color-mix(in oklab, var(--accent) 75%, #fff);
-  box-shadow: 0 0 14px color-mix(in oklab, var(--accent) 30%, transparent), inset 0 0 8px color-mix(in oklab, var(--accent) 20%, transparent);
-  transition: opacity .3s, background-color .3s, border-color .3s;
-}
-.cur-ring.is-on { opacity: .85; }
-.cur-ring.is-hot { border-color: var(--accent); }
-.cur-ring.has-label { background: color-mix(in oklab, var(--accent) 20%, rgba(4,6,10,.45)); }
-.cur-label { font: 600 5.5px/1 var(--f-mono); letter-spacing: .18em; text-transform: uppercase; color: #fff; opacity: 0; transition: opacity .2s; white-space: nowrap; }
-.cur-ring.has-label .cur-label { opacity: 1; }
-html.menu-open .cur-ring { border-color: var(--bone); }
 
 /* ---------- preloader (khung; chương 00 styling chi tiết ở chapters/c00.css) ---------- */
 .preloader { position: fixed; inset: 0; z-index: 200; background: var(--ink); --r: 0px;
@@ -256,12 +277,12 @@ html.menu-open .cur-ring { border-color: var(--bone); }
 
 /* ---------- debug HUD ---------- */
 .hud { position: fixed; left: 10px; bottom: 10px; z-index: 300; margin: 0; padding: 10px 12px; min-width: 230px;
-  font: 400 11px/1.45 var(--f-mono); color: #9ff7c8; background: rgba(0,0,0,.72);
-  border: 1px solid rgba(159,247,200,.25); border-radius: 8px; pointer-events: none; white-space: pre; }
+  font: 400 11px/1.45 var(--f-mono); color: var(--signal); background: rgba(0,0,0,.72);
+  border: 1px solid color-mix(in oklab, var(--signal) 25%, transparent); border-radius: 8px; pointer-events: none; white-space: pre; }
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .grain, .slot { animation: none; }
+  .grain, .slot, .slot::after { animation: none; }
   .neon, .neon .tube-off { animation: none; }
 }
-html.reduced .grain, html.reduced .slot, html.reduced .neon, html.reduced .neon .tube-off { animation: none; }
+html.reduced .grain, html.reduced .slot, html.reduced .slot::after, html.reduced .neon, html.reduced .neon .tube-off { animation: none; }
